@@ -1,0 +1,115 @@
+﻿@model DESDrawing.Models.DiscomOffice
+@{
+    ViewBag.Title = "AddDiscomOffice";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Add Discom Office</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @{
+                    string Code = (string)TempData["code"];
+                    string msg = (string)TempData["Msg"];
+                    if (!string.IsNullOrEmpty(Code))
+                    {
+                        if (Code == "1")
+                        {
+                            <div class="alert alert-success msgdiv">
+                                <strong>Success!</strong> @msg
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger msgdiv">
+                                <strong>Error!</strong> @msg
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-header">
+                        <h4 class="m-b-0 text-white">
+                             Discom Office
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/Master/AddDiscomOffice" method="post" onsubmit="return validateForm()">
+                            <div class="form-body">
+
+                                <div class="row p-t-20">
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Enter Discom Office Name<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.OfficeName, new { @class = "form-control", @placeholder = "Enter Discom Office Name" })
+                                            @Html.ValidationMessageFor(m => m.OfficeName, "", new { @class = "text-danger" })
+                                            @Html.HiddenFor(m => m.ID)
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                    </div>
+                </div>
+                <div class="form-actions">
+                    @if (Model.ID > 0)
+                    {
+                        <button class="btn btn-success hstheme-button-o text-white">
+                            <i class="fa fa-check"></i>
+                            Update
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-success hstheme-button-o text-white">
+                            <i class="fa fa-check"></i>
+                            Submit
+                        </button>
+                    }
+
+                    <a href="/Master/DiscomOfficeList" class="btn btn-danger hstheme-button-o text-white">
+                        <i class="fa fa-crosshairs"></i>
+                        Cancel
+                    </a>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+        </div>
+
+
+
+<footer class="footer"> Developed by Uttar Pradesh Vidhut Suraksha </footer>
+
+    </div>
+</div>
+<script>
+    function validateForm() {
+        if ($('#OfficeName').val() == '' || $('#OfficeName').val() == '0') {
+            swal("", "Please Enter Discom Office Name..", "warning");
+            $('#OfficeName').focus();
+            return false;
+
+        }
+    }
+</script>
+

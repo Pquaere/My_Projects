@@ -1,0 +1,100 @@
+﻿@model DESDrawing.Models.RoleMasterModel
+@{
+    ViewBag.Title = "RoleMaster";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    @{
+        string Code = (string)TempData["code"];
+        string msg = (string)TempData["Msg"];
+        if (!string.IsNullOrEmpty(Code))
+        {
+            if (Code == "1")
+            {
+                <div class="alert alert-success msgdiv">
+                    <strong>Success!</strong> @msg
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger msgdiv">
+                    <strong>Error!</strong> @msg
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+            }
+        }
+    }
+
+    <div class="row page-titles">
+        <div class="ptitle">
+            <h4 class="mb-1 mt-0">Role Master</h4>
+            <nav aria-label="breadcrumb" class="float-left mt-1">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                    <li class="breadcrumb-item"><a href="#">User Permission</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Role Master </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                @using (Html.BeginForm("RoleMasterInsert", "UserPermission", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <div>
+                        <div class="box-body" id="dvInitialInfo">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="password">Role Name<span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(M => M.RoleName, new { @class = "form-control", @id = "RoleName", @placeholder = "Enter Role Name", maxlength = "50" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+
+                                        @if (Model.PK_RoleId != null)
+                                        {
+                                            <input type="submit" class="btn btn-success" name="Update" value="Update" id="Update" onclick="return validate();" />
+                                            <a href="/UserPermission/RoleMasterList" class="btn btn-danger">Cancel</a>
+                                        }
+
+                                        else
+                                        {
+                                            <input type="submit" class="btn btn-success" name="Save" value="Save" id="btnFinalSave" onclick="return validate();" />
+                                            <a href="/UserPermission/RoleMasterList" class="btn btn-danger">Cancel</a>
+                                        }
+                                        @Html.HiddenFor(M => M.PK_RoleId)
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validate() {
+        var FormType = $('#RoleName').val();
+        if (FormType == "") {
+            swal("", "Please Enter Role Name..", "warning");
+            $('#RoleName').focus();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+

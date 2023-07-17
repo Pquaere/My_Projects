@@ -1,0 +1,137 @@
+﻿@model DESDrawing.Models.FormMasterModel
+@{
+    ViewBag.Title = "FormMaster";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    @{
+        string Code = (string)TempData["code"];
+        string msg = (string)TempData["Msg"];
+        if (!string.IsNullOrEmpty(Code))
+        {
+            if (Code == "1")
+            {
+                <div class="alert alert-success msgdiv">
+                    <strong>Success!</strong> @msg
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger msgdiv">
+                    <strong>Error!</strong> @msg
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+            }
+        }
+    }
+
+
+
+    <div class="row page-titles">
+        <div class="ptitle">
+            <h4 class="mb-1 mt-0">Form Master</h4>
+            <nav aria-label="breadcrumb" class="float-left mt-1">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                    <li class="breadcrumb-item"><a href="#">User Permission</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Form Master </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="container-fluid">
+
+        <div class="card">
+            <div class="card-body">
+                @using (Html.BeginForm("FormMasterInsert", "UserPermission", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+
+                    <div class="box-body" id="dvInitialInfo">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="password">Form Type<span class="text-danger">*</span></label>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+
+                                        @Html.DropDownListFor(M => M.FK_FormTypeId, new SelectList(ViewBag.ddlFormType, "Value", "Text"), "--Select FormType--", new { @class = "form-control", @placeholder = "Select Form Type" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label for="password">Form Name<span class="text-danger">*</span></label>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(M => M.FormName, new { @class = "form-control", @id = "FormName", @placeholder = "Enter Form Name", maxlength = "50" })
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    
+                                        @if (Model.PK_FormId != null)
+                                        {
+                                            <input type="submit" class="btn btn-success" name="Update" value="Update" id="Update" onclick="return validate();" />
+                                            <a href="/UserPermission/FormTypeList" class="btn btn-danger">Cancel</a>
+                                        }
+                                    else
+                                    {
+                                        <input type="submit" class="btn btn-success" name="Save" value="Save" id="btnFinalSave" onclick="return validate();" />
+                                        <a href="/UserPermission/FormMasterList" class="btn btn-danger">Cancel</a>
+                                    }
+                                    @Html.HiddenFor(M => M.PK_FormId)
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+
+    function validate() {
+        debugger;
+        var FormType = $('#FormName').val();
+        var FK_FormTypeId = $('#FK_FormTypeId').val();
+       
+        if (FK_FormTypeId == "" || FK_FormTypeId == null || FK_FormTypeId == undefined) {
+            alert("Please Select Form Type!");
+            $('#FormType').focus();
+            return false;
+        }
+        else if (FormType == "") {
+            alert("Please Enter Form Name!");
+            $('#FormType').focus();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+
+
+
+
+
+
+
+

@@ -1,0 +1,222 @@
+.topbar .top-navbar .navbar-header .navbar-brand span img.dark-logo {
+	width: 100%;
+	max-height: 50px;
+}
+.imgbg {
+	width: 50px;
+	height: 50px;
+	margin: 0px 10px 0px 0px;
+	background: rgb(191, 226, 222);
+	padding: 12px;
+	border-radius: 50%;
+}
+.houshold-icon {
+	width: 30px;
+	height: 30px;
+	float: left;
+	margin: 10px 20px 10px 5px;
+}
+.houshold-icon img {
+	width: 100%;
+}
+.map-part iframe {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+.map-part {
+	width: 100%;
+	height: 100%;
+	display: table-cell;
+	position: relative;
+}
+.map-view {
+	width: 100%;
+	position: relative;
+	min-height: 710px;
+	max-height: 710px;
+	display: table;
+	overflow: hidden;
+	text-align: center;
+	margin-top: 10px;
+}
+.map-pointers {
+	position: absolute;
+	right: -15px;
+	top: 0;
+	width: 120px;
+	background: #fff;
+	height: 100%;
+	box-shadow: -5px 0px 2px rgb(0 0 0 / 15%);
+	overflow-y: auto;
+}
+.pointer-listing ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.pointer-listing ul li {
+	text-align: center;
+	vertical-align: middle;
+	display: inline-block;
+	margin: 0 40px;
+}
+.pointer-listing ul li:first-child {
+	margin: 0px;
+}
+.pointer-listing ul li a {
+	display: block;
+}
+span.pointer-block span.pointer-name {
+	font-size: 12px;
+	font-weight: bold;
+	color: #333333;
+}
+.pointer-block .pointer-icon {
+	display: block;
+	padding: 5px;
+	width: 40px;
+	height: 40px;
+	line-height: 30px;
+	background: #fff;
+	padding: 5px;
+	border-radius: 100%;
+	margin: 0px auto;
+	box-shadow: 0 1px 5px 0 rgb(0 0 0 / 10%);
+}
+.pointer-block span.pointer-icon img {
+	width: 20px;
+}
+span.pointer-block {
+	display: block;
+}
+.household, .population {
+	width: 100%;
+	height: auto;
+	background: #fff;
+	border-radius: 0px;
+	z-index: 1;
+	padding: 5px 0px;
+	box-shadow: 0px 0px 1px rgb(0 0 0 / 5%);
+	border-bottom: 1px solid #eaeaea;
+}
+.houshold-icon {
+	width: 50px;
+	height: 50px;
+	margin-bottom: 10px;
+}
+.houshold-icon img {
+	width: 100%;
+}
+.household-count h2 {
+	font-weight: bold;
+	font-size: 18px;
+	margin-bottom: 0;
+}
+.household-count h4 {
+	margin-top: 0;
+	font-size: 16px;
+	font-weight: normal;
+}
+.houshold-icon {
+	width: 30px;
+	height: 30px;
+	margin: 10px 20px 10px 5px;
+	float: left;
+}
+.houshold-icon img {
+	width: 100%;
+}
+.household-count h2 {
+	font-weight: bold;
+	font-size: 18px;
+	margin-bottom: 0;
+}
+.household-count h4 {
+	margin-top: 0;
+	font-size: 16px;
+	font-weight: normal;
+}
+.map-part #map {
+	position: absolute !important;
+}
+.pointer-listing {
+	padding: 10px 20px 0px;
+}
+.pointer-listing ul {
+	text-align: center;
+	margin: 0px;
+	padding: 0px 0px 10px;
+	list-style: none;
+}
+.pointer-listing ul li:first-child {
+	margin: 0px;
+}
+.pointer-listing ul li {
+	text-align: center;
+	vertical-align: middle;
+	display: inline-block;
+	margin: 0px 30px;
+}
+.topboxpad {
+	text-align: center;
+	padding: 10px 0px 0px !important;
+}
+.manage {
+	width: 20%;
+	padding:0 10px;
+}
+
+@media only screen and (max-width: 480px) {
+.manage {
+	width: 50%;
+}
+}
+.table th, .table thead th {
+    font-weight: 500;
+    background: #cf3614;
+    color: #fff;
+    vertical-align: middle;
+    border: 1px solid #cf3614;
+}
+.profile-box {
+    background: #cf3614;
+    padding: 10px 25px;
+    border-radius: 10px 10px 0 0;
+}
+
+.notify .point{
+	top: 0px!important;
+}
+
+.topbar .top-navbar .navbar-header .navbar-brand span img.dark-logo {
+	width: 77%!important;
+	max-height: 50px;
+}
+
+/*Himanshu css 05/05/23*/
+
+.card-outline-info .card-header {
+	background: #c4295e !important;
+	border-color: #c4295e !important;
+}
+
+.card-outline-info {
+	border-color: #b54738 !important;
+}
+
+.table th, .table thead th {
+	font-weight: 500;
+	background: #c4295e !important;
+	color: #fff;
+	vertical-align: middle;
+	border: 1px solid #cf3614;
+}
+
+.ptitle {
+    width: 50%;
+}
+
+.pbutton {
+    width: 50%;
+}

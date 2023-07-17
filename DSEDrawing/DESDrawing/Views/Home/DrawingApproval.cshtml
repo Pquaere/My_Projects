@@ -1,0 +1,311 @@
+﻿@model DESDrawing.Models.ApplicantDispatch
+
+@{
+    ViewBag.Title = "DrawingApproval";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <title></title>
+    <style>
+        .page {
+            width: 21cm;
+            min-height: 27.7cm;
+            padding: 0.5cm 0.5cm 0.5cm 0.5cm;
+            margin: 1cm auto;
+            border: 1px #D3D3D3 solid;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            font-size: 12px !important;
+        }
+
+
+        .subpage {
+            padding: 2px 2px 2px 2px;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        @@page {
+            size: A4;
+            margin: 0;
+        }
+
+        @@page {
+            size: portrait;
+            margin: 0px;
+        }
+
+        @@media print {
+            .page {
+                margin: 0;
+                border: initial;
+                border-radius: initial;
+                width: initial;
+                min-height: initial;
+                box-shadow: initial;
+                background: initial;
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="subpage" style="background:url(images/certificatebackground_vertical.jpg)">
+            <table cellpadding="0" cellspacing="0" border="0"
+                   style="width:100%;height:100%; border:1px solid #000; font-family:Arial; font-size:14px; margin:0px auto;">
+                <tbody>
+                    <tr>
+                        <td style="padding:0px 10px 0 10px; width:100%;" valign="top">
+                            <table>
+                                <tr>
+                                    <td style="text-align:center;padding:20px 0px"><img src="/assets/images/vnslogonew1.png" width="50%" alt="logo"></td>
+                                </tr>
+                                <!-- <tr>
+                                <td style="padding:0px; ">
+                                  <table style="width:100%">
+                                    <tr>
+                                      <td style="width:50%; text-align:left;"><strong>Ref.No. : </strong> JH/23-00002 </td>
+                                      <td style="text-align:right;width:50%"><strong>Certificate No.:</strong> VL-00001/23 </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                </tr> -->
+                                <tr>
+                                    <td style="text-align:center;padding:5px 0px;">
+                                        <span style="  background:#fff; color:#c51515;;  display: inline-block; text-transform:uppercase;">
+                                            <font style="font-size:14px;padding-bottom: 10px;">
+                                                <!-- <strong> सत्यापन पत्र</strong><br> -->
+                                                <strong>
+                                                    Drawing Approval For EHV or HV or Self Execution Installation
+                                                </strong>
+                                            </font>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:50%; text-align:left;margin-top:30px;padding-top:20px">
+                                        <table style="width:100%">
+                                            <tr>
+                                                <td>
+                                                    <table>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>No.</strong>
+                                                                @*&nbsp;&nbsp;&nbsp;*@
+                                                                DRW/APPROVAL/23-24/LKO/@Model.DrawingNo<br>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>To.</strong>
+                                                                @Model.Name
+                                                                <br>
+
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div>
+                                                                    <strong> Address:</strong> @Model.Area, @Model.Tahsil, @Model.State,@Model.Pincode
+
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                    </table>
+                                                </td>
+                                                <td style="width:50%; text-align:right;">
+                                                    <table style="width:100%">
+                                                        <tr>
+                                                            <strong>Date : @Model.DispatchDate</strong>
+                                                        </tr>
+                                                        <tr>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style=" padding-top: 10px; ">
+                                            Sir/Madam,<br>
+                                        </div>
+                                        <div style=" padding-top: 5px; ">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub: Approval of drawings pertaining to
+                                            the
+                                            electrical installation of <strong>@Model.Capacity KVA</strong> at <strong>
+                                                @Model.Area, @Model.Tahsil, @Model.State,
+                                                @Model.Pincode
+                                            </strong>
+                                        </div>
+                                        <br>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style=" padding-top: 1px; ">
+                                            Ref: @Model.RefNo<br>
+                                        </div>
+                                        <p style="font-size: 13px;">
+                                            Please find herein enclosed the drawings in duplicate
+                                            referred to the
+                                            above duly approved after
+                                            effecting necessary
+                                            corrections and with observations noted in <strong> Red INK </strong> You may take up the work
+                                            through Licensed
+                                            Electrical Contractor as per the approved drawings and after completing the work, submit the
+                                            connected documents with
+                                            completion, report to the undersigned along with the following particulars to arrange for
+                                            inspection.
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-top:10px;font-size: 13px;">
+                                        1. Manufacturers Test Reports of Transformer or HT or LT breakers etc.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 13px;">
+                                        2. Completion report of Licensed Electrical Contractor in Form 81 for having completed the works
+                                        as per the approved
+                                        drawings along with the following details.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=" padding-left:10px;font-size: 13px;">
+                                        (a) Description of the motor or equipments, indicating serial numbers.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style=" padding-left:10px;font-size: 13px;">
+                                        (b) Rating in HP or KW or KVA
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style=" padding-left:10px;font-size: 13px;">
+                                        (c) Feeder details
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style=" padding-left:10px;font-size: 13px;">
+                                        (d) Voltage Rating, insulation test results of the equlpinents and
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style=" padding-left:10px;font-size: 13px;">
+                                        (e) Earth Test Results
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style=" padding-left:10px;font-size: 13px;">
+                                        (f) The completion report should be signed by the Licenced Electrical Contractor and the
+                                        Electrical supervisor along with
+                                        their valid licence or Permit number and validity date.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style=" padding-top:5px;font-size: 13px;">
+                                        3. Oil test results of transformer or oil circuit breaker.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style=" padding-top:2px;font-size: 13px;">
+                                        4. Insulation test results of transformer OCB's cable and other connected equipments.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=" padding-top:2px;font-size: 13px;">
+                                        5. Calibration certificates in original of protective devices, CTS, PTS, Energy meters etc., as
+                                        calibrated by the relay
+                                        testing and meler testing division of KPTCL or other approved agencies
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=" padding-top:2px;font-size: 13px;">
+                                        6. All earth electrodes shall be constructed as per 1SS: 3043br 1987 and their artendments.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=" padding-top:2px;font-size: 13px;">
+                                        7. A List of authorized persons qualified to operate at the sub-station or at the works (fist shall
+                                        be signed by both
+                                        the employees and employer with permit number and validity date)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style=" padding-top: 5px;line-height:1.5; ">
+                                            &nbsp;8. Treasure regarding is pertaining fee of Rs. 15000 (Fifteen Thousand only)
+                                            ....................
+
+                                        </div>
+                                        <br>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td tyle=" padding-top:2px;font-size: 13px;">
+                                        9.Please after completion of installation work upload in the reference site of the 'Department of
+                                        Electrical Safety.'
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style=" padding:20px 25px 10px 0;">
+                                        <table style="width:100%">
+                                            <tr>
+                                                <td style="width:50%; text-align:left; vertical-align:top;">
+
+                                                    <span><b>Copy To......... </b></span><br><br>
+                                                    <strong>Phone:........</strong>
+                                                    </p>
+                                                </td>
+                                                <td style="text-align:center;width:50%; vertical-align:middle">
+                                                    <img src="images/signature.png"
+                                                         alt=""><br>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
+
+

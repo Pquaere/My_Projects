@@ -1,0 +1,132 @@
+﻿@model DESDrawing.Models.Zone
+@{
+    ViewBag.Title = "AddZone";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Add Zone</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-header">
+                        <h4 class="m-b-0 text-white">Zone
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/Master/AddZone" method="post" id="ZoneFormSubmit" onsubmit="return validate();">
+                            <div class="form-body">
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Select Region<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(model => model.RegionId, new SelectList(ViewBag.Regions, "Value", "Text"), "-Select Region-", new { @class = "form-control" })
+                                            @Html.HiddenFor(model => model.ID)
+                                            @Html.HiddenFor(model => model.RegionId)
+                                            @Html.ValidationMessageFor(m => m.RegionId, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Enter Zone Name<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.ZoneName, new { @class = "form-control", @placeholder = "Enter Zone Name" })
+                                            @Html.ValidationMessageFor(m => m.ZoneName, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                @if (Model.ID > 0)
+                                {
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Update
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Submit
+                                    </button>
+                                }
+
+                                <a href="/Master/Zone" class="btn btn-danger hstheme-button-o text-white">
+                                    <i class="fa fa-crosshairs"></i>
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <footer class="footer"> Developed by Uttar Pradesh Vidhut Suraksha </footer>
+
+    </div>
+</div>
+<script>
+    function validate() {
+        debugger;
+        if ($('#RegionId').val() == '' || $('#RegionId').val() == '0') {
+            swal("", "Please select Region..", "warning");
+            $('#RegionId').focus();
+            return false;
+
+        }
+        if ($('#ZoneName').val() == '' || $('#ZoneName').val() == '0' || $('#ZoneName').val() == null) {
+            swal("", "Please Enter Zone Name..", "warning");
+            $('#ZoneName').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#ZoneFormSubmit").submit();
+        }
+    }
+</script>
+
+
+

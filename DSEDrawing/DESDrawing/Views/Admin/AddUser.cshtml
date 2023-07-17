@@ -1,0 +1,418 @@
+﻿@model DESDrawing.Models.Users
+@{
+    ViewBag.Title = "AddUser";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Add User</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-header">
+                        <h4 class="m-b-0 text-white">
+                            User
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/Admin/AddUser" method="post" id="UserFormSubmit" onsubmit="return validate();">
+                            <div class="form-body">
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Select Role <span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(model => model.RoleID, new SelectList(ViewBag.Role, "Value", "Text"), "-Select Role-", new { @class = "form-control" })
+                                            @Html.HiddenFor(model => model.RoleID)
+                                            @Html.ValidationMessageFor(m => m.RoleID, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Enter UserName <span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.UserName, new { @class = "form-control", @placeholder = "UserName.." })
+                                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                                            @Html.HiddenFor(m=> m.UserID)
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Enter Password <span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.Password, new { @class = "form-control", @placeholder = "Password.." })
+                                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Enter FullName <span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.Fullname, new { @class = "form-control", @placeholder = "Fullname.." })
+                                            @Html.ValidationMessageFor(m => m.Fullname, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Enter Mobile <span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.Mobile, new { @class = "form-control", @placeholder = "Mobile..", @maxlength = "10" })
+                                            @Html.ValidationMessageFor(m => m.Mobile, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Enter Email <span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.Email, new { @class = "form-control", @placeholder = "Email.." })
+                                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Select Discom Office<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(model => model.DiscomId, new SelectList(ViewBag.discomoffice, "Value", "Text"), "-Select Discom Office-", new { @class = "form-control", @onchange = "BindRegions();" })
+                                            @Html.HiddenFor(model => model.DiscomId)
+                                            @Html.ValidationMessageFor(m => m.DiscomId, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Select Region<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(Model => Model.RegionId, new SelectList(string.Empty, "Value", "Text"), "--Select--", new { @class = "form-control", @id = "SubRegionId", @onchange = "BindZones();" })
+                                            @Html.HiddenFor(model => model.RegionId)
+                                            @Html.ValidationMessageFor(m => m.RegionId, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Select Zones<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(Model => Model.ZoneId, new SelectList(string.Empty, "Value", "Text"), "--Select--", new { @class = "form-control", @id = "SubZoneId", @onchange = "BindDistrict();" })
+                                            @Html.HiddenFor(model => model.ZoneId)
+                                            @Html.ValidationMessageFor(m => m.ZoneId, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Select District<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(Model => Model.DistrictId, new SelectList(string.Empty, "Value", "Text"), "--Select--", new { @class = "form-control", @id = "SubDistrictId" })
+                                            @Html.HiddenFor(model => model.DistrictId)
+                                            @Html.ValidationMessageFor(m => m.DistrictId, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Enter Pincode <span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.Pincode, new { @class = "form-control", @placeholder = "Pincode..", @maxlength = "6", @minlegth = "6" })
+                                            @Html.ValidationMessageFor(m => m.Pincode, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Enter Address <span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextAreaFor(M => M.Address, new { @class = "form-control", @placeholder = "Address.." })
+                                            @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                @if (Model.UserID > 0)
+                                {
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Update
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Submit
+                                    </button>
+                                }
+
+                                <a href="/Admin/UsersList" class="btn btn-danger hstheme-button-o text-white">
+                                    <i class="fa fa-crosshairs"></i>
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <footer class="footer"> Developed by Uttar Pradesh Vidhut Suraksha </footer>
+
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+
+    if (@Model.DiscomId > 0) {
+        debugger;
+        BindRegions(@Model.DiscomId);
+        BindZones(@Model.RegionId);
+        BindDistrict(@Model.ZoneId);
+    }
+
+    function BindRegions(id) {
+        debugger;
+        var DiscomId = $('#DiscomId').val();
+        $.ajax({
+            url: '/Admin/GetsubRegions',
+            type: 'post',
+            data: { DiscomId: DiscomId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#SubRegionId').empty();
+                    $('#SubRegionId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        $('#SubRegionId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#SubRegionId").val(@Model.RegionId);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+
+
+        })
+    }
+    function BindZones(id) {
+        debugger;
+        var RegionId;
+        if (id > 0) {
+            (RegionId = @Model.RegionId);
+        }
+        else {
+            RegionId = $('#SubRegionId option:selected').val() ;
+        }
+       /* var RegionId = $('#RegionId').val();*/
+        $.ajax({
+            url: '/Admin/GetsubZones',
+            type: 'post',
+            data: { RegionId: RegionId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#SubZoneId').empty();
+                    $('#SubZoneId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        $('#SubZoneId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#SubZoneId").val(@Model.ZoneId);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+
+
+        })
+    }
+    function BindDistrict(id) {
+        debugger;
+        var ZoneId;
+        if (id > 0) {
+            (ZoneId = @Model.ZoneId);
+        }
+        else {
+            ZoneId = $('#SubZoneId option:selected').val() ;
+        }
+        /*var ZoneId = $('#ZoneId').val();*/
+        $.ajax({
+            url: '/Admin/GetsubDistrict',
+            type: 'post',
+            data: { ZoneId: ZoneId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#SubDistrictId').empty();
+                    $('#SubDistrictId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        $('#SubDistrictId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#SubDistrictId").val(@Model.DistrictId);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+
+        })
+    }
+
+
+    function validate() {
+        debugger;
+        var matchpattern = /^[6-9][0-9]{9}$/;
+        var reg = /^([A-Za-z0-9_\-\.])+\@@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,3})$/;
+        if ($('#RoleID').val() == '' || $('#RoleID').val() == '0' || $('#RoleID').val() == undefined) {
+            swal("", "Please Select Role..", "warning");
+            $('#RoleID').focus();
+            return false;
+
+        }
+        if ($('#UserName').val() == '' || $('#UserName').val() == '0' || $('#UserName').val() == undefined) {
+            swal("", "Please Enter UserName..", "warning");
+            $('#UserName').focus();
+            return false;
+
+        }
+        if ($('#Password').val() == '' || $('#Password').val() == '0' || $('#Password').val() == undefined) {
+            swal("", "Please Enter Password..", "warning");
+            $('#Password').focus();
+            return false;
+
+        }
+        if ($('#Fullname').val() == '' || $('#Fullname').val() == '0' || $('#Fullname').val() == undefined) {
+            swal("", "Please Enter Fullname..", "warning");
+            $('#Fullname').focus();
+            return false;
+
+        }
+        if ($('#Mobile').val() == '' || $('#Mobile').val() == '0' || $('#Mobile').val() == undefined) {
+            swal("", "Please Enter Mobile..", "warning");
+            $('#Mobile').focus();
+            return false;
+        }
+        var charCode = $('#Mobile').val();
+        var val = matchpattern.test(charCode);
+        if (!val) {
+            swal("", "Please enter 10 digit mobile number", "warning");
+            $('#Mobile').focus();
+            $('#Mobile').val('');
+            return false;
+        }
+        if ($('#Email').val() == '' || $('#Email').val() == '0' || $('#Email').val() == undefined) {
+            swal("", "Please Enter Email..", "warning");
+            $('#Email').focus();
+            return false;
+
+        }
+        if (reg.test($("#Email").val()) == false) {
+            $("#Email").focus();
+            $("#Email").val('');
+            swal("", "Please enter a valid email Id", "warning");
+            return false;
+        }
+        if ($('#DiscomId').val() == '' || $('#DiscomId').val() == '0' || $('#DiscomId').val() == undefined) {
+            swal("", "Please Select Discom Office..", "warning");
+            $('#DiscomId').focus();
+            return false;
+
+        }
+        if ($('#SubRegionId option:selected').val() == '---Select----' ) {
+            swal("", "Please Select Region..", "warning");
+            $('#RegionId').focus();
+            return false;
+
+        }
+        if ($('#SubZoneId option:selected').val() == '---Select----' ) {
+            swal("", "Please Select Zone..", "warning");
+            $('#ZoneId').focus();
+            return false;
+
+        }
+        if ($('#SubDistrictId option:selected').val() == '---Select----' ) {
+            swal("", "Please Select District..", "warning");
+            $('#DistrictId').focus();
+            return false;
+
+        }
+        if ($('#Pincode').val() == '' || $('#Pincode').val() == '0' || $('#Pincode').val() == null || $('#Pincode').val() == undefined) {
+            swal("", "Please Enter Pincode..", "warning");
+            $('#Pincode').focus();
+            return false;
+        }
+        if ($('#Address').val() == '' || $('#Address').val() == '0' || $('#Address').val() == null || $('#Address').val() == undefined) {
+            swal("", "Please Enter Address..", "warning");
+            $('#Address').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#UserFormSubmit").submit();
+        }
+    }
+</script>
+

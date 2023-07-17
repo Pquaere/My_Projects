@@ -1,0 +1,131 @@
+﻿@model List<DESDrawing.Models.RoleMasterModel>
+@{
+    ViewBag.Title = "RoleMasterList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="page-wrapper">
+    @{
+        string Code = (string)TempData["code"];
+        string msg = (string)TempData["Msg"];
+        if (!string.IsNullOrEmpty(Code))
+        {
+            if (Code == "1")
+            {
+                <div class="alert alert-success msgdiv">
+                    <strong>Success!</strong> @msg
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger msgdiv">
+                    <strong>Error!</strong> @msg
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+            }
+        }
+    }
+
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Role Master</h3>
+            <nav aria-label="breadcrumb" class="float-left">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#-">Admin</a></li>
+                    <li class="breadcrumb-item"><a href="#-">User Permission</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Role Master</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="pbutton">
+            <div class="right text-right">
+                @*@if (PermissionManager.IsActionPermit("Role Master", ViewOptions.FormSave))
+                    {*@
+                <a href="/UserPermission/RoleMaster" id="btnAdd" class="btn btn-success">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Add Role
+                </a>
+                @*}*@
+            </div>
+        </div>
+    </div>
+
+    <div id="no-more-tables">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="box">
+                    <div class="box-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        @*<h4 class="header-title mt-0 mb-1">Product List</h4>*@
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table id="myTable" class="table table-hover table-striped mb-0 datatable">
+                                        <thead class="table-primary">
+                                            <tr class="hdr">
+                                                <th align="left" scope="col">S. No.</th>
+                                                <th align="left" scope="col">Role Name</th>
+                                                <th align="left" scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                            @if (Model != null)
+                                            {
+                                                int SNO = 0;
+                                                foreach (var item in Model)
+                                                {
+                                                    <tr>
+                                                        <td>@(SNO = SNO + 1)</td>
+                                                        <td>@item.RoleName</td>
+                                                        <td>
+                                                            @if (item.PK_RoleId == "1" || item.PK_RoleId == "2" || item.PK_RoleId == "3" || item.PK_RoleId == "4" || item.PK_RoleId == "5" || item.PK_RoleId == "6")
+                                                            {
+
+                                                            }
+                                                            else
+                                                            {
+                                                                @*@if (PermissionManager.IsActionPermit("Role Master", ViewOptions.FormUpdate))
+                                                                    {*@
+                                                                <a href="/UserPermission/RoleMasterFill?id=@item.PK_RoleId" title="Edit" onclick="return confirm ('Are you sure to edit?');" class="btn btn-primary btn-sm">  <i class="fa fa-edit"></i></a>
+                                                                @*}
+                                                                    @if (PermissionManager.IsActionPermit("Role Master", ViewOptions.FormDelete))
+                                                                    {*@
+
+                                                                <a href="/UserPermission/RoleMasterDelete?id=@item.PK_RoleId" onclick="return confirm('Are you sure to delete ?')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                                                @*}*@
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                    @*<div id="loader">
+                                            <img src="~/Content/img/player_loading.gif" />
+                                        </div>*@
+                                </div><!-- /.box-body -->
+                            </div>
+                        </div><!-- /.box -->
+
+                    </div><!-- /.col -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+

@@ -1,0 +1,155 @@
+﻿@model DESDrawing.Models.Users
+@using DESDrawing.Models.Manager;
+@{
+    ViewBag.Title = "UsersList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .dataTables_wrapper{
+        padding-top: 0px;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Users List</h3>
+        </div>
+        <div class="pbutton">
+            <div class="right text-right">
+                @if (PermissionManager.IsActionPermit("UserList", ViewOptions.FormSave))
+                {
+                    <a href="/Admin/AddUser" id="btnAdd" class="btn btn-success">
+                        <i class="fa fa-plus" aria-hidden="true"></i> Add User
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @{
+                    string Code = (string)TempData["code"];
+                    string msg = (string)TempData["Msg"];
+                    if (!string.IsNullOrEmpty(Code))
+                    {
+                        if (Code == "1")
+                        {
+                            <div class="alert alert-success msgdiv">
+                                <strong>Success!</strong> @msg
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger msgdiv">
+                                <strong>Error!</strong> @msg
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                            </div>
+
+                        }
+                    }
+                }
+            </div>
+        </div>
+
+
+        <div class="row">
+            <!-- column -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                        </div>
+                        <div class="table">
+                            <div class="table-responsive">
+                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr role="row" class="bg-secondary">
+                                            <th>S.No</th>
+                                            <th>UserName</th>
+                                            <th>Password</th>
+                                            <th>Role</th>
+                                            <th>FullName</th>
+                                            <th>Mobile</th>
+                                            <th>Email</th>
+                                            <th>Address</th>
+                                            <th>Pincode</th>
+                                            <th>Edit</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Userslist != null)
+                                        {
+                                            var sn = 1;
+                                            foreach (var item in Model.Userslist)
+                                            {
+                                                <tr role="row" class="odd">
+                                                    <td>@sn</td>
+                                                    <td>@item.UserName</td>
+                                                    <td>
+                                                        <i class="fa fa-eye" onclick="ShowPassword('@item.Password',@sn)"></i>
+                                                        <span id="txtpassord_@sn"></span>
+                                                    </td>
+                                                    <td>@item.Role</td>
+                                                    <td>@item.Fullname</td>
+                                                    <td>@item.Mobile</td>
+                                                    <td>@item.Email</td>
+                                                    <td>@item.Address</td>
+                                                    <td>@item.Pincode</td>
+                                                    <td>
+                                                        @if (PermissionManager.IsActionPermit("UserList", ViewOptions.FormUpdate))
+                                                        {
+                                                            <a href="/Admin/AddUser?ID=@item.UserID" title="Edit"><i class="fa fa-pencil"></i> </a>
+                                                        }
+                                                    </td>
+                                                    <td>
+
+                                                        @if (PermissionManager.IsActionPermit("UserList", ViewOptions.FormDelete))
+                                                        {
+                                                            if (item.Isactive != false)
+                                                            {
+                                                                <a href="/Admin/ChangeUserStatus?Isactive=false&ID=@item.UserID" title="" name="Isactive" value="false"><span class=" p-1 badge-success">Active</span> </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="/Admin/ChangeUserStatus?Isactive=true&ID=@item.UserID" title="" name="Isactive" value="true"><span class=" p-1 badge-danger">In-Active</span> </a>
+                                                            }
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                sn++;
+                                            }
+
+                                        }
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+    <footer class="footer"> Developed by Uttar Pradesh Vidhut Suraksha </footer>
+
+</div>
+<script>
+    function ShowPassword(Password, i) {
+        debugger;
+        $('#txtpassord_' + i).text(Password);
+    }
+</script>
+
+

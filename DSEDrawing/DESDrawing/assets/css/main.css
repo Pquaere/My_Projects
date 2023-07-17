@@ -1,0 +1,83 @@
+.account-wrapper {
+    display: table;
+    table-layout: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+.account-wrapper {
+    padding: 30px;
+}
+
+.account-page {
+    display: table-row;
+    height: 100%;
+}
+
+.account-center {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.account-box {
+    background-color: #fff;
+    border: 1px solid #eaeaea;
+    margin: 0 auto;
+    padding: 20px;
+    width: 400px;
+}
+
+.account-logo {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+@media only screen and (max-width: 575.98px){
+.account-box {
+    width: 100%;
+    margin-bottom: 20px;
+}
+.account-wrapper {
+    padding: 30px;
+}
+
+.account-box {
+    width: 362px;
+}
+}
+
+@media only screen and (max-width: 575.98px){
+.account-box {
+    width: 100%;
+    margin-bottom: 20px;
+}
+}
+
+.account-box {
+    background-color: #fff;
+    border: 1px solid #eaeaea;
+    margin: 0 auto;
+    padding: 20px;
+    width: 400px;
+}
+
+.css-bar>i {
+    z-index: 10;
+}
+
+.css-bar > i {
+    width: 70px;
+    height: 70px;
+    background: #fff;
+    line-height: 70px;
+    position: absolute;
+    border-radius: 100%;
+    text-align: center;
+    margin-left: 5px;
+    margin-top: 5px;
+    left: 0px;
+    right: 0px;
+    z-index: 120;
+    font-size: 27px;
+    color: #a6b7bf;
+}

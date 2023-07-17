@@ -1,0 +1,142 @@
+﻿@model DESDrawing.Models.Region
+@{
+    ViewBag.Title = "Region";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Region</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+
+        <div>
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                        </div>
+                    }
+                }
+            }
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-header">
+                        <h4 class="m-b-0 text-white">
+                            Region
+                        </h4>
+                    </div>
+                    <div class="card-body">
+
+                        <form action="/Master/SaveRegion" method="post" id="form"  onsubmit="return validate();">
+                            <div class="form-body">
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-4">
+                                        @Html.HiddenFor(m=>m.Id)
+
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                 Discomoffices <span class="text-danger">*</span>
+                                            </label>
+
+                                
+                                            @Html.DropDownListFor(model => model.DiscomofficeName, new SelectList(ViewBag.Discomoffices, "Value", "Text"), "-Select Discomoffices-", new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m=>m.DiscomofficeName,"",new {@class="text-danger" })
+                                           
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Regions Name<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.RegionName, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.RegionName)
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+                            </div>
+                            <div class="form-actions">
+
+                                @if (Model.Id > 0)
+                                {
+
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Update
+                                    </button>
+
+                                    <a  href="/Master/RegionList" class="btn btn-warning hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Cancle
+                                    </a>
+                                }
+                                else
+                                {
+
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Submit
+                                    </button>
+
+                                    <a  href="/Master/RegionList" class="btn btn-danger hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Cancle
+                                    </a>
+                                }
+
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        </div>
+        </div>
+
+
+<script>
+
+    function validate() {
+        debugger;
+        if ($('#DiscomofficeName').val() == '' || $('#DiscomofficeName').val() == '0') {
+            swal("", "Please select DiscomofficeName..", "warning");
+            $('#DiscomofficeName').focus();
+            return false;
+
+        }
+        if ($('#RegionName').val() == '' || $('#RegionName').val() == undefined || $('#RegionName').val() == null) {
+            swal("", "Please Enter RegionName..", "warning");
+            $('#RegionName').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+</script>

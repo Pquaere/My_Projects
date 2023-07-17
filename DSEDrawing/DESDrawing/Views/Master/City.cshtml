@@ -1,0 +1,113 @@
+﻿@model DESDrawing.Models.City
+@{
+    ViewBag.Title = "City";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-11 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">City List</h3>
+        </div>
+
+        <div class="pbutton">
+            <div class="right text-right">
+                <a href="/Master/AddCity" id="btnAdd" class="btn btn-success btn-sm">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Add City
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @{
+                    string Code = (string)TempData["code"];
+                    string msg = (string)TempData["Msg"];
+                    if (!string.IsNullOrEmpty(Code))
+                    {
+                        if (Code == "1")
+                        {
+                            <div class="alert alert-success msgdiv">
+                                <strong>Success!</strong> @msg
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger msgdiv">
+                                <strong>Error!</strong> @msg
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+
+
+        <div class="row">
+            <!-- column -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+
+                        </div>
+                        <div class="table">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr role="row" class="bg-secondary">
+                                            <th>S.No</th>
+                                            <th>State Name</th>
+                                            <th>City Name</th>
+                                            <th>Edit</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.CityList != null)
+                                        {
+                                            var sn = 1;
+                                            foreach (var item in Model.CityList)
+                                            {
+                                                <tr role="row" class="odd">
+                                                    <td>@sn</td>
+                                                    <td>@item.StateName</td>
+                                                    <td>@item.CityName</td>
+                                                    <td><a href="/Master/AddCity?ID=@item.ID" title="Edit"><i class="fa fa-pencil"></i> </a>  
+                                                    </td>
+                                                    <td>
+                                                        @if (item.Isactive != false)
+                                                        {
+                                                            <a href="/Master/ChangeCityStatus?Isactive=false&ID=@item.ID" title="" name="Isactive" value="false"><span class=" p-1 badge-success">Active</span> </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="/Master/ChangeCityStatus?Isactive=true&ID=@item.ID" title="" name="Isactive" value="true"><span class=" p-1 badge-danger">In-Active</span> </a>
+                                                        }
+
+                                                    </td>
+                                                </tr>
+                                                sn++;
+                                            }
+
+                                        }
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+    <footer class="footer"> Developed by Uttar Pradesh Vidhut Suraksha </footer>
+
+</div>

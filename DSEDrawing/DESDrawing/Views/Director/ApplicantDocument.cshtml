@@ -1,0 +1,258 @@
+﻿@model DESDrawing.Models.Applicant
+@using DESDrawing.Models.Manager
+@{
+    ViewBag.Title = "ApplicantDocument";
+    Layout = "~/Views/Shared/_DirectorLayout.cshtml";
+}
+
+
+<div class="preloader">
+    <svg class="circular" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+    </svg>
+</div>
+
+<div id="main-wrapper">
+    <div class="page-wrapper">
+        <div class="row page-titles">
+            <div class="col-md-12 align-self-center">
+                <h3 class="text-themecolor font-20 clearfix">@SessionManager.RoleName Dashboard</h3>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <!-- column -->
+                @{
+                    string Code = (string)TempData["code"];
+                    string msg = (string)TempData["Msg"];
+                    if (!string.IsNullOrEmpty(Code))
+                    {
+                        if (Code == "1")
+                        {
+                            <div class="alert alert-success msgdiv">
+                                <strong>Success!</strong> @msg
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger msgdiv">
+                                <strong>Error!</strong> @msg
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                            </div>
+                        }
+                    }
+                }
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Applicant ID</label>
+                                        @Html.DropDownListFor(model => model.PK_Applicant_id, new SelectList(ViewBag.Applicantno, "Value", "Text"), "-Select Applicarion No-", new { @class = "form-control", @onchange = "JointApplicantList()" })
+                                        @Html.HiddenFor(model => model.Id)
+                                        @Html.HiddenFor(model => model.PK_Applicant_id)
+                                        @Html.ValidationMessageFor(m => m.PK_Applicant_id, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <h4>Recent Applications :-</h4>
+                                </div>
+                            </div>
+                            <!-- <h4>Mentoring Scheduled Plan</h4> -->
+                            <div class="table">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr role="row" class="bg-secondary">
+                                                <th>S.No</th>
+                                                <th>Application No.</th>
+                                                <th>Entrepreneur Name</th>
+                                                <th>Mobile No.</th>
+                                                <th>Email</th>
+                                                <th>Customer Type</th>
+                                                <th>Appication Date</th>
+                                                <th>Request KVA</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbldata1"></tbody>
+
+                                    </table>
+                                    <div id="_Data"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Uploaded Documents</h4>
+                            <div class="row" id="docdata">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+<div class="modal fade bs-example-modal-lg" id="RemarkMod" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+     aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <form action="/Director/ApproveDoc" method="post" id="UserFormSubmit" onsubmit="return validate();">
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <input type="hidden" id="Status" name="Status" />
+                                    <input type="hidden" id="Document_type" name="Document_type" />
+                                    <input type="hidden" name="FK_Applicant_id" id="FK_Applicant_id" />
+                                    <h4 class="card-title text-danger" id="1">Remark :</h4>
+                                    @Html.TextAreaFor(m => m.Remark, new { @class = "form-control", @placeholder = "Enter Your Remark..", @rows = "4" })
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-xlg-6 m-t-30 m-b-30 justify-content-end">
+
+                                <button class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Select2 -->
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        debugger;
+        var id = $('#PK_Applicant_id').val();
+        if (id == "" || id == undefined || id == null) {
+            $("#PK_Applicant_id").prop("disabled", false)
+        }
+        else {
+            $("#PK_Applicant_id").prop("disabled", true)
+        }
+        JointApplicantList();
+
+    })
+    function getFileExtension(filename) {
+
+        const extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
+        return extension;
+    }
+
+    function JointApplicantList() {
+
+        debugger;
+        $.ajax({
+            type: 'post',
+            datatype: 'json',
+            contentType: 'application/json;charset=utf-8',
+            traditional: true,
+            url: '/Director/ApplicantList',
+            data: JSON.stringify({ ApplicantID: $("#PK_Applicant_id").val() }),
+            success: function (data) {
+                if (data != null && data != undefined) {
+                    var sno = 1;
+                    $("#docdata").html("");
+                    $("#tbldata1").html("");
+                    if (data != null) {
+
+                        $("#tbldata1").append("<tr><td>" + 1 + "</td><td>" + data.Applicant_No + "</td><td>" + data.Name + "</td><td>" + data.Phone_number + "</td><td>" + data.Email + "</td><td>" + data.InstallationType + "</td><td>" + data.Created_at + "</td><td>" + data.Total + ' KVA' + "</td><td>" + data.Status + "</td></tr>");
+                        if (data.DocumentList != null) {
+                            for (i = 1; i <= data.DocumentList.length; i++) {
+                                var extension = "";
+                                try {
+                                    extension = getFileExtension(data.DocumentList[i].Doc_filepath);
+                                } catch { ; }
+
+                                if (extension == "jpg" || extension == "jpeg" || extension == "png") {
+                                    if (data.DocumentList[i].Status == "Approved") {
+                                        $('#docdata').append('  <div class="col-md-4"> <h4 class="card-title p-3">' + data.DocumentList[i].Document_type + '</h4><a class="image-popup-vertical-fit" href=' + data.DocumentList[i].Doc_filepath + '><img src=' + data.DocumentList[i].Doc_filepath + ' alt="image" style="height:350px;width:350px" class="img-responsive "></a><div class="m-t-10"><h4 style="color:green">' + data.DocumentList[i].Status + '</h4></div></div>');
+                                    }
+                                    else if (data.DocumentList[i].Status == "Rejected") {
+                                        $('#docdata').append('  <div class="col-md-4"> <h4 class="card-title p-3">' + data.DocumentList[i].Document_type + '</h4><a class="image-popup-vertical-fit" href=' + data.DocumentList[i].Doc_filepath + '><img src=' + data.DocumentList[i].Doc_filepath + ' alt="image" style="height:350px;width:350px" class="img-responsive "></a><div class="m-t-10"><h4 style="color:red">' + data.DocumentList[i].Status + '</h4></div></div>');
+                                    }
+                                    else if (data.DocumentList[i].Status == "Query") {
+                                        $('#docdata').append('  <div class="col-md-4"> <h4 class="card-title p-3">' + data.DocumentList[i].Document_type + '</h4><a class="image-popup-vertical-fit" href=' + data.DocumentList[i].Doc_filepath + '><img src=' + data.DocumentList[i].Doc_filepath + ' alt="image" style="height:350px;width:350px" class="img-responsive "></a><div class="m-t-10"><h4 style="color:Blue">' + data.DocumentList[i].Status + '</h4></div></div>');
+                                    }
+                                    else {
+                                        $('#docdata').append('  <div class="col-md-4"> <h4 class="card-title p-3">' + data.DocumentList[i].Document_type + '</h4><a class="image-popup-vertical-fit" href=' + data.DocumentList[i].Doc_filepath + '><img src=' + data.DocumentList[i].Doc_filepath + ' alt="image" style="height:350px;width:350px" class="img-responsive "></a><div class="m-t-10"><a href="javascript:void(0);"  class="btn btn-success" onclick="DocumentStatus(' + "'Approved'" + ',' + "'" + '' + data.DocumentList[i].Document_type + '' + "'" + ')">Approved</a>&nbsp;&nbsp;<a href="javascript:void(0);" class="btn btn-warning" onclick="DocumentStatus(' + "'Rejected'" + ',' + "'" + '' + data.DocumentList[i].Document_type + '' + "'" + ')">Rejected</a>&nbsp;&nbsp;<a href="javascript:void(0);" class="btn btn-info" onclick="DocumentStatus(' + "'Query'" + ',' + "'" + '' + data.DocumentList[i].Document_type + '' + "'" + ')">Query</a></div></div>');
+                                    }
+
+                                }
+                                else {
+
+                                    if (data.DocumentList[i].Status == "Approved") {
+
+                                        $('#docdata').append('  <div class="col-md-4"> <h4 class="card-title p-3">' + data.DocumentList[i].Document_type + '</h4><a class="image-popup-vertical-fit" href=' + data.DocumentList[i].Doc_filepath + '><a href="' + data.DocumentList[i].Doc_filepath + '" target="_blank" class="btn btn-warning dropify"><i class="fa fa-download"></i></a></a><div class="m-t-10"><h4 style="color:green">' + data.DocumentList[i].Status + '</h4></div></div>');
+                                    }
+
+                                    else if (data.DocumentList[i].Status == "Rejected") {
+                                        $('#docdata').append('  <div class="col-md-4"> <h4 class="card-title p-3">' + data.DocumentList[i].Document_type + '</h4><a class="image-popup-vertical-fit" href=' + data.DocumentList[i].Doc_filepath + '><a href="' + data.DocumentList[i].Doc_filepath + '" target="_blank" class="btn btn-warning dropify"><i class="fa fa-download"></i></a></a><div class="m-t-10"><h4 style="color:red">' + data.DocumentList[i].Status + '</h4></div></div>');
+                                    }
+                                    else if (data.DocumentList[i].Status == "Query") {
+                                        $('#docdata').append('  <div class="col-md-4"> <h4 class="card-title p-3">' + data.DocumentList[i].Document_type + '</h4><a class="image-popup-vertical-fit" href=' + data.DocumentList[i].Doc_filepath + '><a href="' + data.DocumentList[i].Doc_filepath + '" target="_blank" class="btn btn-warning dropify"><i class="fa fa-download"></i></a></a><div class="m-t-10"><h4 style="color:blue">' + data.DocumentList[i].Status + '</h4></div></div>');
+                                    }
+                                    else {
+                                        $('#docdata').append('<div class="col-md-4"> <h4 class="card-title p-3" >' + data.DocumentList[i].Document_type + '</h4><a class="image-popup-vertical-fit" href=' + data.DocumentList[i].Doc_filepath + '><a href="' + data.DocumentList[i].Doc_filepath + '" target="_blank" class="btn btn-warning dropify"><i class="fa fa-download"></i></a></a><div class="m-t-10"><a href="#"class="btn btn-success" onclick="DocumentStatus(' + "'Approved'" + ',' + "'" + '' + data.DocumentList[i].Document_type + '' + "'" + ')">Approved</a>&nbsp;&nbsp;<a class="btn btn-warning" onclick="DocumentStatus(' + "'Rejected'" + ',' + "'" + '' + data.DocumentList[i].Document_type + '' + "'" + ')">Rejected</a>&nbsp;&nbsp;<a href="#"class="btn btn-info" onclick="DocumentStatus(' + "'Query'" + ',' + "'" + '' + data.DocumentList[i].Document_type + '' + "'" + ')">Query</a></div></div>');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        });
+    }
+    function DocumentStatus(Status, obj) {
+        debugger;
+        var PK_Applicant_id = $('#PK_Applicant_id').val();
+        $('#FK_Applicant_id').val(PK_Applicant_id);
+        $('#Document_type').val(obj);
+        $('#Status').val(Status);
+
+        $('#RemarkMod').modal('show');
+    }
+    function validate() {
+        debugger;
+        var Remark = $('#Remark').val();
+        if (Remark == null || Remark == "" || Remark == undefined) {
+            swal("", "Please Enter Remark..", "warning");
+            $("#Remark").focus();
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+</script>
+
+
+
+
+
+
+
+

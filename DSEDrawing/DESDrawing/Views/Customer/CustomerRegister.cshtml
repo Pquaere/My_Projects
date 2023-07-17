@@ -1,0 +1,309 @@
+﻿@model DESDrawing.Models.Customer
+@{
+    ViewBag.Title = "CustomerRegister";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="/assets/css/Custom.css" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.png">
+    <title>Vidyutsuraksha</title>
+    <link href="/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/plugins/sweetalert/sweetalert.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    <link href="/assets/css/colors/blue.css" id="theme" rel="stylesheet">
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <style>
+        img#togglePassword {
+            position: absolute;
+            right: 25px;
+            top: 223px;
+        }
+        img#toggleCPass {
+            position: absolute;
+            right: 25px;
+            top: 285px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+        </svg>
+    </div>
+
+    <section id="wrapper">
+        <div class="login-register" style="background-image:url(/assets/images/tmline.jpg);">
+            <div class="login-box card">
+                <div class="card-body">
+                    <div class="images">
+                        <a href="#"><img src="/assets/images/vnslogonew1.png" alt="logo-img" width="100%"></a>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @{
+                                string Code = (string)TempData["code"];
+                                string msg = (string)TempData["Msg"];
+                                if (!string.IsNullOrEmpty(Code))
+                                {
+                                    if (Code == "1")
+                                    {
+                                        <div class="alert alert-success msgdiv">
+                                            <strong>Success!</strong> @msg
+                                        </div>
+                                        <script type="text/javascript">
+                                            window.setTimeout(function () {
+                                                location.href = '/Customer/CustomerRegister';
+                                            }, 2000);
+                                        </script>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-danger msgdiv">
+                                            <strong>Error!</strong> @msg
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <form class="form-horizontal form-material" id="loginform" action="/Customer/CustomerRegister" method="post" onsubmit="return validateForm()">
+                        <!-- <h3 class="box-title m-b-20 text-center">Sign Up</h3> -->
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                @Html.TextBoxFor(m => m.Customer_Name, new { @class = "form-control", @placeholder = "Name" })
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="col-xs-12">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Email" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="d-flex" style="position: relative;">
+                                    @Html.TextBoxFor(M => M.Password, new { minlength = 5, @class = "form-control", @placeholder = "Password", @type = "password" })
+                                    <img src="https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash-300x240.png" width="15px" height="15x" style="position: absolute; z-index: 9; top: 10px; right: 20px;" id="togglePassword">
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        @*<div class="form-group">
+                            <div class="col-xs-12">
+                                @Html.TextBoxFor(m => m.CPass, new { minlength = 5, @class = "form-control", @placeholder = "Confirm Password", @type = "password" })
+                                <img src="https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash-300x240.png" width="15px" height="15x" style="display:inline; vertical-align: middle" id="toggleCPass">
+                            </div>
+                        </div>*@
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="d-flex" style="position: relative;">
+                                    @Html.TextBoxFor(M => M.CPass, new { minlength = 5, @class = "form-control", @placeholder = "Confirm Password", @type = "password" })
+                                    <img src="https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash-300x240.png" width="15px" height="15x" style="position: absolute; z-index: 9; top: 10px; right: 20px;" id="toggleCPass">
+                                    @*<span class="fa fa-eye" id="togglePassword" style="position: absolute; z-index: 9; top: 10px; right: 20px;"></span>*@
+                                </div>
+                                @Html.ValidationMessageFor(m => m.CPass, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div style="margin-top: 7px;" id="CheckPasswordMatch"></div>
+                        <div class="form-group ">
+                            <div class="col-xs-12">
+                                @Html.TextBoxFor(m => m.Phone_Number, new { maxlength = 10, @class = "form-control", @placeholder = "Phone Number" })
+                            </div>
+                        </div>
+
+                        <div class="form-group ">
+                            <div class="col-xs-12">
+                                @Html.DropDownListFor(m => m.FK_District_id, new SelectList(ViewBag.City, "Value", "Text"), "District", new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <div class="checkbox checkbox-success">
+                                    <input id="check" name="check" type="checkbox">
+                                    <label for="check"> I agree to all <a href="#">Terms</a></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group text-center m-t-20">
+                            <div class="col-xs-12">
+                                @*<a href=""
+                                    class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light"
+                                    type="submit">Sign Up</a>*@
+                                <input type="submit" value="Sign Up" class="btn btn-info  btn-lg btn-block text-uppercase " id="submit" onclick="validatedForm" />
+                            </div>
+                        </div>
+                        <div class="form-group m-b-0">
+                            <div class="col-sm-12 text-center">
+                                <div>
+                                    Already have an account? <a href="/Customer/CustomerLogin" class="text-info m-l-5">
+                                        <b>
+                                            Sign
+                                            In
+                                        </b>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <script src="/assets/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="/assets/plugins/bootstrap/js/popper.min.js"></script>
+    <script src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!--Wave Effects -->
+    <script src="/assets/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="/assets/js/sidebarmenu.js"></script>
+    <!--stickey kit -->
+    <script src="/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/assets/js/custom.min.js"></script>
+    <!--sparkline JavaScript -->
+    <script src="/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <!-- Sweet-Alert  -->
+    <script src="/assets/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="/assets/plugins/sweetalert/jquery.sweet-alert.custom.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#CPass").on('keyup', function () {
+                var password = $("#Password").val();
+                var confirmPassword = $("#CPass").val();
+                if (password != confirmPassword) {
+                    $("#CheckPasswordMatch").html("Password Mismatched !").css("color", "red");
+                    return false;
+                }
+                else
+                    $("#CheckPasswordMatch").html("Password Matched !").css("color", "green");
+            });
+        });
+     const togglePassword =
+            document.querySelector('#togglePassword');
+
+        const password = document.querySelector('#Password');
+
+        togglePassword.addEventListener('click', function (e) {
+
+            // Toggle the type attribute
+            const type = password.getAttribute(
+                'type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+
+            // Toggle the eye slash icon
+            if (togglePassword.src.match(
+                "https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash.png")) {
+                togglePassword.src =
+                    "https://media.geeksforgeeks.org/wp-content/uploads/20210917145551/eye.png";
+            } else {
+                togglePassword.src =
+                    "https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash.png";
+            }
+        });
+
+    const toggleCPass =
+            document.querySelector('#toggleCPass');
+
+        const cpassword = document.querySelector('#CPass');
+
+        toggleCPass.addEventListener('click', function (e) {
+
+            // Toggle the type attribute
+            const type = cpassword.getAttribute(
+                'type') === 'password' ? 'text' : 'password';
+            cpassword.setAttribute('type', type);
+
+            // Toggle the eye slash icon
+            if (toggleCPass.src.match(
+                "https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash.png")) {
+                toggleCPass.src =
+                    "https://media.geeksforgeeks.org/wp-content/uploads/20210917145551/eye.png";
+            } else {
+                toggleCPass.src =
+                    "https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash.png";
+            }
+        });
+    </script>
+
+    <script>
+        function validateForm() {
+            var matchpattern = /^[6-9][0-9]{9}$/;
+            var password = $("#Password").val();
+            var confirmPassword = $("#CPass").val();
+            if ($('#Customer_Name').val() == '' || $('#Customer_Name').val() == '0') {
+                swal("", "Please Enter Name..", "warning");
+                $('#Customer_Name').focus();
+                return false;
+            }
+            if ($('#Email').val() == '' || $('#Email').val() == '0') {
+                swal("", "Please Enter Email..", "warning");
+                $('#Email').focus();
+                return false;
+            }
+            if ($('#Password').val() == '' || $('#Password').val() == '0') {
+                swal("", "Please Enter Password..", "warning");
+                $('#Password').focus();
+                return false;
+            }
+            if ($('#CPass').val() == '' || $('#CPass').val() == '0') {
+                swal("", "Please Enter Confirm Password..", "warning");
+                $('#CPass').focus();
+                return false;
+            }
+            if ($('#Phone_Number').val() == '' || $('#Phone_Number').val() == '0') {
+                swal("", "Please Enter Phone Number..", "warning");
+                $('#Phone_Number').focus();
+                return false;
+            }
+            var charCode = $('#Phone_Number').val();
+            var val = matchpattern.test(charCode);
+            if (!val) {
+                swal("", "Please enter Correct mobile number", "warning");
+                $('#Phone_Number').focus();
+                return false;
+            }
+            if ($('#FK_District_id').val() == '' || $('#FK_District_id').val() == '0') {
+                swal("", "Please Select District..", "warning");
+                $('#FK_District_id').focus();
+                return false;
+            }
+            if (password != confirmPassword) {
+                /*$("#CheckPasswordMatch").html("Password Mismatched !").css("color", "red");*/
+                swal("", "Password and Confirm Password Not Matched..", "warning");
+                return false;
+            }
+            if ($('#check').prop('checked') == false) {
+                swal("", "Please Check term and Condition", "warning");
+                return false;
+            }
+            else {
+                return true;
+                $("#loginform").submit();
+            }
+
+        }
+
+       
+    </script>
+</body>
+
+</html>
+
+
+
+

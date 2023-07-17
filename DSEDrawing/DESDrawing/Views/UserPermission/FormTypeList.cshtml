@@ -1,0 +1,127 @@
+﻿@model List<DESDrawing.Models.FormTypeModel>
+@{
+    ViewBag.Title = "FormTypeList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="page-wrapper">
+    @{
+        string Code = (string)TempData["code"];
+        string msg = (string)TempData["Msg"];
+        if (!string.IsNullOrEmpty(Code))
+        {
+            if (Code == "1")
+            {
+                <div class="alert alert-success msgdiv">
+                    <strong>Success!</strong> @msg
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger msgdiv">
+                    <strong>Error!</strong> @msg
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+            }
+        }
+    }   
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Form Type List</h3>
+            <nav aria-label="breadcrumb" class="float-left">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#-">Admin</a></li>
+                    <li class="breadcrumb-item"><a href="#-">User Permission</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Form Type List</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="pbutton">
+            <div class="right text-right">
+                <a href="/UserPermission/FormType" id="btnAdd" class="btn btn-success">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Add Form Type
+                </a>
+            </div>
+        </div>
+    </div>   
+
+    <div id="no-more-tables">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="box">
+                    <div class="box-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        @*<h4 class="header-title mt-0 mb-1">Product List</h4>*@
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive" id="">
+                                    <table id="myTable" class="table table-hover table-striped datatable mb-0">
+                                        <thead class="table-primary">
+                                            <tr class="hdr">
+                                                <th align="left" scope="col">S. No.</th>
+                                                <th align="left" scope="col">Form Type</th>
+
+                                                <th align="left" scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @if (Model != null)
+                                            {
+                                                int SNO = 0;
+                                                foreach (var item in Model)
+                                                {
+                                                    <tr>
+                                                        <td>@(SNO = SNO + 1)</td>
+
+                                                        <td>@item.FormType</td>
+
+                                                        <td>
+                                                            @*@if (PermissionManager.IsActionPermit("Form Type", ViewOptions.FormUpdate))
+                                                                {*@
+                                                            <a href="/UserPermission/FormTypeFill?id=@item.PK_FormTypeId" title="Edit" onclick="return confirm ('Are you sure to edit?');" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+                                                            @*}
+
+                                                                @if (PermissionManager.IsActionPermit("Form Type", ViewOptions.FormDelete))
+                                                                {*@
+                                                            <a href="/UserPermission/FormTypeDelete?id=@item.PK_FormTypeId" title="Delete" onclick="return confirm ('Are you sure to delete?');" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                                            @*}*@
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                    @*<div id="loader">
+                                            <img src="~/Content/img/player_loading.gif" />
+                                        </div>*@
+                                </div><!-- /.box-body -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

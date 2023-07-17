@@ -1,0 +1,464 @@
+﻿@model DESDrawing.Models.ApplicantDashboard
+
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_ApplicantLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Dashboard</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    <div class="container-fluid">
+
+        <div class="row">
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+                @*<a class="" href="industrial_zone.html">*@
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row p-t-10 p-b-10">
+                            <!-- Column -->
+                            <div class="col p-r-0">
+                                <h1 class="font-light">@Model.TotalApplication</h1>
+                                <h6 class="text-muted">Total Application</h6>
+                            </div>
+                            <!-- Column -->
+                            <div class="col text-right align-self-center">
+                                <div class="css-bar m-b-0 css-bar-primary css-bar-0">
+                                    <i class="mdi mdi-library-plus"></i>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </a>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row p-t-10 p-b-10">
+                            <!-- Column -->
+                            <div class="col p-r-0">
+                                <h1 class="font-light">@Model.PendingApplication</h1>
+                                <h6 class="text-muted">Pending Application</h6>
+                            </div>
+                            <!-- Column -->
+                            <div class="col text-right align-self-center">
+                                <div class="css-bar m-b-0 css-bar-warning css-bar-0">
+                                    <i class="mdi mdi-clipboard-alert"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row p-t-10 p-b-10">
+                            <!-- Column -->
+                            <div class="col p-r-0">
+                                <h1 class="font-light">@Model.ApprovedApplication</h1>
+                                <h6 class="text-muted">Approved Application </h6>
+                            </div>
+                            <!-- Column -->
+                            <div class="col text-right align-self-center">
+                                <div class="css-bar m-b-0 css-bar-info css-bar-0">
+                                    <i class="mdi mdi-receipt"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row p-t-10 p-b-10">
+                            <!-- Column -->
+                            <div class="col p-r-0">
+                                <h1 class="font-light">@Model.QueryApplication</h1>
+                                <h6 class="text-muted">Query Application</h6>
+                            </div>
+                            <!-- Column -->
+                            <div class="col text-right align-self-center">
+                                <div class="css-bar m-b-0 css-bar-danger css-bar-0">
+                                    <i class="mdi mdi-network-question"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row p-t-10 p-b-10">
+                            <!-- Column -->
+                            <div class="col p-r-0">
+                                <h1 class="font-light">@Model.DeclinedApplication</h1>
+                                <h6 class="text-muted">Declined Application</h6>
+                            </div>
+                            <!-- Column -->
+                            <div class="col text-right align-self-center">
+                                <div class="css-bar m-b-0 css-bar-danger css-bar-0">
+                                    <i class="mdi mdi-bookmark-remove"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row p-t-10 p-b-10">
+                            <!-- Column -->
+                            <div class="col p-r-0">
+                                <h1 class="font-light">@Model.ResubmittedApplication</h1>
+                                <h6 class="text-muted">Resubmitted Application </h6>
+                            </div>
+                            <!-- Column -->
+                            <div class="col text-right align-self-center">
+                                <div class="css-bar m-b-0 css-bar-info css-bar-0">
+                                    <i class="mdi mdi-receipt"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+        </div>
+
+        <div class="row">
+            <!-- column -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <!-- <div class="form-group">
+                                    <label class="control-label">Types of Installation</label>
+                                    <select class="form-control custom-select"
+                                        data-placeholder="Choose a Category" tabindex="1">
+                                        <option value="Category 1">Commercial</option>
+                                        <option value="Category 2">Industrial</option>
+                                        <option value="Category 3">Residential</option>
+                                        <option value="Category 4">Hotel</option>
+                                        <option value="Category 5">Institutional</option>
+                                        <option value="Category 6">Generating Plant</option>
+                                        <option value="Category 7">Irrigation </option>
+                                        <option value="Category 8">Other</option>
+                                    </select>
+                                </div> -->
+                                <h4>Recent Applications :-</h4><br>
+                            </div>
+
+                        </div>
+                        <!-- <h4>Mentoring Scheduled Plan</h4> -->
+                        <div class="table">
+                            <div class="table-responsive">
+                                <div class="table">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                                <!-- <tr class="bg-info text-white text-center">
+                                                    <th colspan="2"> Mentoring Cycle Schedule
+
+                                                    <th colspan="5"> Mentoring Plan 2023
+
+                                                    </th>
+                                                    <th colspan="2">Assessment Time
+                                                    </th>
+                                                    <th colspan="2"></th>
+
+                                                </tr> -->
+                                                <tr role="row" class="bg-secondary">
+                                                    <th>S.No</th>
+                                                    <th>Application No.</th>
+                                                    <th>Entrepreneur Name</th>
+                                                    <th>Mobile No.</th>
+                                                    <th>Email</th>
+                                                    <th>Consumer Type </th>
+                                                    <th>Application Date</th>
+                                                    <th>Request KVA</th>
+                                                    <th>View PDF</th>
+                                                    <th>View Application</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.list != null)
+                                                {
+                                                    var sn = 1;
+                                                    foreach (var item in Model.list)
+                                                    {
+                                                        <tr role="row" class="odd">
+                                                            <td>@sn</td>
+                                                            <td>
+                                                                <a href="/Applicant/ViewApplicantDetails?ApplicantID=@item.PK_Applicant_id">@item.Applicant_No</a>
+                                                            </td>
+                                                            <td>@item.Applicant_Name</td>
+                                                            <td>@item.Phone_number</td>
+                                                            <td>@item.Email</td>
+                                                            <td>@item.InstallationType</td>
+                                                            <td>@item.AppDate</td>
+                                                            <td>@item.Capicity</td>
+                                                            <td>
+                                                                <a type="button" href="/Home/ApplicationDocument?PK_ID=@item.PK_Applicant_id" class="btn btn-block btn-outline-secondary btn-sm">
+                                                                    <i class="fa fa-arrow-down"></i> View
+                                                                </a>  
+                                                            </td>
+                                                            <td><a href="/Applicant/ViewApplicantDetails?ApplicantID=@item.PK_Applicant_id">View</a></td>
+                                                            <td>
+                                                                @if (item.Status == "Pending")
+                                                                {
+                                                                    <a href="#" class="badge badge-info">@item.Status</a>
+                                                                }
+                                                                else if (item.Status == "Approved")
+                                                                {
+                                                                    <a href="#" class="badge badge-success">@item.Status</a>
+                                                                }
+                                                                else if (item.Status == "Resubmitted")
+                                                                {
+                                                                    <a href="#" class="badge badge-primary">@item.Status</a>
+                                                                }
+                                                                @*else if (item.Status == "Declined")
+                                                                {
+                                                                    <a href="#" class="badge badge-danger">@item.Status</a>
+                                                                }*@
+                                                                else if (item.Status == "Rejected")
+                                                                {
+                                                                    <a href="#" class="badge badge-danger">@item.Status</a>
+                                                                }
+                                                                else if (item.Status == "Query")
+                                                                {
+                                                                    <a href="#" class="badge badge-warning">@item.Status</a>
+                                                                }
+                                                                else if (item.Status == "Dispatched")
+                                                                {
+                                                                    <a href="#" class="badge badge-info">@item.Status</a>
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                @if (item.Status == "Pending")
+                                                                {
+                                                                    <a href="" class="">  </a>
+
+                                                                }
+                                                                else if (item.Status == "Approved")
+                                                                {
+                                                                    <a type="button" href="/Applicant/ViewApplicantDetails?ApplicantID=@item.PK_Applicant_id" class="btn btn-block btn-outline-secondary btn-sm"> <i class="fa fa-arrow-down"></i> View</a>
+
+                                                                }
+                                                                else if (item.Status == "Resubmitted")
+                                                                {
+                                                                    <a href="" class="">  </a>
+                                                                }
+                                                                @*else if (item.Status == "Declined")
+                                                                {
+                                                                    <a href="" class="">  </a>
+                                                                }*@
+                                                                else if (item.Status == "Rejected")
+                                                                {
+                                                                    <a href="" class="">  </a>
+                                                                }
+                                                                else if (item.Status == "Query")
+                                                                {
+                                                                    <button type="button" class="btn btn-block btn-outline-secondary btn-sm " onclick="applicantreply('@item.PK_Applicant_id')">
+                                                                        <i class="fa fa-reply"></i>Reply
+                                                                    </button>
+                                                                }
+                                                                else if (item.Status == "Dispatched")
+                                                                {
+                                                                    <a href="/Home/DrawingApproval?ApplicantID=@item.PK_Applicant_id" target="_blank" class="btn btn-warning"><i class="fa fa-download"></i></a>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        sn++;
+                                                    }
+
+                                                }
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!---------------------query modal -->
+    <div class="modal fade bs-example-modal-lg" id="reply" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+         aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myLargeModalLabel">
+                        Query From Directorate of Electrical Safety
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title text-danger" id="1">Remark :</h4>
+                                    <p id="remark"></p>
+                                    @*<h4 class="card-title text-danger" id="2">Lack of safety measures</h4>
+                                        <p>
+                                            Transformers can pose significant safety hazards, particularly in busy
+                                            commercial
+                                            areas. However, many transformers are
+                                            installed without proper safety measures such as fencing, warning signs,
+                                            and circuit
+                                            breakers.
+                                        </p>*@
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Uploaded Document</h4>
+
+                                    <div class="row m-t-30">
+                                        <div class="col-md-4" id="image"></div>
+                                    </div>
+
+                                    <div class="col-lg-12 col-xlg-6 m-t-30 m-b-30 justify-content-end">
+                                        <input type="hidden" name="FK_Applicant_id" id="FK_Applicant_id" />
+                                        <a class="btn btn-primary hstheme-button-o" id="SubmitButton">
+                                            Resubmit
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+                <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-danger waves-effect text-left"
+                        data-dismiss="modal">Close</button>
+                </div> -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!---------------------query modal-->
+    <footer class="footer"> Developed by Uttar Pradesh Vidhut Suraksha </footer>
+
+</div>
+
+<script>
+
+    //function reply(PK_Applicant_id) {
+    //    debugger;
+
+
+    //    $('#Pk_Applicant_id').val(PK_Applicant_id)
+
+    //}
+
+    function getFileExtension(filename){
+    // get file extension
+    const extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
+    return extension;
+}
+    function applicantreply(ID) {
+        debugger;
+        $('#reply').modal('show');
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetApplicantReply", "Applicant")',
+            data: { Id: ID },
+            success: function (data) {
+                if (data != null) {
+                    debugger;
+                    var url = "/UpdateApplicationForm?PK_Applicant_ID=" + data.FK_Applicant_id
+                    $('#remark').text(data.Remark);
+                    $("#SubmitButton").attr('href', url);
+                    try {
+                         var extension = getFileExtension(data.filepath);
+                        let result = data.filepath.replace('~/','');
+                        if (extension == "jpg" || extension == "jpeg" || extension == "png")
+                        {
+                             $('#image').html('<img src="'+result+'" height="200" width="200" />');
+                        }
+                        else
+                        {
+                             $('#image').html(' <a href="'+result+'" target="_blank" class="btn btn-warning"><i class="fa fa-download"></i></a>');
+                        }
+                    } catch{ ;}
+                   
+                    $('#reply').modal('show');
+                }
+            },
+            error: function (e) {
+                debugger;
+            }
+        })
+    }
+</script>
+

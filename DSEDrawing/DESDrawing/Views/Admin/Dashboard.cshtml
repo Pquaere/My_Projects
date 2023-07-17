@@ -1,0 +1,338 @@
+﻿@model DESDrawing.Models.Dashboard
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<html lang="en">
+<body class="fix-header fix-sidebar card-no-border">
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+        </svg>
+    </div>
+
+    <div id="main-wrapper">
+        <div class="page-wrapper">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Dashboard</h3>
+                </div>
+            </div>
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                        </div>
+                    }
+                }
+            }
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row p-t-10 p-b-10">
+                                    <div class="col p-r-0">
+                                        <h1 class="font-light">@Model.Pending</h1>
+                                        <h6 class="text-muted">Pending</h6>
+                                    </div>
+                                    <div class="col text-right align-self-center">
+                                        <div data-label="" class="css-bar m-b-0 css-bar-info css-bar-0">
+                                            <i class="mdi mdi-receipt" style="color: #d83838;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row p-t-10 p-b-10">
+                                    <div class="col p-r-0">
+                                        <h1 class="font-light">@Model.Query</h1>
+                                        <h6 class="text-muted">Under Query</h6>
+                                    </div>
+                                    <div class="col text-right align-self-center">
+                                        <div data-label="40%" class="css-bar m-b-0 css-bar-warning css-bar-0">
+                                            <i class="fa fa-question" style="color: #daba16;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row p-t-10 p-b-10">
+                                    <div class="col p-r-0">
+                                        <h1 class="font-light">@Model.Approved</h1>
+                                        <h6 class="text-muted">Approved Application</h6>
+                                    </div>
+                                    <div class="col text-right align-self-center">
+                                        <div class="css-bar m-b-0 css-bar-primary css-bar-0">
+                                            <i class="fa fa-file" style="color: #715353;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row p-t-10 p-b-10">
+                                    <div class="col p-r-0">
+                                        <h1 class="font-light">@Model.Resubmit</h1>
+                                        <h6 class="text-muted">Resubmitted Application</h6>
+                                    </div>
+                                    <div class="col text-right align-self-center">
+                                        <div data-label="30%" class="css-bar m-b-0 css-bar-danger css-bar-0">
+                                            <i class="fa fa-file" style="color: #715353;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row p-t-10 p-b-10">
+                                    <div class="col p-r-0">
+                                        <h1 class="font-light">@Model.Decline</h1>
+                                        <h6 class="text-muted">Declined</h6>
+                                    </div>
+                                    <div class="col text-right align-self-center">
+                                        <div data-label="60%" class="css-bar m-b-0 css-bar-info css-bar-0">
+                                            <i class="fa fa-ban" style="color: red;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                    <!-- Column -->
+                </div>
+            </div>
+            @*<div class="container-fluid">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h4> Applications :-</h4><br>
+                                        </div>
+                                    </div>
+                                    <div class="table">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr role="row" class="bg-secondary">
+                                                        <th>S.No</th>
+                                                        <th>Application No.</th>
+                                                        <th>Entrepreneur Name</th>
+                                                        <th>Appication Date</th>
+                                                        <th>Request KVA</th>
+                                                        <th>View Document</th>
+                                                        <th>View Application</th>
+                                                        <th>ForwordTo</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbldata1">
+                                                    @if (Model.AppicantList != null && Model.AppicantList.Count() > 0)
+                                                    {
+                                                        var Sn = 0;
+                                                        foreach (var item in Model.AppicantList)
+                                                        {
+                                                            Sn = Sn + 1;
+                                                    <tr role="row" class="odd">
+                                                        <td> @Sn </td>
+                                                        <td> @item.Applicant_No </td>
+                                                        <td> @item.Name </td>
+                                                        <td> @item.ApplicationDate </td>
+                                                        <td> @item.Capacity </td>
+                                                        <td>
+                                                            <a type="button" href="/Home/ApplicationDocument?PK_ID=@item.Pk_Applicant_id" class="btn btn-block btn-outline-secondary btn-sm">
+                                                                <i class="fa fa-arrow-down"></i> View
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <a type="button" href="/Director/ApplicantDetails?ApplicantID=@item.Pk_Applicant_id">
+                                                                View
+                                                            </a>
+                                                        </td>
+                                                        <td> @item.ForwordTo </td>
+                                                        <td>
+                                                            @if (item.Status == "Pending")
+                                                            {
+                                                                <a href="#" class="badge badge-info">@item.Status</a>
+                                                            }
+                                                            else if (item.Status == "Approved")
+                                                            {
+                                                                <a href="#" class="badge badge-success">@item.Status</a>
+                                                            }
+                                                            else if (item.Status == "Resubmitted")
+                                                            {
+                                                                <a href="#" class="badge badge-primary">@item.Status</a>
+                                                            }
+                                                            else if (item.Status == "Declined")
+                                                            {
+                                                                <a href="#" class="badge badge-danger">@item.Status</a>
+                                                            }
+                                                            else if (item.Status == "Query")
+                                                            {
+                                                                <a href="#" class="badge badge-warning">@item.Status</a>
+                                                            }
+                                                        </td>
+
+                                                    </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>*@
+        </div>
+        </div>
+</body>
+
+</html>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+
+
+    if (@Model.DiscomID > 0) {
+        debugger;
+        BindRegions(@Model.DiscomID);
+        BindZones(@Model.RegionID);
+        BindDistrict(@Model.ZoneID);
+    }
+
+    function BindRegions(id) {
+        debugger;
+        var DiscomId = $('#DiscomID').val();
+        $.ajax({
+            url: '/Admin/GetsubRegions',
+            type: 'post',
+            data: { DiscomId: DiscomId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#SubRegionId').empty();
+                    $('#SubRegionId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        $('#SubRegionId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#SubRegionId").val(@Model.RegionID);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+    function BindZones(id) {
+        debugger;
+        var RegionId;
+        if (id > 0) {
+            (RegionId = @Model.RegionID);
+        }
+        else {
+            RegionId = $('#SubRegionId option:selected').val() ;
+        }
+       /* var RegionId = $('#RegionId').val();*/
+        $.ajax({
+            url: '/Admin/GetsubZones',
+            type: 'post',
+            data: { RegionId: RegionId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#SubZoneId').empty();
+                    $('#SubZoneId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        $('#SubZoneId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#SubZoneId").val(@Model.ZoneID);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+    function BindDistrict(id) {
+        debugger;
+        var ZoneId;
+        if (id > 0) {
+            (ZoneId = @Model.ZoneID);
+        }
+        else {
+            ZoneId = $('#SubZoneId option:selected').val() ;
+        }
+        /*var ZoneId = $('#ZoneId').val();*/
+        $.ajax({
+            url: '/Admin/GetsubDistrict',
+            type: 'post',
+            data: { ZoneId: ZoneId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#SubDistrictId').empty();
+                    $('#SubDistrictId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        $('#SubDistrictId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#SubDistrictId").val(@Model.DistrictID);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+</script>

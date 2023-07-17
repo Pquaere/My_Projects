@@ -1,0 +1,105 @@
+﻿@model DESDrawing.Models.Load
+@{
+    ViewBag.Title = "LoadList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-11 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Load List</h3>
+        </div>
+
+        <div class="pbutton">
+            <div class="right text-right">
+                <a href="/Master/AddLoad" id="btnAdd" class="btn btn-success btn-sm">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Add Load
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @{
+                    string Code = (string)TempData["code"];
+                    string msg = (string)TempData["Msg"];
+                    if (!string.IsNullOrEmpty(Code))
+                    {
+                        if (Code == "1")
+                        {
+                            <div class="alert alert-success msgdiv">
+                                <strong>Success!</strong> @msg
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger msgdiv">
+                                <strong>Error!</strong> @msg
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+
+
+        <div class="row">
+            <!-- column -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+
+                        </div>
+                        <div class="table">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr role="row" class="bg-secondary">
+                                            <th>S.No</th>
+                                            <th>Role Name</th>
+                                            <th>Load From</th>
+                                            <th>Load To</th>
+                                            <th>Edit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.LoadList != null)
+                                        {
+                                            var sn = 1;
+                                            foreach (var item in Model.LoadList)
+                                            {
+                                                <tr role="row" class="odd">
+                                                    <td>@sn</td>
+                                                    <td>@item.RollName</td>
+                                                    <td>@item.LoadFrom</td>
+                                                    <td>@item.Loadto</td>
+                                                    <td>
+                                                        <a href="/Master/AddLoad?ID=@item.ID" title="Edit"><i class="fa fa-pencil"></i> </a>
+                                                    </td>
+                                                </tr>
+                                                sn++;
+                                            }
+
+                                        }
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+    <footer class="footer"> Developed by Uttar Pradesh Vidhut Suraksha </footer>
+
+</div>
+

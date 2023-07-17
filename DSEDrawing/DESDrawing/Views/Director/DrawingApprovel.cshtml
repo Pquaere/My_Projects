@@ -1,0 +1,531 @@
+﻿@{
+    ViewBag.Title = "DrawingApprovel";
+    Layout = "~/Views/Shared/_DirectorLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h3 class="text-themecolor">Application for Drawing Approval</h3>
+        </div>
+        <div class="col-md-7 align-self-center">
+            <!-- <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                <li class="breadcrumb-item">Encloser</li>
+                <li class="breadcrumb-item active">Encloser Uploads</li>
+            </ol> -->
+        </div>
+        <div class="">
+            <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10">
+                <i class="ti-settings text-white"></i>
+            </button>
+        </div>
+    </div>
+    <div class="container-fluid">
+
+        <div class="row">
+            <!-- column -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div style="max-width:800px; margin:0px auto; text-align:right; padding:20px;">
+                            <button href="#" class="btn btn-primary printMe"
+                                    style=" padding:8px 20px; margin-bottom:10px; border:1px solid #d8d8d8; font-family:Arial; text-decoration:none;">
+                                Print
+                            </button>
+                        </div>
+
+
+                        <div class="table-responsive">
+                            <table cellpadding="0" cellspacing="0" id="body_TblHeader"
+                                   style="border: solid 1px #000; font-family: Calibri; font-size: 14px; width: 800px; margin: auto;">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4">
+                                            <table cellpadding="0" cellspacing="0" width="100%">
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="7" align="center" style="padding: 5px;"
+                                                            valign="top" width="125">
+                                                            <strong>Application for Drawing Approval</strong>
+                                                        </td>
+
+
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border-top: solid 1px #000; padding: 0;" colspan="4">
+                                            <table cellpadding="5" cellspacing="0" style="width: 100%;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 20px;">
+                                                            1.
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 20px;">
+                                                            (a)
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Name
+                                                            of applicant or owner with communication address
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            &nbsp;
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            (b)
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Phone Number and Email of the applicant or owner
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            2.
+                                                        </td>
+                                                        <td colspan="2"
+                                                            style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Location of installation (full particulars of the Taluk,
+                                                            Town,
+                                                            Village and name of
+                                                            street to be furnished)
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td colspan="4"
+                                                            style="border-right: solid 0px #000; border-bottom: solid 1px #000;width: 50%;text-align: center">
+                                                            <strong>Details of Licensed Electrical Contractor</strong>
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 20px;">
+                                                            3.
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 20px;">
+                                                            (a)
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Name
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            &nbsp;
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            (b)
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            LEC
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            &nbsp;
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            (c)
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Supervisor Name
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            &nbsp;
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            (d)
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Wireman Name
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            &nbsp;
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            (e)
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Address
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            &nbsp;
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            (f)
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Firm Name
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            &nbsp;
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            (g)
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Licensed No.
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            &nbsp;
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            (h)
+                                                        </td>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Validity
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+
+
+
+
+
+
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            4.
+                                                        </td>
+                                                        <td colspan="2"
+                                                            style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Brief details of installation<br>
+                                                            <table width="100%" border="0" cellspacing="0"
+                                                                   cellpadding="0">
+
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td style="border-right:0px solid #000;width: 79px;text-align: center;">
+                                                                            HT
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:0px solid #000;text-align: center;">
+                                                                            DG
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:0px solid #000;text-align: center;">
+                                                                            MSB
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:0px solid #000;text-align: center;">
+                                                                            Transmission
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:0px solid #000;text-align: center;">
+                                                                            DTCs
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:0px solid #000;text-align: center;">
+                                                                            IPP(Spp or
+                                                                            SRTPV or Wpp or Co-Gen or HPP or TPP or
+                                                                            Biomass
+                                                                            etc)
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:0px solid #000;text-align: center;">
+                                                                            Others:
+                                                                        </td>
+
+                                                                    </tr>
+
+
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;border-right: solid 0px #000;padding: 0px;"
+                                                            colspan="5">
+                                                            <table width="100%" border="0" cellspacing="0"
+                                                                   cellpadding="0">
+                                                                <thead>
+                                                                <th style="border-right: solid 1px #000;width: 79px; border-bottom: solid 1px #000;">
+                                                                    Existing
+                                                                </th>
+                                                                <th style="border-right: solid 1px #000;width: 130px; border-bottom: solid 1px #000;">
+                                                                    Proposed
+                                                                </th>
+                                                                <th style="border-bottom: solid 1px #000;">
+                                                                    Total Capacity
+                                                                </th>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td style="border-right:1px solid #000;text-align: center;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;border-right:1px solid #000;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;">
+                                                                            -----
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:1px solid #000;text-align: center;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;border-right:1px solid #000;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;">
+                                                                            -----
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:1px solid #000;text-align: center;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;border-right:1px solid #000;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;">
+                                                                            -----
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:1px solid #000;text-align: center;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;border-right:1px solid #000;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;">
+                                                                            -----
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:1px solid #000;text-align: center;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;border-right:1px solid #000;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;">
+                                                                            -----
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:1px solid #000;text-align: center;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;border-right:1px solid #000;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;">
+                                                                            -----
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="border-right:1px solid #000;text-align: center;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;border-right:1px solid #000;">
+                                                                            -----
+                                                                        </td>
+                                                                        <td style="text-align:center;">
+                                                                            -----
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 3%;">
+                                                            5.
+                                                        </td>
+                                                        <td colspan="2"
+                                                            style="border-right: solid 1px #000; border-bottom: solid 1px #000;width: 50%;">
+                                                            Type of Installation <br>
+                                                            (Commercial or Industrial or Residential or Hotel or
+                                                            Hospital
+                                                            or<br>
+
+                                                            Institutional or<br>
+
+                                                            Generating Plants or Irrigation Projects or Commercial
+                                                            cum<br>
+
+                                                            Residential or others)<br>
+
+                                                        </td>
+                                                        <td style="border-bottom: solid 1px #000;" colspan="5">
+                                                            <b>
+                                                                ------------
+                                                            </b>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="7">
+                                                            <p style="text-align: justify;">
+                                                                We ...........
+                                                                hereby
+                                                                declare that the
+                                                                particular's stated above are correct
+                                                                to the best of my/our knowledge and that I/ We have
+                                                                read
+                                                                the
+                                                                Central Electrical
+                                                                Authority (Measures Relating to safety and Electric
+                                                                Supply)
+                                                                Regulations, 2010,
+                                                                the Electrical Act, 2003, National
+                                                                Building Code (NBC) and other applicable Act, Rules
+                                                                or
+                                                                Regulations, and fully
+                                                                understand the terms and conditions under which
+                                                                drawing
+                                                                or
+                                                                Installation approval
+                                                                is granted a breach of which will render the
+                                                                approval
+                                                                liable
+                                                                for withdrawal and
+                                                                or cancellation.<br>
+                                                                <span>
+                                                                    I/We certify that I or We will not be in
+                                                                    possession of
+                                                                    more than one
+                                                                    approval of any installation at any given
+                                                                    instant in
+                                                                    my
+                                                                    or our or our
+                                                                    company or firm name.
+                                                                </span>
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3">
+                                                            Date:-
+                                                        </td>
+                                                        <td colspan="4">
+                                                            <br><br><br>
+                                                            Signature
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Place:- </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+
+
+    </div>
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(".printMe").click(function () {
+        var divToPrint = document.getElementById("body_TblHeader");
+        newWin = window.open("");
+        newWin.document.write(divToPrint.outerHTML);
+        newWin.print();
+        newWin.close();
+    });
+</script>

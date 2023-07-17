@@ -1,0 +1,132 @@
+﻿@model DESDrawing.Models.Region
+@{
+    ViewBag.Title = "RegionsList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .bg-secondary {
+        background-color: #c4295e !important;
+    }
+</style>
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-6 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Regions List</h3>
+        </div>
+
+        <div class="pbutton" style="width: 50%;">
+            <div class="right text-right">
+                <a href="/Master/Region" id="btnAdd" class="btn btn-success btn-sm ">
+                    <i class="fa fa-plus" aria-hidden="true"></i>  Add Regions 
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @{
+                    string Code = (string)TempData["code"];
+                    string msg = (string)TempData["Msg"];
+                    if (!string.IsNullOrEmpty(Code))
+                    {
+                        if (Code == "1")
+                        {
+                            <div class="alert alert-success msgdiv">
+                                <strong>Success!</strong> @msg
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger msgdiv">
+                                <strong>Error!</strong> @msg
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+
+
+        <div class="row">
+            <!-- column -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+
+                        </div>
+                        <div class="table">
+                            <div    class="table-responsive">
+                                <table class="table table-bordered table-striped" id="myTable" >
+                                    <thead>
+                                        <tr role="row" class="bg-secondary">
+                                            <th>S.No</th>
+                                            <th>DiscomofficeName</th>
+                                            <th>Regions Name</th>
+                                            <th>Edit</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Regionlst != null)
+                                        {
+                                            var sn = 1;
+                                            foreach (var item in Model.Regionlst)
+                                            {
+                                        <tr role="row" class="odd">
+                                            <td>@sn</td>
+                                            <td>@item.DiscomofficeName</td>
+                                            <td>@item.RegionName</td>
+
+                                            <td class="">
+                                                <a href="/Master/Region?ID=@item.Id" title="Edit" onclick="return confirm('Are sure wants to Edit?');"><i class="fa fa-pencil"></i> </a>
+                                            </td>
+                                            <td>
+                                                @if (item.Isactive != false)
+                                                {
+                                                    <a href="/Master/ChangeRegionStatus?Isactive=false&ID=@item.Id" title="" name="Isactive" value="false"><span class=" p-1 badge-success " onclick="return confirm('Are sure wants to InActive?');">Active</span> </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="/Master/ChangeRegionStatus?Isactive=true&ID=@item.Id" title="" name="Isactive" value="true"><span class=" p-1 badge-danger" onclick="return confirm('Are sure wants to Active?');">In-Active</span> </a>
+                                                }
+
+                                            </td>
+                                        </tr>
+                                                sn++;
+                                            }
+
+
+                                        }
+
+                                        else
+                                        {
+                                    <tr>
+
+                                        <td colspan="5">No Record Found</td>
+                                    </tr>
+                                    }
+
+
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        </div>
+    <footer class="footer"> Developed by Uttar Pradesh Vidhut Suraksha </footer>
+
+    </div>
+

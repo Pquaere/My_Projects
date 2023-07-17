@@ -1,0 +1,124 @@
+﻿@model DESDrawing.Models.State
+
+@{
+    ViewBag.Title = "StateList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-11 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">State List</h3>
+        </div>
+
+        <div class="pbutton">
+            <div class="right text-right">
+                <a href="/Master/State" id="btnAdd" class="btn btn-success btn-sm">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Add State
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                @{
+                    string Code = (string)TempData["code"];
+                    string msg = (string)TempData["Msg"];
+                    if (!string.IsNullOrEmpty(Code))
+                    {
+                        if (Code == "1")
+                        {
+                            <div class="alert alert-success msgdiv">
+                                <strong>Success!</strong> @msg
+                            </div>
+                            <script type="text/javascript">
+                                window.setTimeout(function () {
+                                    location.href = '/Master/StateList';
+                                }, 3000);
+                            </script>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger msgdiv">
+                                <strong>Error!</strong> @msg
+                            </div>
+                        }
+                    }
+                }
+            </div>
+
+            <div class="col-md-12">
+
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table">
+                            <div class="table-responsive">
+                                <div class="table">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr role="row" class="bg-secondary">
+                                                    <th>S.No</th>
+                                                    <th>State Name</th>
+                                                    <th>Edit</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model != null && Model.List != null)
+                                                {
+                                                    if (Model.List.Count() > 0)
+                                                    {
+                                                        var Sn = 0;
+                                                        foreach (var item in Model.List)
+                                                        {
+                                                            Sn = Sn + 1;
+                                                            <tr role="row" class="odd">
+                                                                <td>  @Sn</td>
+                                                                <td> @item.StateName </td>
+                                                                <td>
+                                                                    @*<a class=" edit btn btn-primary btn-sm" href="/Master/State?PK_State_id=@item.PK_State_id"><i class="fa fa-edit"></i></a>
+                                                                        <td class="">*@
+                                                                    <a href="/Master/State?ID=@item.ID" title="Edit"><i class="fa fa-pencil"></i> </a>
+
+                                                                </td>
+
+                                                                <td>
+                                                                    @if (item.Isactive != false)
+                                                                    {
+                                                                        <a href="/Master/ChangeStateStatus?Isactive=false&ID=@item.ID" title="" name="Isactive" value="false"><span class=" p-1 badge-success">Active</span> </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a href="/Master/ChangeStateStatus?Isactive=true&ID=@item.ID" title="" name="Isactive" value="true"><span class=" p-1 badge-danger">In-Active</span> </a>
+                                                                    }
+                                                                    @*<input type="hidden" value="91" class="ProductId">
+                                                                        <input type="hidden" value="1" class="SubProductId">*@
+                                                                    @*<a class="dropdown-item" href="/admin-AddHospitals?Id=@item.PK_HospitalID"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>*@
+
+                                                                    @*<a class="del btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i></a>*@
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                }
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer"> Developed by Uttar Pradesh Vidhut Suraksha. Copyright ©20 U.P. All Rights Reserved Directorate of Electrical Safety </footer>
+</div>
+
+
+

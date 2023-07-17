@@ -1,0 +1,304 @@
+﻿@using DESDrawing.Models.Manager
+@{SessionManager sm = new SessionManager();}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="~/assets/css/Custom.css" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/assets/images/favicon.png">
+    <title>Vidyutsuraksha</title>
+    <link href="~/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/assets/plugins/dropify/dist/css/dropify.min.css">
+    <link href="~/assets/plugins/chartist-js/dist/chartist.min.css" rel="stylesheet">
+    <link href="~/assets/plugins/chartist-js/dist/chartist-init.css" rel="stylesheet">
+    <link href="~/assets/plugins/chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.css" rel="stylesheet">
+    <link href="~/assets/plugins/css-chart/css-chart.css" rel="stylesheet">
+    <link href="~/assets/plugins/sweetalert/sweetalert.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <link href="~/assets/css/colors/blue.css" id="theme" rel="stylesheet">
+    <link href="~/assets/css/main1.css" id="theme" rel="stylesheet">
+    <style>
+        .sidebar-nav ul li a.active {
+            color: #2e2b2c;
+        }
+
+        .sidebar-nav .has-arrow:after {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <nav class="navbar top-navbar navbar-expand-md navbar-light">
+            <!-- ============================================================== -->
+            <!-- Logo -->
+            <!-- ============================================================== -->
+            <div class="navbar-header">
+
+                <a class="navbar-brand" href="index.html">
+                    <b>
+                        <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
+                        <!-- Dark Logo icon -->
+                        <img src="~/assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
+                    </b>
+                    <span>
+                        <!--  Facility Layer  -->
+                        <img src="~/assets/images/vnslogonew2.png" alt="Viduhat" class="dark-logo" />
+                    </span>
+                </a>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- End Logo -->
+            <!-- ============================================================== -->
+            <div class="navbar-collapse">
+                <!-- ============================================================== -->
+                <!-- toggle and nav items -->
+                <!-- ============================================================== -->
+                <ul class="navbar-nav mr-auto mt-md-0">
+                    <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
+                    <li class="nav-item m-l-10"> <a class="nav-link sidebartoggler hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                </ul>
+                <ul class="navbar-nav my-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <img src="~/assets/images/users/user.png" alt="user" class="profile-pic" /> </a>
+                        <div class="dropdown-menu dropdown-menu-right scale-up">
+                            <ul class="dropdown-user">
+                                <li>
+                                    <div class="dw-user-box">
+                                        <div class="u-img"><img src="~/assets/images/users/user.png" alt="user"></div>
+                                        <div class="u-text">
+                                            <h4>@SessionManager.Name</h4>
+                                            <input type="hidden" value="@SessionManager.UserId" />
+                                            <input type="hidden" value="@SessionManager.CustomerID" />
+                                            <p class="text-muted">@SessionManager.Email</p>
+                                            <a href="#" class="btn btn-rounded btn-danger btn-sm">View Profile</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#"><i class="ti-user"></i> My Profile</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/Customer/ChangePassword"><i class="ti-user"></i> Change Password</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/Logout"><i class="fa fa-power-off"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <aside class="left-sidebar">
+
+        <!-- Sidebar scroll-->
+        <div class="scroll-sidebar">
+            <div class="user-profile" style="background:#f1f1f1;">
+                <!-- User profile image -->
+                <div class="profile-img">
+                    <img src="~/assets/images/images.jpg" alt="user">
+                    <!-- this is blinking heartbit-->
+                    <div class="notify setpos"> <span class="heartbit"></span> <span class="point"></span> </div>
+                </div>
+                <!-- User profile text-->
+                <div class="profile-text">
+                    <a href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false" style="padding:0px;">
+                        <h5>@SessionManager.Name<br><small>Applicant</small></h5>
+                    </a>
+                    <div class="dropdown-menu animated flipInY">
+                        <!-- text-->
+                        <a href="#" class="dropdown-item"><i class="ti-user"></i> My Profile</a>
+                        <!-- text-->
+
+                        <a href="#" class="dropdown-item"><i class="ti-settings"></i> Account Setting</a>
+                        <!-- text-->
+                        <div class="dropdown-divider"></div>
+                        <!-- text-->
+                        <a href="/Logout" class="dropdown-item"><i class="fa fa-power-off"></i> Logout</a>
+                        <!-- text-->
+                    </div>
+                </div>
+            </div>
+            <!-- Sidebar navigation-->
+            <nav class="sidebar-nav">
+                <ul id="sidebarnav">
+                    <li class="active">
+                        <a class="has-arrow waves-effect waves-dark" href="/Dashboard" aria-expanded="false">
+                            <i class="mdi mdi-gauge"></i><span class="hide-menu">
+                                Dashboard
+                            </span>
+                        </a>
+
+                    </li>
+                    <li class="active">
+                        <a class="has-arrow waves-effect waves-dark" href="/ApplicantionForm" aria-expanded="false">
+                            <i class="mdi mdi-gauge"></i><span class="hide-menu">
+                                New Application Form
+                            </span>
+                        </a>
+
+                    </li>
+                    <li>
+                        <a class="has-arrow waves-effect waves-dark" href="/Logout" aria-expanded="false">
+                            <i class="fa fa-power-off"></i><span class="hide-menu">
+                                Logout
+                            </span>
+                        </a>
+                    </li>
+                    @*<li>
+                            <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+                                <i class="mdi mdi-email"></i><span class="hide-menu">Inbox</span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="app-email.html">Mailbox</a></li>
+                                <li><a href="app-email-detail.html">Mailbox Detail</a></li>
+                                <li><a href="app-compose.html">Compose Mail</a></li>
+                            </ul>
+                        </li>*@
+
+                </ul>
+            </nav>
+            <!-- End Sidebar navigation -->
+        </div>
+        <!-- End Sidebar scroll-->
+    </aside>
+    <div class="">
+        @RenderBody()
+    </div>
+    <div class="container-fluid">
+        <footer class="footer">
+            Developed by Uttar Pradesh Vidhut Suraksha
+            Copyright ©20 U.P. All Rights Reserved Directorate of Electrical Safety
+        </footer>
+    </div>
+
+    <script src="~/assets/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="~/assets/plugins/bootstrap/js/popper.min.js"></script>
+    <script src="~/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!--Wave Effects -->
+    <script src="~/assets/js/jquery.slimscroll.js"></script>
+    <script src="~/assets/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="~/assets/js/sidebarmenu.js"></script>
+    <script src="~/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js"></script>
+    <script src="~/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <!--stickey kit -->
+    <script src="~/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js"></script>
+    <!--Custom JavaScript -->
+    <script src="~/assets/js/custom.min.js"></script>
+    <!--sparkline JavaScript -->
+    <script src="~/assets/plugins/Chart.js/chartjs.init.js"></script>
+    <script src="~/assets/plugins/Chart.js/Chart.min.js"></script>
+    <script src="~/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
+
+    <!-- Sweet-Alert  -->
+    <script src="~/assets/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="~/assets/plugins/sweetalert/jquery.sweet-alert.custom.js"></script>
+    <script src="~/assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
+    <script src="~/assets/plugins/dropify/dist/js/dropify.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Basic
+            $('.dropify').dropify();
+
+            // Translated
+            $('.dropify-fr').dropify({
+                messages: {
+                    default: 'Glissez-déposez un fichier ici ou cliquez',
+                    replace: 'Glissez-déposez un fichier ou cliquez pour remplacer',
+                    remove: 'Supprimer',
+                    error: 'Désolé, le fichier trop volumineux'
+                }
+            });
+
+            // Used events
+            var drEvent = $('#input-file-events').dropify();
+
+            drEvent.on('dropify.beforeClear', function (event, element) {
+                return confirm("Do you really want to delete \"" + element.file.name + "\" ?");
+            });
+
+            drEvent.on('dropify.afterClear', function (event, element) {
+                alert('File deleted');
+            });
+
+            drEvent.on('dropify.errors', function (event, element) {
+                console.log('Has Errors');
+            });
+
+            var drDestroy = $('#input-file-to-destroy').dropify();
+            drDestroy = drDestroy.data('dropify')
+            $('#toggleDropify').on('click', function (e) {
+                e.preventDefault();
+                if (drDestroy.isDropified()) {
+                    drDestroy.destroy();
+                } else {
+                    drDestroy.init();
+                }
+            })
+        });
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+<script src="../assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+        $(document).ready(function () {
+            var table = $('#example').DataTable({
+                "columnDefs": [{
+                    "visible": false,
+                    "targets": 2
+                }],
+                "order": [
+                    [2, 'asc']
+                ],
+                "displayLength": 25,
+                "drawCallback": function (settings) {
+                    var api = this.api();
+                    var rows = api.rows({
+                        page: 'current'
+                    }).nodes();
+                    var last = null;
+                    api.column(2, {
+                        page: 'current'
+                    }).data().each(function (group, i) {
+                        if (last !== group) {
+                            $(rows).eq(i).before('<tr class="group"><td colspan="5">' + group + '</td></tr>');
+                            last = group;
+                        }
+                    });
+                }
+            });
+            // Order by the grouping
+            $('#example tbody').on('click', 'tr.group', function () {
+                var currentOrder = table.order()[0];
+                if (currentOrder[0] === 2 && currentOrder[1] === 'asc') {
+                    table.order([2, 'desc']).draw();
+                } else {
+                    table.order([2, 'asc']).draw();
+                }
+            });
+        });
+    });
+    $('#example23').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+
+    $(document).ready(function () {
+        $(".dataTables_filter").removeAttr("top");
+    });
+
+
+</script>

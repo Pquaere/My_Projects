@@ -1,0 +1,1021 @@
+﻿@model DESDrawing.Models.Dashboard
+@using DESDrawing.Models.Manager
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_DirectorLayout.cshtml";
+}
+
+
+<html lang="en">
+<body class="fix-header fix-sidebar card-no-border">
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+        </svg>
+    </div>
+
+    <div id="main-wrapper">
+        <div class="page-wrapper">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">@SessionManager.RoleName Dashboard</h3>
+                </div>
+            </div>
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                        </div>
+                    }
+                }
+            }
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- Column -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row p-t-10 p-b-10">
+                                    <!-- Column -->
+                                    <div class="col p-r-0">
+                                        <h1 class="font-light">@Model.Approved</h1>
+                                        <h6 class="text-muted">Approved Application</h6>
+                                    </div>
+                                    <!-- Column -->
+                                    <div class="col text-right align-self-center">
+                                        <div class="css-bar m-b-0 css-bar-primary css-bar-0">
+                                            <i class="fa fa-file" style="color: #715353;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Column -->
+                    <!-- Column -->
+                    <div class="col-lg-4 col-md-6">
+                        @*<a href="Resubmitted_Application.html">*@
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row p-t-10 p-b-10">
+                                    <!-- Column -->
+                                    <div class="col p-r-0">
+                                        <h1 class="font-light">@Model.Resubmit</h1>
+                                        <h6 class="text-muted">Resubmitted Application</h6>
+                                    </div>
+                                    <!-- Column -->
+                                    <div class="col text-right align-self-center">
+                                        <div data-label="30%" class="css-bar m-b-0 css-bar-danger css-bar-0">
+                                            <i class="fa fa-file" style="color: #715353;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Column -->
+                    <!-- Column -->
+                    <div class="col-lg-4 col-md-6">
+                        @*<a href="Query.html">*@
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row p-t-10 p-b-10">
+                                    <!-- Column -->
+                                    <div class="col p-r-0">
+                                        <h1 class="font-light">@Model.Query</h1>
+                                        <h6 class="text-muted">Under Query</h6>
+                                    </div>
+                                    <!-- Column -->
+                                    <div class="col text-right align-self-center">
+                                        <div data-label="40%" class="css-bar m-b-0 css-bar-warning css-bar-0">
+                                            <i class="fa fa-question" style="color: #daba16;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Column -->
+                    <!-- Column -->
+                    <div class="col-lg-4 col-md-6">
+                        @*<a href="Declined.html">*@
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row p-t-10 p-b-10">
+                                    <!-- Column -->
+                                    <div class="col p-r-0">
+                                        <h1 class="font-light">@Model.Decline</h1>
+                                        <h6 class="text-muted">Declined</h6>
+                                    </div>
+                                    <!-- Column -->
+                                    <div class="col text-right align-self-center">
+                                        <div data-label="60%" class="css-bar m-b-0 css-bar-info css-bar-0">
+                                            <i class="fa fa-ban" style="color: red;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Column -->
+                    <div class="col-lg-4 col-md-6">
+                        @*<a href="Pending.html">*@
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row p-t-10 p-b-10">
+                                    <!-- Column -->
+                                    <div class="col p-r-0">
+                                        <h1 class="font-light">@Model.Pending</h1>
+                                        <h6 class="text-muted">Pending</h6>
+                                    </div>
+                                    <!-- Column -->
+                                    <div class="col text-right align-self-center">
+                                        <div data-label="" class="css-bar m-b-0 css-bar-info css-bar-0">
+                                            <i class="mdi mdi-receipt" style="color: #d83838;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (SessionManager.Role == 1 || SessionManager.Role == 6)
+                {
+                    <div class="row">
+                        <!-- column -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Zone</label>
+                                                @Html.DropDownListFor(model => model.ZoneID, new SelectList(ViewBag.zones, "Value", "Text"), "-Select Zone-", new { @class = "form-control", @id = "ZoneID2", @onchange = "JointDirectorList()" })
+                                                @Html.HiddenFor(model => model.ID)
+                                                @Html.HiddenFor(model => model.ZoneID)
+                                                @Html.ValidationMessageFor(m => m.ZoneID, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <h4>List of Joint Director :-</h4>
+                                        </div>
+                                    </div>
+                                    <!-- <h4>Mentoring Scheduled Plan</h4> -->
+                                    <div class="table">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr role="row" class="bg-secondary">
+                                                        <th>S.No</th>
+                                                        <th>Joint Director Name.</th>
+                                                        <th>Role</th>
+                                                        <th>Mobile Number</th>
+                                                        <th>Email </th>
+                                                        <th>Zonal Office Name</th>
+                                                        <th> Region</th>
+                                                        <th> District</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbldata1"></tbody>
+
+                                            </table>
+                                            <div id="_Data"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (SessionManager.Role == 1 || SessionManager.Role == 3)
+                {
+                    <div class="row">
+                        <!-- column -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Zone</label>
+                                                @Html.DropDownListFor(model => model.ZoneID, new SelectList(ViewBag.zones, "Value", "Text"), "-Select Zone-", new { @class = "form-control", @id = "ZoneID3", @onchange = "DeputyDirectorList()" })
+                                                @Html.HiddenFor(model => model.ID)
+                                                @Html.HiddenFor(model => model.ZoneID)
+                                                @Html.ValidationMessageFor(m => m.ZoneID, "", new { @class = "text-danger" })
+                                            </div>
+                                            <h4>List of Depty Director :-</h4>
+                                        </div>
+                                    </div>
+                                    <!-- <h4>Mentoring Scheduled Plan</h4> -->
+                                    <div class="table">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr role="row" class="bg-secondary">
+                                                        <th>S.No</th>
+                                                        <th>Depty Director Name.</th>
+                                                        <th>Role</th>
+                                                        <th>Mobile Number</th>
+                                                        <th>Email </th>
+                                                        <th>Zonal Office Name</th>
+                                                        <th> Region</th>
+                                                        <th> District</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbldata2"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (SessionManager.Role == 1 || SessionManager.Role == 4 || SessionManager.Role == 3)
+                {
+                    <div class="row">
+                        <!-- column -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Zone</label>
+                                                @Html.DropDownListFor(model => model.ZoneID, new SelectList(ViewBag.zones, "Value", "Text"), "-Select Zone-", new { @class = "form-control", @id = "ZoneID4", @onchange = "AssisDirectorList()" })
+                                                @Html.HiddenFor(model => model.ID)
+                                                @Html.HiddenFor(model => model.ZoneID)
+                                                @Html.ValidationMessageFor(m => m.ZoneID, "", new { @class = "text-danger" })
+                                            </div>
+                                            <h4>List of Assistant Director :-</h4>
+                                        </div>
+                                    </div>
+                                    <!-- <h4>Mentoring Scheduled Plan</h4> -->
+                                    <div class="table">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr role="row" class="bg-secondary">
+                                                        <th>S.No</th>
+                                                        <th>Assistant Director Name.</th>
+                                                        <th>Role</th>
+                                                        <th>Mobile Number</th>
+                                                        <th>Email </th>
+                                                        <th>Zonal Office Name</th>
+                                                        <th> Region</th>
+                                                        <th> District</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbldata3"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (SessionManager.Role == 1 || SessionManager.Role == 4 || SessionManager.Role == 3 || SessionManager.Role == 5)
+                {
+                    <div class="row">
+                        <!-- column -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Zone</label>
+                                                @Html.DropDownListFor(model => model.ZoneID, new SelectList(ViewBag.zones, "Value", "Text"), "-Select Zone-", new { @class = "form-control", @id = "ZoneID1", @onchange = "DistrictList()" })
+                                                @Html.HiddenFor(model => model.ID)
+                                                @Html.HiddenFor(model => model.ZoneID)
+                                                @Html.ValidationMessageFor(m => m.ZoneID, "", new { @class = "text-danger" })
+                                            </div>
+                                            <h4>List of District Officer :-</h4>
+                                        </div>
+                                    </div>
+                                    <!-- <h4>Mentoring Scheduled Plan</h4> -->
+                                    <div class="table">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr role="row" class="bg-secondary">
+                                                        <th>S.No</th>
+                                                        <th>District Director Name.</th>
+                                                        <th>Role</th>
+                                                        <th>Mobile Number</th>
+                                                        <th>Email </th>
+                                                        <th>Zonal Office Name</th>
+                                                        <th> Region</th>
+                                                        <th> District</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbldata"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+               
+                
+
+                <!--<div class="row">-->
+                <!-- column -->
+                <!--<div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Pie Chart</h4>
+                            <div>
+                                <canvas id="chart3" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+                <!-- column -->
+                <!-- column -->
+                <!--<div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Bar Chart</h4>
+                            <div>
+                                <canvas id="chart2" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+                <!-- column -->
+                <!-- column -->
+                <!--<div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body d-none">
+                            <h4 class="card-title">Line Chart</h4>
+                            <div>
+                                <canvas id="chart1" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+                <!-- column -->
+                <!--</div>-->
+
+
+
+                <div class="row">
+                    <!-- column -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h4>Recent Applications :-</h4><br>
+                                    </div>
+                                </div>
+                                <!-- <h4>Mentoring Scheduled Plan</h4> -->
+                                <div class="table">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr role="row" class="bg-secondary">
+                                                    <th>S.No</th>
+                                                    <th>Application No.</th>
+                                                    <th>Entrepreneur Name</th>
+                                                    <th>Mobile No.</th>
+                                                    <th>Email</th>
+                                                    <th>Consumer Type</th>
+                                                    <th>Appication Date</th>
+                                                    <th>Request KVA</th>
+                                                    <th>View Document</th>
+                                                    <th>View Application</th>
+                                                    <th>Enclosure Doc.</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.AppicantList != null && Model.AppicantList.Count() > 0)
+                                                {
+                                                    var Sn = 0;
+                                                    foreach (var item in Model.AppicantList)
+                                                    {
+                                                        Sn = Sn + 1;
+                                                <tr role="row" class="odd">
+                                                    <td> @Sn </td>
+                                                    <td> @item.Applicant_No </td>
+                                                    @*<td> @item.Pk_Applicant_id </td>*@
+                                                    <td> @item.Name </td>
+                                                    <td> @item.Mobile </td>
+                                                    <td> @item.Email </td>
+                                                    <td> @item.ConsumerType </td>
+                                                    <td> @item.ApplicationDate </td>
+                                                    <td> @item.Capacity KVA</td>
+                                                    <td>
+                                                        <a type="button" href="/Home/ApplicationDocument?PK_ID=@item.Pk_Applicant_id" class="btn btn-block btn-outline-secondary btn-sm">
+                                                            <i class="fa fa-arrow-down"></i> View
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a type="button" href="/Director/ApplicantDetails?ApplicantID=@item.Pk_Applicant_id">
+                                                             View
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        @if (Model.DocList != null && Model.DocList.Count() > 0)
+                                                        {
+                                                            foreach (var i in Model.DocList.Where(x => x.FK_Applicant_id == item.Pk_Applicant_id))
+                                                            {
+                                                                if (i.Document_type == "SLD")
+                                                                {
+                                                                    <a href="@i.Doc_filepath" target="_blank" class="badge badge-info"> @i.Document_type</a>
+
+                                                                }
+                                                                else if (i.Document_type == "Plant Layout")
+                                                                {
+                                                                    <a href="@i.Doc_filepath" target="_blank" class="badge badge-success"> @i.Document_type</a>
+                                                                }
+                                                                else if (i.Document_type == "Earthing Arrangement")
+                                                                {
+                                                                    <a href="@i.Doc_filepath" target="_blank" class="badge badge-warning"> @i.Document_type</a>
+                                                                }
+                                                                else if (i.Document_type == "Others")
+                                                                {
+                                                                    <a href="@i.Doc_filepath" target="_blank" class="badge badge-dark"> @i.Document_type</a>
+                                                                }
+
+                                                            }
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (item.Status == "Pending")
+                                                        {
+                                                            <a href="#" class="badge badge-info">@item.Status</a>
+                                                        }
+                                                        else if (item.Status == "Approved")
+                                                        {
+                                                            <a href="#" class="badge badge-success">@item.Status</a>
+                                                        }
+                                                        else if (item.Status == "Resubmitted")
+                                                        {
+                                                            <a href="#" class="badge badge-primary"> @item.Status</a>
+                                                        }
+                                                        @*else if (item.Status == "Declined")
+                                                        {
+                                                            <a href="#" class="badge badge-danger"> @item.Status </a>
+                                                        }*@
+                                                        else if (item.Status == "Rejected")
+                                                        {
+                                                            <a href="#" class="badge badge-danger"> @item.Status </a>
+                                                        }
+                                                        else if (item.Status == "Query")
+                                                        {
+                                                            <a href="#" class="badge badge-warning"> @item.Status</a>
+                                                        }
+                                                        else if (item.Status == "Dispatched")
+                                                        {
+                                                            <a href="#" class="badge badge-info">@item.Status</a>
+                                                        }
+                                                    </td>
+
+                                                    <td>
+                                                        @if (item.Status == "Pending")
+                                                        {
+                                                            <button type="button" class="badge badge-info" style="margin-right: 5px;" onclick="reply('@item.Pk_Applicant_id')">
+                                                                <i class="fa fa-reply"></i>Query
+                                                            </button>
+
+                                                            <button type="button" class="badge badge-warning" onclick="Forward('@item.Pk_Applicant_id')">
+                                                                <i class="fa fa-reply"></i>Forward
+                                                            </button>
+                                                            <a href="/Director/ApplicantDocument?ApplicantID=@item.Pk_Applicant_id" class="badge badge-success" style="margin-right: 5px;">
+                                                                <i class="fa fa-reply"></i>Approved
+                                                            </a>
+                                                        }
+                                                        else if (item.Status == "Approved")
+                                                        {
+                                                            <a href="" class="">  </a>
+                                                        }
+                                                        else if (item.Status == "Resubmitted")
+                                                        {
+                                                            <button type="button" class="badge badge-info" style="margin-right: 5px;" onclick="reply('@item.Pk_Applicant_id')">
+                                                                <i class="fa fa-reply"></i>Query
+                                                            </button>
+
+                                                            <button type="button" class="badge badge-warning" onclick="Forward('@item.Pk_Applicant_id')">
+                                                                <i class="fa fa-reply"></i>Forward
+                                                            </button>
+                                                            <a href="/Director/ApplicantDocument?ApplicantID=@item.Pk_Applicant_id" class="badge badge-success" style="margin-right: 5px;">
+                                                                <i class="fa fa-reply"></i>Approved
+                                                            </a>
+                                                        }
+                                                        @*else if (item.Status == "Declined")
+                                                        {
+                                                            <a href="" class="">  </a>
+                                                        }*@
+                                                        else if (item.Status == "Rejected")
+                                                        {
+                                                            <a href="" class="">  </a>
+                                                        }
+                                                        else if (item.Status == "Query")
+                                                        {
+                                                            <a href="" class="">  </a>
+                                                        }
+                                                        else if (item.Status == "Dispatched")
+                                                        {
+                                                            <a href="/Home/DrawingApproval?ApplicantID=@item.Pk_Applicant_id" target="_blank" class="btn btn-warning"><i class="fa fa-download"></i></a>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer"> Copyright ©2019 U.P.All Rights Reserved Directorate of Electrical Safety </footer>
+        </div>
+    </div>
+</body>
+</html>
+
+<div class="modal fade bs-example-modal-lg" id="reply" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+     aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close " data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <form action="/Director/SubmitReply" method="post" id="UserFormSubmit" onsubmit="return validate();">
+                <div class="modal-body">
+                    <div class="row p-t-20">
+
+                        <!--/span-->
+                        <!--/span-->
+
+                        <div class="col-md-12 ">
+                            <div class="form-group">
+                                <label for="exampleFormControlTextarea1" class="form-label">Remark</label>
+                                @*<textarea class="form-control" id="Remark" rows="3"></textarea>*@
+
+                                @Html.TextAreaFor(m => m.Remark, new { @class = "form-control", @Id = "Remark", @name = "Remark", @rows = "3" })
+                                @Html.HiddenFor(m => m.Pk_Applicant_id)
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">Upload File</label>
+                                <input class="form-control" onchange="UploadFile(this,'ReplyFile')" type="file" id="File" />
+                                @Html.HiddenFor(m => m.ReplyFile, new { @class = "form-control" })
+                                @*<span id="FileAnchor" style="display: none;" class="input-group-text btn-download"></span>*@
+                                <div class="d-none" id="d1">
+
+                                    <img class="inline-block" src="" target="blank" id="imgReplyFile" alt="user" style="height:50px">
+
+                                </div>
+                                <div class="d-none" id="d2">
+                                    <div class="col-md-4" id="image"></div>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        @*<div class="col-md-12" onchange="Approve()">
+                            <div class="form-check">
+
+
+                                <label class="btn btn-outline-secondary" id="label1" style="color:black">
+                                    <input type="radio" name="Status" id="exampleRadios1" value="Query"> Query
+                                </label>
+                                @*<label class="btn btn-outline-secondary" id="label2" style="color:black">
+                                        <input type="radio" name="Status" id="exampleRadios2" value="Approved"> Approved
+                                    </label>*@
+                                @*<label class="btn btn-outline-secondary" id="label3" style="color:black">
+                                    <input type="radio" name="Status" id="exampleRadios3" value="Declined"> Declined
+                                </label>
+                            </div>
+                            <div class="form-check ">
+                                @Html.TextBoxFor(m => m.ApprovalID, new { @class = "form-control ", @Id = "ApprovalID", @name = "ApprovalID", @style = "display:none", @onkeypress = "return onlyNos(event,this)", @placeholder = "Enter Approval ID" })
+                            </div> 
+
+                        </div>*@
+
+
+                        <div class="col-md-12">
+                            <div class="text-center">
+                                <button class="btn btn-primary">Submit</button>
+
+                                @*<button type="button" class="btn btn-primary">
+
+                                        Submit
+                                    </button>*@
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left"
+                    data-dismiss="modal">Close</button>
+            </div> -->
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade bs-example-modal-sm" id="Forward" tabindex="-1" role="dialog" aria-labelledby="mysmallModalLabel"
+     aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <form action="/Director/ForwardApplication" method="post" onsubmit="return validated();">
+                <div class="modal-body">
+                    <div class="row p-t-20">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-control-placeholder" for="VendorName">Select User</label>
+
+
+                                @Html.DropDownListFor(m => m.UserId, new SelectList(ViewBag.User, "Value", "Text"), "---select----", new { @class = "form-control" })
+                                @Html.HiddenFor(m => m.Pk_Applicant_id1)
+
+                            </div>
+                        </div>
+                        <!--/span-->
+                        <!--/span-->
+
+                        <div class="col-md-12 ">
+                            <div class="form-group">
+                                <label for="exampleFormControlTextarea1" class="form-label">Remark</label>
+                                @*<textarea class="form-control" id="ForwardRemark" rows="3"></textarea>*@
+                                @Html.TextAreaFor(m => m.ForwardRemark, new { @class = "form-control", @Id = "ForwardRemark", @name = "ForwardRemark", @rows = "3" })
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">Upload File</label>
+                                <input class="form-control" onchange="UploadForwardFile(this,'ForwardFile')" type="file" id="FFile" />
+                                @Html.HiddenFor(m => m.ForwardFile, new { @class = "form-control" })
+                                @*<span id="FFileAnchor" style="display: none;" class="input-group-text btn-download"></span>*@
+                                <div class="d-none" id="d3">
+                                    <img class="inline-block " src="" id="imgForwardFile" alt="user" style="height:50px">
+                                </div>
+                                <div class="d-none" id="d4">
+                                    <div class="col-md-4" id="Forwardimage"></div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="text-center">
+                                <button class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left"
+                    data-dismiss="modal">Close</button>
+            </div> -->
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    function reply(PK_Applicant_id) {
+        debugger;
+        $('#reply').modal('show');
+
+        $('#Pk_Applicant_id').val(PK_Applicant_id)
+
+    }
+
+    function Forward(PK_Applicant_id) {
+        debugger;
+        $('#Forward').modal('show');
+
+        $('#Pk_Applicant_id1').val(PK_Applicant_id)
+
+    }
+
+
+        function UploadFile(obj, type) {
+        debugger;
+        var filename = $(obj)[0].files[0].name;
+        var fileId = $(obj).attr("id");
+         var ext = obj.value.match(/\.(.+)$/)[1];
+
+
+        switch (ext) {
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'pdf':
+                var fileSize = ($("#" + fileId)[0].files[0].size / 1024 / 1024);
+                //if (fileSize > 2) {
+                //    swal("", "File size should not exceed 2 MB.\r\nफाइल का साइज़ 2 MB से अधिक नहीं होना चाहिए।", "warning");
+                //    return false;
+                //}
+                //else {
+                var data = new FormData();
+                var files = $("#" + fileId).get(0).files;
+                if (files.length > 0) {
+                    data.append("File", files[0]);
+                }
+                data.append("type", type);
+                $("#divLoader").show();
+                $.ajax({
+                    url: '@Url.Action("AddImageFile", "Applicant")',
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function (response) {
+                        $("#divLoader").hide();
+
+                        if (response != null) {
+                            if (response.result) {
+                                var result = response.fpath;
+
+                                if (ext == "jpg" || ext == "jpeg" || ext == "png")
+                    {
+                          $('#d1').removeClass('d-none');
+                          $('#d2').addClass('d-none');
+                    }
+                    else
+                    {
+                       $('#d2').removeClass('d-none');
+                       $('#d1').addClass('d-none');
+                                     $('#image').html(' <a href="'+result+'" target="_blank" class="btn btn-warning"><i class="fa fa-download"></i></a>');
+                    }
+                                $("#" + type + "").val(response.fpath);
+
+                                if ($("#" + type + "").val() != '') {
+
+                                    $("#img" + type + "").attr("src", response.fpath);
+                                }
+                                swal("", "File upload successfully. ", "success")
+                            }
+                            else {
+                                $("#" + type + "").val('');
+                                swal("", response.mesg, "error")
+                            }
+                        }
+                        else {
+                            swal("", "Fail to Upload File", "error")
+                        }
+                        return false;
+
+                    },
+                    error: function (e) {
+
+                        $("#divLoader").hide();
+                        swal("", "An Error Occured while uploading file", "error");
+                    }
+                });
+
+                /*}*/
+                break;
+            default:
+                swal("", 'File should be in PNG/JPG/JPEG/pdf format./फाइल PNG/JPG/JPEG/pdf प्रारूप में होनी चाहिए।', "warning");
+                this.value = '';
+                return false;
+        }
+
+    }
+
+    function validate() {
+        debugger;
+        //var value = $("input:radio[name=Status]:checked").val();
+        if ($('#Remark').val() == '' || $('#Remark').val() == '0' || $('#Remark').val() == undefined) {
+            swal("", "Please Enter Remark..", "warning");
+            $('#Remark').focus();
+            return false;
+
+        }
+        //if (value == '' || value == '0' || value == undefined) {
+        //    swal("", "Please Select Status..", "warning");
+        //    $('#Remark').focus();
+        //    return false;
+
+        //}
+        //if (value == "Approved") {
+        //    if ($('#ApprovalID').val() == '' || $('#ApprovalID').val() == '0' || $('#ApprovalID').val() == undefined) {
+        //        swal("", "Please Enter Approval ID..", "warning");
+        //        $('#Remark').focus();
+        //        return false;
+        //    }
+        //}
+
+    }
+
+    //function Approve() {
+    //    debugger;
+    //    var value = $("input:radio[name=Status]:checked").val();
+    //    //var id = $("input:radio[name=Status]:checked").attr("class");
+    //    //$(id).css("color", "red");
+    //    if (value == "Approved") {
+    //        $('#ApprovalID').show();
+    //        $("#label2").css("background-color", "green")
+    //        $("#label1").css("background-color", "gray")
+    //        $("#label3").css("background-color", "gray")
+    //    }
+    //    else if (value == "Query") {
+    //        $('#ApprovalID').hide();
+    //        $("#label1").css("background-color", "green")
+    //        $("#label3").css("background-color", "gray")
+    //        $("#label2").css("background-color", "gray")
+    //    }
+    //    else {
+    //        $('#ApprovalID').hide();
+    //        $("#label3").css("background-color", "green")
+    //        $("#label1").css("background-color", "gray")
+    //        $("#label2").css("background-color", "gray")
+    //    }
+    //}
+
+    function EmployeeList() {
+        debugger;
+        $.ajax({
+            type: 'post',
+            datatype: 'json',
+            contentType: 'application/json;charset=utf-8',
+            traditional: true,
+            url: '/Director/DirectorList',
+            data: JSON.stringify({ ZoneID: $("#ZoneID4").val(), Type: "7" }),
+            success: function (data) {
+                debugger;
+                $("#tbldata3").html("");
+                if (data != null && data != undefined) {
+                    var sno = 1;
+                    if (data.List != null && data.List.length > 0) {
+                        for (var i = 0; i < data.List.length; i++) {
+                            $("#tbldata3").append("<tr><td>" + sno + "</td><td>" + data.List[i].Name + "</td><td>" + data.List[i].Role + "</td><td>" + data.List[i].Mobile + "</td><td>" + data.List[i].Email + "</td><td>" + data.List[i].DiscomOfficeName + "</td><td>" + data.List[i].RegionName + "</td><td>" + data.List[i].DistrictName + "</td></tr>")
+                            sno++;
+                        }
+                    }
+                }
+            },
+            error: function (error) {
+                $("#_Data").html('No Record found')
+            }
+        });
+    }
+
+    function AssisDirectorList() {
+        debugger;
+        $.ajax({
+            type: 'post',
+            datatype: 'json',
+            contentType: 'application/json;charset=utf-8',
+            traditional: true,
+            url: '/Director/DirectorList',
+            data: JSON.stringify({ ZoneID: $("#ZoneID4").val(), Type: "5" }),
+            success: function (data) {
+                debugger;
+                $("#tbldata3").html("");
+                if (data != null && data != undefined) {
+                    var sno = 1;
+                    if (data.List != null && data.List.length > 0) {
+                        for (var i = 0; i < data.List.length; i++) {
+                            $("#tbldata3").append("<tr><td>" + sno + "</td><td>" + data.List[i].Name + "</td><td>" + data.List[i].Role + "</td><td>" + data.List[i].Mobile + "</td><td>" + data.List[i].Email + "</td><td>" + data.List[i].DiscomOfficeName + "</td><td>" + data.List[i].RegionName + "</td><td>" + data.List[i].DistrictName + "</td></tr>")
+                            sno++;
+                        }
+                    }
+                }
+            },
+            error: function (error) {
+                $("#_Data").html('No Record found')
+            }
+        });
+    }
+
+    function DeputyDirectorList() {
+        debugger;
+        $.ajax({
+            type: 'post',
+            datatype: 'json',
+            contentType: 'application/json;charset=utf-8',
+            traditional: true,
+            url: '/Director/DirectorList',
+            data: JSON.stringify({ ZoneID: $("#ZoneID3").val(), Type: "4" }),
+            success: function (data) {
+                debugger;
+                $("#tbldata2").html("");
+                if (data != null && data != undefined) {
+                    var sno = 1;
+                    if (data.List != null && data.List.length > 0) {
+                        for (var i = 0; i < data.List.length; i++) {
+                            $("#tbldata2").append("<tr><td>" + sno + "</td><td>" + data.List[i].Name + "</td><td>" + data.List[i].Role + "</td><td>" + data.List[i].Mobile + "</td><td>" + data.List[i].Email + "</td><td>" + data.List[i].DiscomOfficeName + "</td><td>" + data.List[i].RegionName + "</td><td>" + data.List[i].DistrictName + "</td></tr>")
+                            sno++;
+                        }
+                    }
+                }
+            },
+            error: function (error) {
+                $("#_Data").html('No Record found')
+            }
+        });
+    }
+
+    function JointDirectorList() {
+        debugger;
+        $.ajax({
+            type: 'post',
+            datatype: 'json',
+            contentType: 'application/json;charset=utf-8',
+            traditional: true,
+            url: '/Director/DirectorList',
+            data: JSON.stringify({ ZoneID: $("#ZoneID2").val(), Type: "3" }),
+            success: function (data) {
+                debugger;
+                $("#tbldata1").html("");
+                if (data != null && data != undefined) {
+                    var sno = 1;
+                    if (data.List != null && data.List.length > 0) {
+                        for (var i = 0; i < data.List.length; i++) {
+                            $("#tbldata1").append("<tr><td>" + sno + "</td><td>" + data.List[i].Name + "</td><td>" + data.List[i].Role + "</td><td>" + data.List[i].Mobile + "</td><td>" + data.List[i].Email + "</td><td>" + data.List[i].DiscomOfficeName + "</td><td>" + data.List[i].RegionName + "</td><td>" + data.List[i].DistrictName + "</td></tr>")
+                            sno++;
+                        }
+                    }
+                }
+            },
+            error: function (error) {
+                $("#_Data").html('No Record found')
+            }
+        });
+    }
+
+
+    function DistrictList() {
+        debugger;
+        $.ajax({
+            type: 'post',
+            datatype: 'json',
+            contentType: 'application/json;charset=utf-8',
+            traditional: true,
+            url: '/Director/DirectorList',
+            data: JSON.stringify({ ZoneID: $("#ZoneID1").val(), Type: "2" }),
+            success: function (data) {
+                debugger;
+                $("#tbldata").html("");
+                if (data != null && data != undefined) {
+                    var sno = 1;
+                    if (data.List != null && data.List.length > 0) {
+                        for (var i = 0; i < data.List.length; i++) {
+                            $("#tbldata").append("<tr><td>" + sno + "</td><td>" + data.List[i].Name + "</td><td>" + data.List[i].Role + "</td><td>" + data.List[i].Mobile + "</td><td>" + data.List[i].Email + "</td><td>" + data.List[i].DiscomOfficeName + "</td><td>" + data.List[i].RegionName + "</td><td>" + data.List[i].DistrictName + "</td></tr>")
+                            sno++;
+                        }
+                    }
+                }
+            },
+            error: function (error) {
+                $("#_Data").html('No Record found')
+            }
+        });
+    }
+
+
+
+</script>
+
+
+
+

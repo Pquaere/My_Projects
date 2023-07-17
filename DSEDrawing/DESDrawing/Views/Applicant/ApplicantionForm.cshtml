@@ -1,0 +1,930 @@
+﻿@model DESDrawing.Models.Applicant
+@{
+    ViewBag.Title = "ApplicantionForm";
+    Layout = "~/Views/Shared/_ApplicantLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">New Application</h3>
+        </div>
+    </div>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @{
+                    string Code = (string)TempData["code"];
+                    string msg = (string)TempData["Msg"];
+                    if (!string.IsNullOrEmpty(Code))
+                    {
+                        if (Code == "1")
+                        {
+                            <div class="alert alert-success msgdiv">
+                                <strong>Success!</strong> @msg
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger msgdiv">
+                                <strong>Error!</strong> @msg
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-header">
+                        <h4 class="m-b-0 text-white">
+                            Applicant Registration
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="box-title m-t-20">Applicant Details</h3>
+                        <form action="/Applicant/ApplicantionForm" method="post" id="ApplicantFormSubmit" onsubmit="return validate();">
+                            <div class="form-body">
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                First Name<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.First_name, new { @class = "form-control", @placeholder = "Enter Your First Name.." })
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Last Name<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.Last_name, new { @class = "form-control", @placeholder = "Enter Your Last Name.." })
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Gender<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(m => m.Gender, new List<SelectListItem>() { new SelectListItem { Text = "--Select Your Gender--", Value = "" }, new SelectListItem { Text = "Male", Value = "Male" }, new SelectListItem { Text = "FeMale", Value = "FeMale" } }, new { @class = "form-control", })
+
+                                        </div>
+                                    </div>
+
+
+                                    <!--/span-->
+                                    @*<div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">
+                                                    Date of Application<span class="text-danger">*</span>
+                                                </label>
+                                                @Html.TextBoxFor(m => m.Dt_of_application, new { @class = "form-control", placeholder = "dd-mm-yyyy", @type = "date" })
+                                            </div>
+                                        </div>*@
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Phone Number<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.Phone_number, new { maxlength = 10, @class = "form-control", @Id = "Phone_number", @name = "Phone_number", placeholder = "Phone Number" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Email<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Enter Your Email Id.." })
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-12 ">
+                                        <div class="form-group">
+                                            <label>Address<span class="text-danger">*</span></label>
+                                            @Html.TextAreaFor(m => m.Address, new { @class = "form-control", @placeholder = "Enter Your Address.." })
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                                <h3 class="box-title m-t-20">Location of Installation</h3>
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                State<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.State_Name, new { @class = "form-control", @placeholder = "Uttar Pradesh", @readonly = "readonly", @value = "Uttar Pradesh" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>District/City<span class="text-danger">*</span></label>
+                                            @Html.DropDownListFor(m => m.FK_District_id, new SelectList(ViewBag.District, "Value", "Text"), "Select District..", new { @class = "form-control", disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Tehsil<span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(m => m.Tehsil_name, new { @class = "form-control", @placeholder = "Enter Your Tehsil.." })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!--/row-->
+                                <div class="row">
+
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Town/Village<span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(m => m.Town_name, new { @class = "form-control", @placeholder = "Enter Your Town/Village.." })
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Post Code<span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(m => m.Pincode, new { maxlength = 6, @class = "form-control", @placeholder = "Enter Pincode.." })
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                </div>
+
+                                <h3 class="box-title m-t-20">
+                                    Details of Licensed Electrical
+                                    contractor
+                                </h3>
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Name:</label>
+                                            @Html.TextBoxFor(m => m.LIC_contractor, new { @class = "form-control", @placeholder = "Enter Contractor.." })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">LEC:</label>
+                                            @Html.TextBoxFor(m => m.LEC, new { @class = "form-control", @placeholder = "Enter LEC.." })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Supervisor Name:</label>
+                                            @Html.TextBoxFor(m => m.LIC_supervisor, new { @class = "form-control", @placeholder = "Enter Supervisor name.." })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Wireman Name:</label>
+                                            @Html.TextBoxFor(m => m.Wireman, new { @class = "form-control", @placeholder = "Enter Wireman.." })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Address:</label>
+                                            @Html.TextBoxFor(m => m.LIC_Address, new { @class = "form-control", @placeholder = "Enter Address.." })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Firm Name:</label>
+                                            @Html.TextBoxFor(m => m.FirmName, new { @class = "form-control", @placeholder = "Enter Firm.." })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Licensed no.</label>
+                                            @Html.TextBoxFor(m => m.LicensedNo, new { @class = "form-control", @placeholder = "Enter Licensed no.." })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Validity:</label>
+                                            @Html.TextBoxFor(m => m.validity, new { @class = "form-control", placeholder = "dd-mm-yyyy", @type = "date" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <h3 class="box-title m-t-20">Brief details of installation</h3>
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h3>HT:</h3>
+                                    </div>
+                                    <div class="col-md-3 ">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Existing<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.HT_Existing, new
+                                       {
+                                           @class = "form-control qty1",
+                                           @placeholder = "Enter Existing..",
+                                           @onkeypress = "return onlyNos(event,this)",
+                                           @onchange = "subtotalcapacity(1)",
+                                           maxlength = 8
+                                       })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Proposed<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.HT_proposed, new
+                                       {
+                                           @class = "form-control qty1",
+                                           @placeholder = "Enter Proposed..",
+                                           @onkeypress = "return onlyNos(event,this)",
+                                           @onchange = "subtotalcapacity(1)",
+                                           maxlength = 8
+                                       })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Total Capacity<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.HT_capacity, new { @class = "form-control total1", @placeholder = "HTs Capacity..", @readonly = "readonly" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                        <h3>DG:</h3>
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Existing<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.DG_Existing, new { maxlength = 8, @class = "form-control qty2", @placeholder = "Enter Existing..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(2)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Proposed<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.DG_proposed, new { maxlength = 8,@class = "form-control qty2", @placeholder = "Enter Proposed..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(2)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Total Capacity<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.DG_capacity, new { @class = "form-control total2", @placeholder = "DGs Capacity..", @readonly = "readonly" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                        <h3>MSB:</h3>
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Existing<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.MSB_Existing, new { maxlength = 8,@class = "form-control qty3", @placeholder = "Enter Existing..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(3)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Proposed<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.MSB_proposed, new { maxlength = 8, @class = "form-control qty3", @placeholder = "Enter Proposed..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(3)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Total Capacity<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.MSB_capacity, new { @class = "form-control total3", @placeholder = "MSBs Capacity..", @readonly = "readonly" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                        <h3>Transmission Line:</h3>
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Existing<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.TL_Existing, new { maxlength = 8, @class = "form-control qty4", @placeholder = "Enter Existing..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(4)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Proposed<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.TL_proposed, new { maxlength = 8, @class = "form-control qty4", @placeholder = "Enter Proposed..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(4)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Total Capacity<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.TL_capacity, new { @class = "form-control total4", @placeholder = "TLs Capacity..", @readonly = "readonly" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                        <h3>DTCs:</h3>
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Existing<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.DTC_Existing, new { maxlength = 8, @class = "form-control qty5", @placeholder = "Enter Existing..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(5)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Proposed<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.DTC_proposed, new { maxlength = 8, @class = "form-control qty5", @placeholder = "Enter Proposed..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(5)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Total Capacity<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.DTC_capacity, new { @class = "form-control total5", @placeholder = "DTCs Capacity..", @readonly = "readonly" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                        <h3>IPP:</h3>
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Existing<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.IPP_Existing, new { maxlength = 8,@class = "form-control qty6", @placeholder = "Enter Existing..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(6)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Proposed<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.IPP_proposed, new { maxlength = 8, @class = "form-control qty6", @placeholder = "Enter Proposed..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(6)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Total Capacity<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.IPP_capacity, new { @class = "form-control total6", @placeholder = "IPPs Capacity..", @readonly = "readonly" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+
+                                        <h3>Others:</h3>
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Existing<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.Other_Existing, new { maxlength = 8,@class = "form-control qty7", @placeholder = "Enter Existing..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(7)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Proposed<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.Other_proposed, new { maxlength = 8, @class = "form-control qty7", @placeholder = "Enter Proposed..", @onkeypress = "return onlyNos(event,this)", @onchange = "subtotalcapacity(7)" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Total Capacity<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.Other_capacity, new { @class = "form-control total7", @placeholder = "Others Capacity..", @readonly = "readonly" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                    <div class="col-md-1">
+
+                                    </div>
+                                    <div class="col-md-2">
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group input-group">
+                                            @*<label class="control-label">
+                                                    Total Capacity<span class="text-danger">*</span>
+                                                </label>*@
+                                            @Html.TextBoxFor(m => m.Total, new { @class = "form-control total", @placeholder = "Total Capacity..", @readonly = "readonly" })
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="basic-addon2">KV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">Type of Installation</label>
+                                            @Html.DropDownList("InstallationType", new List<SelectListItem>()
+                                       {
+                    new SelectListItem(){ Text= "Commercial", Value = "Commercial"},
+                    new SelectListItem(){ Text= "Industrial", Value = "Industrial"},
+                    new SelectListItem(){ Text= "Residential", Value = "Residential"},
+                    new SelectListItem(){ Text= "Hotel", Value = "Hotel"},
+                    new SelectListItem(){ Text= "Institutional", Value = "Institutional"},
+                    new SelectListItem(){ Text= "Generating Plant", Value = "Generating Plant"},
+                    new SelectListItem(){ Text= "Irrigation", Value = "Irrigation"},
+                    new SelectListItem(){ Text= "Other", Value = "Other"},
+                }, "--Select--", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h3 class="box-title m-t-20">Enclosures</h3>
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">SLD</label>
+                                            <input class="form-control" onchange="UploadFile(this,'SLDFile')" type="file" id="SLDFileuploadImageUrl" />
+                                            @Html.HiddenFor(m => m.SLDFile, new { @class = "form-control" })
+                                            @if (!string.IsNullOrEmpty(Model.SLDFile))
+                                            {
+                                                <img src="@Model.SLDFile" height="50" width="50" id="imgSLDFile" />
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Plant Layout</label>
+                                            <input class="form-control" onchange="UploadFile(this,'PlantFile')" type="file" id="PlantFileuploadImageUrl" />
+                                            @Html.HiddenFor(m => m.PlantFile, new { @class = "form-control" })
+                                            @if (!string.IsNullOrEmpty(Model.PlantFile))
+                                            {
+                                                <img src="@Model.PlantFile" height="50" width="50" id="imgPlantFile" />
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Earthing Arrangement</label>
+                                            <input class="form-control" onchange="UploadFile(this,'EarthingFile')" type="file" id="EarthingFileuploadImageUrl" />
+                                            @Html.HiddenFor(m => m.EarthingFile, new { @class = "form-control" })
+                                            @if (!string.IsNullOrEmpty(Model.EarthingFile))
+                                            {
+                                                <img src="@Model.EarthingFile" height="50" width="50" id="imgEarthingFile" />
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Others</label>
+                                            <input class="form-control" onchange="UploadFile(this,'OtherFile')" type="file" id="OtherFileuploadImageUrl" />
+                                            @Html.HiddenFor(m => m.OtherFile, new { @class = "form-control" })
+                                            @if (!string.IsNullOrEmpty(Model.OtherFile))
+                                            {
+                                                <img src="@Model.OtherFile" height="50" width="50" id="imgOtherFile" />
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="checkbox" id="IsAccept" name="IsAccept"
+                                                   class="filled-in chk-col-red" >
+                                            <label for="IsAccept">
+                                                We ............... hereby declare that
+                                                the particular's stated above are correct to the best of my/our
+                                                knowledge and that I/ We have read the Central Electrical
+                                                Authority (Measures Relating to safety and Electric Supply)
+                                                Regulations, 2010, the Electrical Act, 2003, National Electricity Code (NEC), National
+                                                Building Code (NBC) and other applicable Act, Rules or
+                                                Regulations, and fully understand the terms and conditions under
+                                                which drawing or Installation approval is granted a breach of
+                                                which will render the approval liable for withdrawal and or
+                                                cancellation.<br><br>
+                                                I/We certify that I or We will not be in possession of more than
+                                                one approval of any installation at any given instant in my or
+                                                our or our company or firm name.
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Signature of Applicant</label>
+                                            <input class="form-control" onchange="UploadFile(this,'SignatureFile')" type="file" id="SignatureFileuploadImageUrl" />
+                                            @Html.HiddenFor(m => m.SignatureFile, new { @class = "form-control" })
+                                            @if (!string.IsNullOrEmpty(Model.SignatureFile))
+                                            {
+                                                <img src="@Model.SignatureFile" height="50" width="50" id="imgSignatureFile" />
+                                            }
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <button class="btn btn-success hstheme-button-o text-white">
+                                <i class="fa fa-check"></i>
+                                SAVE
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    let today = new Date(),
+        day = today.getDate(),
+        month = today.getMonth() + 1, //January is 0
+        year = today.getFullYear();
+    if (day < 10) {
+        day = '0' + day
+    }
+    if (month < 10) {
+        month = '0' + month
+    }
+    today = year + '-' + month + '-' + day;
+
+    document.getElementById("validity").setAttribute("min", today);
+
+
+     function UploadFile(obj, type) {
+        debugger;
+        var filename = $(obj)[0].files[0].name;
+        var fileId = $(obj).attr("id");
+        var ext = obj.value.match(/\.(.+)$/)[1];
+
+        switch (ext) {
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'pdf':
+                var fileSize = ($("#" + fileId)[0].files[0].size / 1024 / 1024);
+                //if (fileSize > 2) {
+                //    swal("", "File size should not exceed 2 MB.\r\nफाइल का साइज़ 2 MB से अधिक नहीं होना चाहिए।", "warning");
+                //    return false;
+                //}
+                //else {
+                var data = new FormData();
+                var files = $("#" + fileId).get(0).files;
+                if (files.length > 0) {
+                    data.append("File", files[0]);
+                }
+                data.append("type", type);
+                $("#divLoader").show();
+                $.ajax({
+                    url: '@Url.Action("AddImageFile", "Applicant")',
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function (response) {
+                        $("#divLoader").hide();
+
+                        if (response != null) {
+                            if (response.result) {
+
+                                $("#" + type + "").val(response.fpath);
+                                if ($("#" + type + "").val() != '') {
+                                    $("#img" + type + "").attr("src", response.fpath);
+                                }
+                                swal("", "File upload successfully. ", "success")
+                            }
+                            else {
+                                $("#" + type + "").val('');
+                                swal("", response.mesg, "error")
+                            }
+                        }
+                        else {
+                            swal("", "Fail to Upload File", "error")
+                        }
+                        return false;
+
+                    },
+                    error: function (e) {
+
+                        $("#divLoader").hide();
+                        swal("", "An Error Occured while uploading file", "error");
+                    }
+                });
+
+                /*}*/
+                break;
+            default:
+                swal("", 'File should be in PNG/JPG/JPEG/pdf format./फाइल PNG/JPG/JPEG/pdf प्रारूप में होनी चाहिए।', "warning");
+                this.value = '';
+                return false;
+        }
+
+    }
+
+
+    function onlyNos(e, t) {
+        try {
+            if (window.event) {
+                var charCode = window.event.keyCode;
+            }
+            else if (e) {
+                var charCode = e.which;
+            }
+            else { return true; }
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+        catch (err) {
+            alert(err.Description);
+        }
+
+    }
+    function validate() {
+        debugger;
+        var matchpattern = /^[6-9][0-9]{9}$/;
+        var reg = /^([A-Za-z0-9_\-\.])+\@@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,3})$/;
+        if ($('#First_name').val() == '' || $('#First_name').val() == " " || $('#First_name').val() == undefined) {
+            swal("", "Please Enter Firstname..", "warning");
+            $('#First_name').focus();
+            return false;
+
+        }
+        if ($('#Last_name').val() == '' || $('#Last_name').val() == " " || $('#Last_name').val() == undefined) {
+            swal("", "Please Enter Lastname..", "warning");
+            $('#Last_name').focus();
+            return false;
+
+        }
+        if ($('#Gender').val() == '' || $('#Gender').val() == " " || $('#Gender').val() == undefined) {
+            swal("", "Please Select Gender..", "warning");
+            $('#Gender').focus();
+            return false;
+
+        }
+        if ($('#Phone_number').val() == '' || $('#Phone_number').val() == " " || $('#Phone_number').val() == undefined) {
+            swal("", "Please Enter Mobile..", "warning");
+            $('#Phone_number').focus();
+            return false;
+        }
+        var charCode = $('#Phone_number').val();
+        var val = matchpattern.test(charCode);
+        if (!val) {
+            swal("", "Please enter Correct mobile number", "warning");
+            $('#Phone_number').focus();
+            $('#Phone_number').val('');
+            return false;
+        }
+        if ($('#Email').val() == '' || $('#Email').val() == " " || $('#Email').val() == undefined) {
+            swal("", "Please Enter Email..", "warning");
+            $('#Email').focus();
+            return false;
+
+        }
+        if (reg.test($("#Email").val()) == false) {
+            $("#Email").focus();
+            $("#Email").val('');
+            swal("", "Please enter a valid email Id", "warning");
+            return false;
+        }
+        if ($('#Address').val() == '' || $('#Address').val() == " " || $('#Address').val() == null || $('#Address').val() == undefined) {
+            swal("", "Please Enter Address..", "warning");
+            $('#Address').focus();
+            return false;
+        }
+        if ($('#FK_District_id').val() == '' || $('#FK_District_id').val() == " " || $('#FK_District_id').val() == undefined) {
+            swal("", "Please Select District..", "warning");
+            $('#FK_District_id').focus();
+            return false;
+        }
+        if ($('#Tehsil_name').val() == '' || $('#Tehsil_name').val() == " " || $('#Tehsil_name').val() == null || $('#Tehsil_name').val() == undefined) {
+            swal("", "Please Enter Tehsil name..", "warning");
+            $('#Tehsil_name').focus();
+            return false;
+        }
+        if ($('#Town_name').val() == '' || $('#Town_name').val() == " " || $('#Town_name').val() == null || $('#Town_name').val() == undefined) {
+            swal("", "Please Enter Townname..", "warning");
+            $('#Town_name').focus();
+            return false;
+        }
+        if ($('#Pincode').val() == '' || $('#Pincode').val() == " " || $('#Pincode').val() == null || $('#Pincode').val() == undefined) {
+            swal("", "Please Enter Pincode..", "warning");
+            $('#Pincode').focus();
+            return false;
+        }
+        
+        if ($('#HT_proposed').val() == '' || $('#HT_proposed').val() == null || $('#HT_proposed').val() == undefined) {
+            swal("", "Please Enter HT proposed..", "warning");
+            $('#HT_proposed').focus();
+            return false;
+        }
+        
+        if ($('#DG_proposed').val() == '' || $('#DG_proposed').val() == null || $('#DG_proposed').val() == undefined) {
+            swal("", "Please Enter DG proposed..", "warning");
+            $('#DG_proposed').focus();
+            return false;
+        }
+        
+        if ($('#MSB_proposed').val() == '' || $('#MSB_proposed').val() == null || $('#MSB_proposed').val() == undefined) {
+            swal("", "Please Enter MSB proposed..", "warning");
+            $('#MSB_proposed').focus();
+            return false;
+        }
+        
+        if ($('#TL_proposed').val() == '' || $('#TL_proposed').val() == null || $('#TL_proposed').val() == undefined) {
+            swal("", "Please Enter TL Proposed..", "warning");
+            $('#TL_proposed').focus();
+            return false;
+        }
+        
+        if ($('#DTC_proposed').val() == '' || $('#DTC_proposed').val() == null || $('#DTC_proposed').val() == undefined) {
+            swal("", "Please Enter DTC Proposed..", "warning");
+            $('#DTC_proposed').focus();
+            return false;
+        }
+        
+        if ($('#IPP_proposed').val() == '' || $('#IPP_proposed').val() == null || $('#IPP_proposed').val() == undefined) {
+            swal("", "Please Enter IPP Proposed..", "warning");
+            $('#IPP_proposed').focus();
+            return false;
+        }        
+
+        if ($('#SLDFile').val() == '' ||  $('#SLDFile').val() == undefined) {
+            swal("", "Please Upload SLD..", "warning");
+            $('#SLDFile').focus();
+            return false;
+        }
+        if ($('#PlantFile').val() == '' ||  $('#PlantFile').val() == undefined) {
+            swal("", "Please Upload Plant Layout..", "warning");
+            $('#PlantFile').focus();
+            return false;
+        }
+        if ($('#EarthingFile').val() == '' ||  $('#EarthingFile').val() == undefined) {
+            swal("", "Please Upload Earthing Arrangement..", "warning");
+            $('#EarthingFile').focus();
+            return false;
+        }
+        if ($('#SignatureFile').val() == '' || $('#SignatureFile').val() == undefined) {
+            swal("", "Please Upload Signature..", "warning");
+            $('#SignatureFile').focus();
+            return false;
+        }
+        //if ($('#IsAccept').prop('checked') == false) {
+        //    return true;
+        //    $("#ApplicantFormSubmit").submit();
+        //}
+        //else {
+        //    swal("", "Please Accept the terms..", "warning");
+        //    $('#IsAccept').focus();
+        //    return false;
+        //}
+        if ($('#IsAccept').prop('checked') == false) {
+            swal("", "Please Accept the terms..", "warning");
+            return false;
+        }
+        else {
+            return true;
+            $("#ApplicantFormSubmit").submit();
+        }
+    }
+
+    function subtotalcapacity(obj) {
+        debugger;
+        var sum = 0;
+        $(".qty" + obj).each(function () {
+            sum += +$(this).val();
+        });
+        $(".total" + obj).val(sum);
+        Calculatetotal();
+    }
+    function Calculatetotal() {
+        debugger;
+        var totalsum = 0;
+        for (var i = 1; i < 8; i++)
+        {
+            totalsum += +$(".total" + i).val();
+        }
+        $(".total").val(totalsum);
+    }
+</script>
+

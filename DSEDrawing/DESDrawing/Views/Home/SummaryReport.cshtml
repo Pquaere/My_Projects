@@ -1,0 +1,387 @@
+﻿@model DESDrawing.Models.SummaryReport
+
+@{
+    ViewBag.Title = "SummaryReport";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    #search {
+        background-color: #218838;
+        margin-top: 15px;
+        font-size: 15px;
+    }
+
+    #reset {
+        margin-top: 15px;
+        font-size: 15px;
+    }
+
+    .dataTables_wrapper {
+        padding-top: 0px;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-11 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Summary Report</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @{
+                    string Code = (string)TempData["code"];
+                    string msg = (string)TempData["Msg"];
+                    if (!string.IsNullOrEmpty(Code))
+                    {
+                        if (Code == "1")
+                        {
+                            <div class="alert alert-success msgdiv">
+                                <strong>Success!</strong> @msg
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger msgdiv">
+                                <strong>Error!</strong> @msg
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <form action="/Home/SummaryReport" method="post">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Discom Office</label>
+                                @Html.DropDownListFor(model => model.DiscomID, new SelectList(ViewBag.DiscomOffice, "Value", "Text"), "-Select Discome-", new { @class = "form-control", @onchange = "BindRegions();" })
+                                @Html.HiddenFor(model => model.ID)
+                                @Html.HiddenFor(model => model.DiscomID)
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Region</label>
+                                @Html.DropDownListFor(model => model.RegionID, new SelectList(string.Empty, "Value", "Text"), "-Select Region-", new { @class = "form-control", @id = "SubRegionId", @onchange = "BindZones();" })
+                                @Html.HiddenFor(model => model.ID)
+                                @Html.HiddenFor(model => model.RegionID)
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Zone</label>
+                                @Html.DropDownListFor(model => model.ZoneID, new SelectList(string.Empty, "Value", "Text"), "-Select Zone-", new { @class = "form-control", @id = "SubZoneId", @onchange = "BindDistrict();" })
+                                @Html.HiddenFor(model => model.ID)
+                                @Html.HiddenFor(model => model.ZoneID)
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">District</label>
+                                @Html.DropDownListFor(model => model.DistrictID, new SelectList(string.Empty, "Value", "Text"), "-Select District-", new { @class = "form-control", @id = "SubDistrictId" })
+                                @Html.HiddenFor(model => model.ID)
+                                @Html.HiddenFor(model => model.DistrictID)
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                @Html.DropDownListFor(m => m.Status, new List<SelectListItem>
+                                          {
+                                             new SelectListItem{ Text="-- Select Status --", Value = "" },
+                                             new SelectListItem{ Text="Pending", Value = "Pending" },
+                                             new SelectListItem{ Text="Query", Value = "Query" },
+                                             new SelectListItem{ Text="Resubmitted", Value = "Resubmitted" },
+                                             new SelectListItem{ Text="Approved", Value = "Approved" },
+                                             new SelectListItem{ Text="Declined", Value = "Declined" },
+
+                                 }, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Date From</label>
+                                <div class="cal-icon">
+                                    @Html.TextBoxFor(m => m.From, new { @class = "form-control", placeholder = "dd-mm-yyyy", @type = "date" })
+
+                                    @Html.ValidationMessageFor(m => m.From, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Date To</label>
+                                <div class="cal-icon">
+                                    @Html.TextBoxFor(m => m.To, new { @class = "form-control", placeholder = "dd-mm-yyyy", @type = "date" })
+
+                                    @Html.ValidationMessageFor(m => m.To, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <div class="form-group">
+                                <div style="margin-top: 18px;">
+                                    <button class="btn btn-success" id="search">Search</button> &nbsp; &nbsp;
+                                    <span><button class="btn btn-warning" id="reset">Reset</button></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- column -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                        </div>
+                        <div class="table">
+                            <div class="table-responsive">
+                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr role="row" class="bg-secondary">
+                                            <th>S.No</th>
+                                            <th>Application No.</th>
+                                            <th>Enterprenuer Name</th>
+                                            <th>Application Date</th>
+                                            <th>Capacity</th>
+                                            <th>Forword To</th>
+                                            <th>Status</th>
+                                            <th>District</th>
+                                            <th>Zone</th>
+                                            <th>Region</th>
+                                            <th>Discom</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.SummaryList != null)
+                                        {
+                                            var sn = 1;
+                                            foreach (var item in Model.SummaryList)
+                                            {
+                                                <tr role="row" class="odd">
+                                                    <td>@sn</td>
+                                                    <td>@item.Applicant_No</td>
+                                                    <td>@item.Name</td>
+                                                    <td>@item.ApplicationDate</td>
+                                                    <td>@item.Capacity KVA</td>
+                                                    <td>@item.ForwordTo </td>
+                                                    <td>
+                                                        @if (item.Status == "Pending")
+                                                        {
+                                                            <a href="#" class="badge badge-info">@item.Status</a>
+                                                        }
+                                                        else if (item.Status == "Approved")
+                                                        {
+                                                            <a href="#" class="badge badge-success">@item.Status</a>
+                                                        }
+                                                        else if (item.Status == "Resubmitted")
+                                                        {
+                                                            <a href="#" class="badge badge-primary"> @item.Status</a>
+                                                        }
+                                                        else if (item.Status == "Declined")
+                                                        {
+                                                            <a href="#" class="badge badge-danger"> @item.Status </a>
+                                                        }
+                                                        else if (item.Status == "Query")
+                                                        {
+                                                            <a href="#" class="badge badge-warning"> @item.Status</a>
+                                                        }
+                                                        else if (item.Status == "Dispatched")
+                                                        {
+                                                            <a href="#" class="badge badge-info">@item.Status</a>
+                                                        }
+                                                    </td>
+                                                    <td>@item.District_name</td>
+                                                    <td>@item.Zone_name</td>
+                                                    <td>@item.Region_name</td>
+                                                    <td>@item.Discomoffice_name</td>
+                                                </tr>
+                                                sn++;
+                                            }
+
+                                        }
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <footer class="footer"> Developed by Uttar Pradesh Vidhut Suraksha </footer>
+
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+
+    function validate() {
+        debugger;
+        if ($('#StateID').val() == '' || $('#StateID').val() == '0') {
+            swal("", "Please select State..", "warning");
+            $('#StateID').focus();
+            return false;
+
+        }
+        if ($('#CityName').val() == '' || $('#CityName').val() == '0' || $('#CityName').val() == null) {
+            swal("", "Please Enter City Name..", "warning");
+            $('#CityName').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#CityFormSubmit").submit();
+        }
+    }
+
+    $(document).ready(function () {
+        $('#search').on('click', function () {
+            if ($('#From').val() == '' || $('#From').val() == '0') {
+                swal("", "Please select  Date From..", "warning");
+                $('#From').focus();
+                return false;
+            }
+            if ($('#To').val() == '' || $('#To').val() == '0') {
+                swal("", "Please select  Date To..", "warning");
+                $('#To').focus();
+                return false;
+            }
+        });
+    });
+
+
+    $(document).ready(function () {
+        $('#reset').on('click', function () {
+            $('#DiscomID').val('');
+            $('#RegionID').val('');
+            $('#ZoneID').val('');
+            $('#DistrictID').val('');
+            $('#Status').val('');
+            $('#From').val('');
+            $('#To').val('');
+        });
+    });
+
+
+    if (@Model.DiscomID > 0) {
+        debugger;
+        BindRegions(@Model.DiscomID);
+        BindZones(@Model.RegionID);
+        BindDistrict(@Model.ZoneID);
+    }
+
+    function BindRegions(id) {
+        debugger;
+        var DiscomId = $('#DiscomID').val();
+        $.ajax({
+            url: '/Home/GetsubRegions',
+            type: 'post',
+            data: { DiscomId: DiscomId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#SubRegionId').empty();
+                    $('#SubRegionId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        $('#SubRegionId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#SubRegionId").val(@Model.RegionID);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+    function BindZones(id) {
+        debugger;
+        var RegionId;
+        if (id > 0) {
+            (RegionId = @Model.RegionID);
+        }
+        else {
+            RegionId = $('#SubRegionId option:selected').val() ;
+        }
+       /* var RegionId = $('#RegionId').val();*/
+        $.ajax({
+            url: '/Home/GetsubZones',
+            type: 'post',
+            data: { RegionId: RegionId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#SubZoneId').empty();
+                    $('#SubZoneId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        $('#SubZoneId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#SubZoneId").val(@Model.ZoneID);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+    function BindDistrict(id) {
+        debugger;
+        var ZoneId;
+        if (id > 0) {
+            (ZoneId = @Model.ZoneID);
+        }
+        else {
+            ZoneId = $('#SubZoneId option:selected').val() ;
+        }
+        /*var ZoneId = $('#ZoneId').val();*/
+        $.ajax({
+            url: '/Home/GetsubDistrict',
+            type: 'post',
+            data: { ZoneId: ZoneId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#SubDistrictId').empty();
+                    $('#SubDistrictId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        $('#SubDistrictId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#SubDistrictId").val(@Model.DistrictID);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+</script>
+
