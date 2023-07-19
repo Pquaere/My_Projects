@@ -1,0 +1,132 @@
+﻿
+@model HRPayroll.Models.Employee
+
+<!DOCTYPE html>
+<html>
+<head>    
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    <link href="~/assets/css/custom.css" rel="stylesheet" />
+    <link href="~/assets/css/ListPage.css" rel="stylesheet" />
+    <link href="~/assets/plugin/sweetalert/sweetalert.css" rel="stylesheet" />
+    <link href="~/assets/css/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/assets/plugin/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <link href="~/assets/css/dataTables.min.css" rel="stylesheet" />
+    
+</head>
+<body>
+    <div class="row" id="EmpTable">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table">
+                        <div class="table-responsive">
+                            <table class="table dataTable table-striped">
+                                <thead id="tbl">
+                                    <tr role="row" class="bg-secondary">
+                                        <th>S.No</th>
+                                        <th>Employee Name</th>
+                                        <th>Mobile No.</th>
+                                        <th>PFMS Code</th>
+                                        <th>Emp Code</th>
+                                        <th>Father Name</th>
+                                        <th>Select</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.EmployeeList != null)
+                                    {
+                                        if (Model.EmployeeList.Count() > 0)
+                                        {
+                                            var Sn = 0;
+                                            foreach (var item in Model.EmployeeList)
+                                            {
+                                                Sn = Sn + 1;
+                                                <tr role="row" class="odd">
+                                                    <td>  @Sn</td>
+                                                    <td> @item.EmployeeName </td>
+
+                                                    <td> @item.MobileNo </td>
+                                                    <td> @item.PFMSCode </td>
+                                                    <td> @item.DepEMPCode </td>
+                                                    <td> @item.FatherName </td>
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="flexCheckDefault_@Sn" value="@item.EMPid">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="6"><span>No Data Available</span></td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+
+        </div>
+        <div class="col-md-4 d-inline" onclick="Action('S');">
+            <input type="button" class="form-control btn-success" value="Stop" />
+        </div>
+        <div class="col-md-4" onclick="Action('C');">
+            <input type="button" class="form-control btn-danger" value="Suspend" />
+        </div>
+    </div>
+
+    <!-- page js file -->
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/assets/bundles/mainscripts.bundle.js"></script>
+
+    <!-- core js file -->
+    <script src="~/assets/bundles/libscripts.bundle.js"></script>
+    <!-- page js file -->
+    <script src="~/assets/bundles/mainscripts.bundle.js"></script>
+    <script src="../js/pages/index.js"></script>
+
+
+
+    <!-- Sweet-Alert  -->
+    <script src="~/assets/plugin/sweetalert/sweetalert.min.js"></script>
+    <script src="~/assets/js/jquery-confirm.min.js"></script>
+    <script src="~/assets/plugin/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="~/assets/plugin/sweetalert/jquery.sweet-alert.custom.js"></script>
+    <script src="~/assets/plugin/styleswitcher/jQuery.style.switcher.js"></script>
+    <script>
+        jQuery(document).ready(function () {
+            $('.datepicker').datepicker({
+                format: 'dd-mm-yyyy',
+                autoclose: true
+            });
+        });
+
+        $(".only-numeric").bind("keypress", function (e) {
+            var keyCode = e.which ? e.which : e.keyCode
+            if (!(keyCode >= 48 && keyCode <= 57)) {
+                //swal("", "Please enter numeric digit only", "warning");
+                return false;
+            }
+            return true;
+        });
+
+    </script>
+    <script src="~/assets/bundles/dataTables.bundle.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.dataTable').dataTable({
+                responsive: true,
+            });
+        });
+    </script>
+</body>
+</html>

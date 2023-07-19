@@ -1,0 +1,187 @@
+﻿@model HRPayroll.Models.Department
+
+@{
+    ViewBag.Title = "AddDepartment";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-lg-4 py-3">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Department Master</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-outline-info">
+
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @{
+                                        string Code = (string)TempData["code"];
+                                        string msg = (string)TempData["Msg"];
+                                        if (!string.IsNullOrEmpty(Code))
+                                        {
+                                            if (Code == "1")
+                                            {
+                                                <div class="alert alert-success msgdiv">
+                                                    <strong>Success!</strong> @msg
+                                                </div>
+                                                <script type="text/javascript">
+                                                    window.setTimeout(function () {
+                                                        location.href = '/Master/AddDepartment';
+                                                    }, 2000);
+                                                </script>
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-danger msgdiv">
+                                                    <strong>Error!</strong> @msg
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <form method="post" id="form" onsubmit="return ValidateForm()">
+                                <div class="form-body">
+                                    <div class="row p-t-20">
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Department Name<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.DepartmentHead, new { @class = "form-control", @placeholder = "Enter Department Name", @maxLength = "50", @minLength = "3",@onkeyPress= "return checkAlphabet(event)" })
+                                                @Html.ValidationMessageFor(m => m.DepartmentHead, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Department Code<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.Code, new { @class = "form-control", @placeholder = "Enter Department  Code", @maxLength = "20" })
+                                                @Html.ValidationMessageFor(m => m.Code, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">User Type<span class="text-danger">*</span></label>
+                                                @Html.DropDownListFor(model => model.UserTypeId, new SelectList(ViewBag.UserType, "Value", "Text"), "-Select User Type-", new { @class = "form-control" })
+                                                @Html.HiddenFor(model => model.ID)
+                                                @Html.HiddenFor(model => model.UserTypeId)
+                                                @Html.ValidationMessageFor(m => m.UserTypeId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Working Type<span class="text-danger">*</span></label>
+                                                @Html.DropDownListFor(model => model.WorkTypeId, new SelectList(ViewBag.WorkingType, "Value", "Text"), "-Select Working Type-", new { @class = "form-control", @onchange = "BindDistricts();" })
+                                                @Html.HiddenFor(model => model.ID)
+                                                @Html.HiddenFor(model => model.WorkTypeId)
+                                                @Html.ValidationMessageFor(m => m.WorkTypeId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Select Office<span class="text-danger">*</span></label>
+                                                @Html.DropDownListFor(model => model.OfficeId, new SelectList(ViewBag.OfficeName, "Value", "Text"), "-Select Working Type-", new { @class = "form-control"})
+                                                @Html.HiddenFor(model => model.OfficeId)
+                                                @Html.ValidationMessageFor(m => m.OfficeId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    @if (Model.ID > 0)
+                                    {
+                                        <button class="btn btn-success hstheme-button-o text-white">
+                                            <i class="fa fa-check"></i>
+                                            Update
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-success hstheme-button-o text-white">
+                                            <i class="fa fa-check"></i>
+                                            Submit
+                                        </button>
+                                    }
+
+                                    <a href="/Master/DepartmentList" class="btn btn-danger hstheme-button-o text-white">
+                                        <i class="fa fa-crosshairs"></i>
+                                        Cancel
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    function ValidateForm() {
+        debugger;
+        if ($('#DepartmentHead').val() == '' || $('#DepartmentHead').val() == '0' || $('#DepartmentHead').val() == null ) {
+            swal("", "Please Enter Department Name..", "warning");
+            $('#DepartmentHead').focus();
+            return false;
+        }
+        if ($('#Code').val() == '' || $('#Code').val() == '0' || $('#Code').val() == null) {
+            swal("", "Please Enter Department Code..", "warning");
+            $('#Code').focus();
+            return false;
+        }
+        if ($('#UserTypeId').val() == '' || $('#UserTypeId').val() == '0' || $('#UserTypeId').val() == null) {
+            swal("", "Please select User Type..", "warning");
+            $('#UserTypeId').focus();
+            return false;
+        }
+        if ($('#WorkTypeId').val() == '' || $('#WorkTypeId').val() == '0' || $('#WorkTypeId').val() == null) {
+            swal("", "Please select Working Type..", "warning");
+            $('#WorkTypeId').focus();
+            return false;
+        }
+        if ($('#OfficeId').val() == '' || $('#OfficeId').val() == '0' || $('#OfficeId').val() == null) {
+            swal("", "Please select Office Name..", "warning");
+            $('#OfficeId').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+
+    }
+    function checkAlphabet(event) {
+        debugger;
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-zA-Z\\s]*$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
+    jQuery($('#Code')).keyup(function () {
+        var raw_text = jQuery(this).val();
+        var return_text = raw_text.replace(/[^a-zA-Z0-9 _]/g, '');
+        jQuery(this).val(return_text);
+    });
+
+</script>

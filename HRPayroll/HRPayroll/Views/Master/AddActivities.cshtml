@@ -1,0 +1,242 @@
+﻿@model HRPayroll.Models.Activitie
+
+@{
+    ViewBag.Title = "AddActivities";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-lg-4 py-3">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Add Activities</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-outline-info">
+
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @{
+                                        string Code = (string)TempData["code"];
+                                        string msg = (string)TempData["Msg"];
+                                        if (!string.IsNullOrEmpty(Code))
+                                        {
+                                            if (Code == "1")
+                                            {
+                                                <div class="alert alert-success msgdiv" id="msgdiv">
+                                                    <strong>Success!</strong> @msg
+                                                </div>
+                                                <script type="text/javascript">
+                                                    window.setTimeout(function () {
+                                                        /*location.href = '';*/
+                                                        $('#msgdiv').hide();
+                                                    }, 5000);
+                                                </script>
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-danger msgdiv">
+                                                    <strong>Error!</strong> @msg
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <form method="post" id="form" onsubmit="return ValidateForm()">
+                                <div class="form-body">
+                                    <div class="row p-t-20">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Subject<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.Tittle, new { @class = "form-control", @placeholder = "Enter Subject Name", @maxLength = "20",@onkeypress= " return checkAlphabet(event)",@autocomplete="off" })
+                                                @Html.ValidationMessageFor(m => m.Tittle, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Mobile<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.Mobile, new { @class = "form-control", @placeholder = "Enter Mobile Number", @maxLength = "12", @onkeypress = "return onlyNos(event,this)", @autocomplete = "off" })
+                                                @Html.ValidationMessageFor(m => m.Mobile, "", new { @class = "text-danger", @autocomplete = "off" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Due Date<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.DueDate, new { @class = "form-control", @placeholder = "Enter Due Date ", @type = "date", @maxLength = "20" , @autocomplete = "off" })
+                                                @Html.ValidationMessageFor(m => m.DueDate, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Activity Type<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.ActivityType, new { @class = "form-control", @placeholder = "Enter ActivityType", @maxLength = "50", @minLength = "3", @autocomplete = "off", @onkeypress = " return checkAlphabet(event)" })
+                                                @Html.ValidationMessageFor(m => m.ActivityType, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Status<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.Status, new { @class = "form-control", @placeholder = "Enter Status ", @maxLength = "20" , @autocomplete = "off", @onkeypress = " return checkAlphabet(event)" })
+                                                @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">
+                                                    Priority<span class="text-danger">*</span>
+                                                </label>
+                                                @Html.TextBoxFor(M => M.Priority, new { @class = "form-control", @placeholder = "Enter Priority ", @maxLength = "100", @minLength = "3", @autocomplete = "off" })
+                                                @Html.ValidationMessageFor(m => m.Priority, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Assign To<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.AssignTo, new { @class = "form-control", @placeholder = "Enter AssignTo ", @maxLength = "20", @onkeypress = " return checkAlphabet(event)", @autocomplete = "off" })
+                                                @Html.ValidationMessageFor(m => m.AssignTo, "", new { @class = "text-danger",  })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Contact Person<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.ContactPerson, new { @class = "form-control", @placeholder = "Enter Name of Contact Person", @maxLength = "20", @autocomplete = "off", @onkeypress = " return checkAlphabet(event)" })
+                                                @Html.ValidationMessageFor(m => m.ContactPerson, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 m-3">
+                                    @if (Model.ID > 0)
+                                    {
+                                        <button class="btn btn-success">
+                                            <i class="fa fa-check"></i>
+                                            Update
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-success">
+                                            <i class="fa fa-check"></i>
+                                            Submit
+                                        </button>
+                                    }
+                                    <a href="/Master/ActivitiesList" class="btn btn-danger hstheme-button-o text-white ms-3">
+                                        <i class="fa fa-crosshairs"></i>
+                                        Cancel
+                                    </a>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function onlyNos(e, t) {
+        try {
+            if (window.event) {
+                var charCode = window.event.keyCode;
+            }
+            else if (e) {
+                var charCode = e.which;
+            }
+            else { return true; }
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+        catch (err) {
+            alert(err.Description);
+        }
+
+    }
+
+
+    function ValidateForm() {
+        debugger;
+        if ($('#Tittle').val() == '' || $('#Tittle').val() == '0' || $('#Tittle').val() == null ) {
+            swal("", "Please enter subject..", "warning");
+            $('#Tittle').focus();
+            return false;
+        }
+        if ($('#Mobile').val() == '' || $('#Mobile').val() == '0' || $('#Mobile').val() == null) {
+            swal("", "Please enter mobile..", "warning");
+            $('#Mobile').focus();
+            return false;
+        }
+        var mobregex = /^(0|91)?[6-9][0-9]{9}$/;
+        if (!$('#Mobile').val().match(mobregex)) {
+            $('#Mobile').focus();
+            swal("", "Please enter valid   mobile No.", "warning")
+            return false;
+        }
+        if ($('#DueDate').val() == '' || $('#DueDate').val() == '0' || $('#DueDate').val() == null) {
+            swal("", "Please enter Due date..", "warning");
+            $('#DueDate').focus();
+            return false;
+        }
+        if ($('#ActivityType').val() == '' || $('#ActivityType').val() == '0' || $('#ActivityType').val() == null) {
+            swal("", "Please Enter Activity Type..", "warning");
+            $('#ActivityType').focus();
+            return false;
+        }
+        if ($('#Status').val() == '' || $('#Status').val() == '0' || $('#Status').val() == null) {
+            swal("", "Please Enter Status..", "warning");
+            $('#Status').focus();
+            return false;
+        }
+        if ($('#Priority').val() == '' || $('#Priority').val() == '0' || $('#Priority').val() == null) {
+            swal("", "Please Enter Priority...", "warning");
+            $('#Priority').focus();
+            return false;
+        }
+        if ($('#AssignTo').val() == '' || $('#AssignTo').val() == '0' || $('#AssignTo').val() == null) {
+            swal("", "Please Enter AssignTo...", "warning");
+            $('#AssignTo').focus();
+            return false;
+        }
+        if ($('#ContactPerson').val() == '' || $('#ContactPerson').val() == '0' || $('#ContactPerson').val() == null) {
+            swal("", "Please Enter Contact Person...", "warning");
+            $('#ContactPerson').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+
+    function checkAlphabet(event) {
+        debugger;
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-zA-Z\\s]*$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
+</script>

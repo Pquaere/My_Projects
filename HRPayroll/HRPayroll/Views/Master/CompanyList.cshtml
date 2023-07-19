@@ -1,0 +1,185 @@
+﻿@model HRPayroll.Models.Company
+@{
+    ViewBag.Title = "CompanyList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+    <div class="container-fluid">
+        <div class="page-wrapper">
+            <div class="block-header py-2">
+                <div class="row page-titles">
+                    <div class="col-md-6 align-self-center">
+                        <h3 class="text-themecolor font-20 clearfix">Company List</h3>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="pbutton" style="text-align: right">
+                            <div class="right text-right">
+                                <a href="/Master/Company" id="btnAdd" class="btn btn-success btn-sm">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Add Company
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    @{
+                        string Code = (string)TempData["code"];
+                        string msg = (string)TempData["Msg"];
+                        if (!string.IsNullOrEmpty(Code))
+                        {
+                            if (Code == "1")
+                            {
+                                <div class="alert alert-success msgdiv">
+                                    <strong>Success!</strong> @msg
+                                </div>
+                                <script type="text/javascript">
+                                    window.setTimeout(function () {
+                                        location.href = '/Master/CompanyList';
+                                    }, 3000);
+                                </script>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger msgdiv">
+                                    <strong>Error!</strong> @msg
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- column -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                            </div>
+                            <div class="table">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped dataTable">
+                                        <thead>
+                                            <tr role="row" class="bg-secondary">
+                                                <th>S.No</th>
+                                                <th>Company Name</th>
+                                                <th>Company Logo</th>
+                                                <th>Company App Logo</th>
+
+                                                <th>Edit</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.CompanyList != null)
+                                            {
+                                                var sn = 1;
+                                                foreach (var item in Model.CompanyList)
+                                                {
+                                                    <tr role="row" class="odd">
+                                                        <input type="hidden" value="@item.CompanyId" class="CompanyId" />
+                                                        <td>@sn</td>
+                                                        <td>@item.CompanyName</td>
+                                                        <td>
+                                                            @if (item.CompanyLogo != null)
+                                                            {
+                                                                <img src="@item.CompanyLogo" height="100" width="100" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <p>No Image</p>
+                                                            }
+                                                        </td>
+
+                                                        <td>
+                                                            @if (item.CompanyAppLogo != null)
+                                                            {
+                                                                <img src="@item.CompanyAppLogo" height="100" width="100" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <p>No Image</p>
+                                                            }
+                                                        </td>
+                                                        <td class="">
+                                                            <a href="/Master/Company?ID=@item.CompanyId" title="Edit"><i class="fa fa-pencil"></i> </a>
+                                                        </td>
+                                                        <td>
+                                                            @if (item.IsActive == 0)
+                                                            {
+                                                                <a href="#" title="" name="Isactive" value="true" class="del"><span class=" p-1 badge-success">Active</span> </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="#" title="" name="Isactive" value="false" class="InActive"><span class=" p-1 badge-danger">In-Active</span> </a>
+                                                            }
+
+                                                        </td>
+                                                    </tr>
+                                                    sn++;
+                                                }
+
+                                            }
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+
+    $('.del').click(function () {
+        debugger;
+        var tr = $(this).closest('tr');
+        var trues = true;
+        var PK_Id = tr.find('.CompanyId').val()
+        $.confirm({
+            title: 'Confirmation Message',
+            content: 'Are you sure ? You want to In-active selected Company   ?',
+            buttons: {
+                Ok: function () {
+                    window.location.href = "/Master/ChangeCompanyStatus?Isactive=" + trues + "&ID=" + PK_Id +"";
+                },
+
+                Cancle: function () {
+                    window.location.href = "/Master/CompanyList";
+                }
+
+
+            }
+        });
+    });
+
+    $('.InActive').click(function () {
+        debugger;
+        var tr = $(this).closest('tr');
+        var trues = false;
+        var PK_Id = tr.find('.CompanyId').val()
+        $.confirm({
+            title: 'Confirmation Message',
+            content: 'Are you sure ? You want to  active selected Company  ?',
+            buttons: {
+                Ok: function () {
+                    window.location.href = "/Master/ChangeCompanyStatus?Isactive=" + trues + "&ID=" + PK_Id + "";
+                },
+
+                Cancle: function () {
+                    window.location.href = "/Master/CompanyList";
+                }
+
+
+            }
+        });
+    });
+</script>
+

@@ -1,0 +1,827 @@
+﻿@model HRPayroll.Models.DeductionReport
+@{
+    ViewBag.Title = "DeductionReport";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Employee Deduction Report</h3>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" id="form" onsubmit="return ValidateForm()">
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv" id="msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    /*location.href = '/Reports/DeductionReport';*/
+                                                                    $('msgdiv').hide();
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5>Search</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="control-label">
+                                                            Pay Year
+                                                        </label>
+                                                        <select class="form-control" id="Year" name="Year"></select>
+                                                        @Html.HiddenFor(model => model.Year)
+                                                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <!--/span-->
+                                                <div class="col-md-4">
+                                                    <div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                Pay Month
+                                                            </label>
+                                                            @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Employee Category</label>
+                                                        @Html.DropDownListFor(model => model.WTypeId, new SelectList(ViewBag.EmployeeCategory, "Value", "Text"), "-Select Category-", new { @class = "form-control", @onchange = "BindEmpType();" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Employee Type</label>
+                                                        @Html.DropDownListFor(m => m.EmpType, new SelectList(String.Empty, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label"> Salary Type</label>
+                                                        @Html.DropDownListFor(model => model.SalaryType, new List<SelectListItem>
+                                                   {
+                                                    new SelectListItem{ Text="Regular Salary", Value = "C" },
+                                                    new SelectListItem{ Text="Supplementary", Value = "S" },
+                                                    }, "-- Select Type--", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4" style="margin-top:30px">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-success" onclick="filldepartment()" type="button">
+                                                            Fill Department
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control", @onchange = "BindEmployee();" })
+                                                        @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Employee</label>
+                                                        @Html.DropDownListFor(model => model.EmpId, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control", @onchange = "BindEmpDetail();" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label"> Select Deduction Type</label>
+                                                        @Html.DropDownListFor(model => model.DeductionType, new List<SelectListItem>
+                                                 {
+                                                  new SelectListItem{ Text="GPF", Value = "GPF" },
+                                                  new SelectListItem{ Text="GIS", Value = "GPF" },
+                                                  new SelectListItem{ Text="TDS", Value = "TDS" },
+                                                  new SelectListItem{ Text="SOCIETY", Value = "SOCIETY" },
+                                                  new SelectListItem{ Text="BANKLOAN", Value = "BANKLOAN" },
+                                                  new SelectListItem{ Text="QUARTERRENT", Value = "QUARTERRENT" },
+                                                  new SelectListItem{ Text="LIC", Value = "LIC" },
+                                                  new SelectListItem{ Text="COURTRECOVERY", Value = "COURTRECOVERY" },
+                                                  new SelectListItem{ Text="MOBILEADVANCE", Value = "MOBILEADVANCE" },
+                                                  new SelectListItem{ Text="HBA", Value = "HBA" },
+                                                  new SelectListItem{ Text="ReliefFund", Value = "ReliefFund" },
+                                                  new SelectListItem{ Text="PAYRECOVERY", Value = "PAYRECOVERY" },
+                                                  new SelectListItem{ Text="MISCRECOVERY", Value = "MISCRECOVERY" },
+                                                  new SelectListItem{ Text="OTHERRECOVERY", Value = "OTHERRECOVERY" },
+                                                  new SelectListItem{ Text="COOPERATIVE", Value = "COOPERATIVE" },
+                                                  new SelectListItem{ Text="PENALTY", Value = "PENALTY" },
+                                                  new SelectListItem{ Text="PPF", Value = "PPF" },
+                                                  new SelectListItem{ Text="NPS", Value = "NPS" },
+                                                  new SelectListItem{ Text="PEN(BASIC)", Value = "PEN(BASIC)" },
+                                                  new SelectListItem{ Text="PEN(BASIC+DA)", Value = "PEN(BASIC+DA)" },
+                                                  new SelectListItem{ Text="EPF", Value = "EPF" },
+                                                  new SelectListItem{ Text="ESIC", Value = "ESIC" },
+                                                  new SelectListItem{ Text="Vehicle User Charges", Value = "Vehicle User Charges" },
+                                                  new SelectListItem{ Text="Misc Deduction", Value = "Misc Deduction" },
+                                                  new SelectListItem{ Text="Other Deduction", Value = "Other Deduction" },
+                                                  new SelectListItem{ Text="Advance GPF", Value = "1" },
+                                                  new SelectListItem{ Text="Advance BankLoan", Value = "2" },
+                                                  new SelectListItem{ Text="Advance HBA", Value = "3" },
+                                                  new SelectListItem{ Text="Advance VehicleLoan", Value = "4" },
+                                                  new SelectListItem{ Text="Advance Emergeny Loan", Value = "5" },
+                                                  new SelectListItem{ Text="Advance PPF", Value = "6" },
+                                                  new SelectListItem{ Text="Advance Festival", Value = "7" },
+                                                  new SelectListItem{ Text="Advance Cooperative Loan", Value = "8" },
+                                                }, "-- Select Type--", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label"> Order By</label>
+                                                        @Html.DropDownListFor(model => model.OrderBy, new List<SelectListItem>
+                                                        {
+                                                        new SelectListItem{ Text="Employee Name", Value = "EmpName" },
+                                                        new SelectListItem{ Text="Dpt. Employee Code", Value = "dptEmpCode" },
+                                                        }, "-- Select Type--", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Bill Date</label>
+                                                        @Html.TextBoxFor(model => model.BillDate, new { @class = "form-control", @type = "date" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4" style="margin-top:30px">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-success" type="submit">
+                                                            Submit
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <br />
+                                                <br />
+                                                <br />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                @if (Model != null)
+                {
+                    if (Model.DeductionType == "PPF" || Model.DeductionType == "GPF")
+                    {
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>Employee Deduction Report</h5>
+                                            <div class="table" id="ticket_list">
+                                                <div class="table-responsive">
+                                                    <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr role="row" class="bg-secondary">
+                                                                <th>EmpId</th>
+                                                                <th>Department Name</th>
+                                                                <th>Sub Department Name</th>
+                                                                <th>EmpName</th>
+                                                                <th>FatherName</th>
+                                                                <th>DptEmpCode</th>
+                                                                <th>DesignationName</th>
+                                                                <th>BranchName</th>
+                                                                <th>RTGSCode</th>
+                                                                <th>AccountNo</th>
+                                                                <th>Code</th>
+                                                                <th>Gross</th>
+                                                                <th>NetPay</th>
+                                                                <th>Amount</th>
+                                                                <th>AdvAmount</th>
+                                                                <th>BankName</th>
+                                                                <th>GISNo</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var item in Model.List)
+                                                            {
+
+                                                                <tr role="row" class="odd">
+                                                                    <td>@item.EmpId</td>
+                                                                    <td>@item.DepartmentHead</td>
+                                                                    <td>@item.SubdeptName</td>
+                                                                    <td>@item.EmpName</td>
+                                                                    <td>@item.FatherName</td>
+                                                                    <td>@item.DptEMpCode</td>
+                                                                    <td>@item.DesignationName</td>
+                                                                    <td>@item.BranchName</td>
+                                                                    <td>@item.RTGSCode</td>
+                                                                    <td>@item.AccountNo</td>
+                                                                    <td>@item.Code</td>
+                                                                    <td>@item.Gross</td>
+                                                                    <td>@item.NetPay</td>
+                                                                    <td>@item.Amount</td>
+                                                                    <td>@item.AdvAmount</td>
+                                                                    <td>@item.BankName</td>
+                                                                    <td>@item.GISNO</td>
+                                                                </tr>
+
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    if (Model.DeductionType == "NPS")
+                    {
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>Employee Deduction Report</h5>
+                                            <div class="table" id="ticket_list">
+                                                <div class="table-responsive">
+                                                    <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr role="row" class="bg-secondary">
+                                                                <th>EmpId</th>
+                                                                <th>Department Name</th>
+                                                                <th>Sub Department Name</th>
+                                                                <th>EmpName</th>
+                                                                <th>FatherName</th>
+                                                                <th>DptEmpCode</th>
+                                                                <th>EPFCode</th>
+                                                                <th>GISCode</th>
+                                                                <th>NPSNO</th>
+                                                                <th>DA</th>
+                                                                <th>BasicSalary</th>
+                                                                <th>DesignationName</th>
+                                                                <th>BranchName</th>
+                                                                <th>RTGSCode</th>
+                                                                <th>AccountNo</th>
+                                                                <th>Code</th>
+                                                                <th>Gross</th>
+                                                                <th>NetPay</th>
+                                                                <th>Amount</th>
+                                                                <th>Amount1</th>
+                                                                <th>AdvAmount</th>
+                                                                <th>BankName</th>
+                                                                <th>GISNo</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var item in Model.List)
+                                                            {
+                                                                <tr role="row" class="odd">
+                                                                    <td>@item.EmpId</td>
+                                                                    <td>@item.DepartmentHead</td>
+                                                                    <td>@item.SubdeptName</td>
+                                                                    <td>@item.EmpName</td>
+                                                                    <td>@item.FatherName</td>
+                                                                    <td>@item.DptEMpCode</td>
+                                                                    <td>@item.EPFCode</td>
+                                                                    <td>@item.GISCode</td>
+                                                                    <td>@item.NPSNO</td>
+                                                                    <td>@item.DA</td>
+                                                                    <td>@item.Basicsal</td>
+                                                                    <td>@item.DesignationName</td>
+                                                                    <td>@item.BranchName</td>
+                                                                    <td>@item.RTGSCode</td>
+                                                                    <td>@item.AccountNo</td>
+                                                                    <td>@item.Code</td>
+                                                                    <td>@item.Gross</td>
+                                                                    <td>@item.NetPay</td>
+                                                                    <td>@item.Amount</td>
+                                                                    <td>@item.Amount1</td>
+                                                                    <td>@item.AdvAmount</td>
+                                                                    <td>@item.BankName</td>
+                                                                    <td>@item.GISNO</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    if (Model.DeductionType == "LIC" || Model.DeductionType == "1" || Model.DeductionType == "2" || Model.DeductionType == "3" || Model.DeductionType == "4" || Model.DeductionType == "5" || Model.DeductionType == "6" || Model.DeductionType == "8" || Model.DeductionType == "7")
+                    {
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>Employee Deduction Report</h5>
+                                            <div class="table" id="ticket_list">
+                                                <div class="table-responsive">
+                                                    <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr role="row" class="bg-secondary">
+                                                                <th>Department Name</th>
+                                                                <th>Sub Department Name</th>
+                                                                <th>EmpName</th>
+                                                                <th>FatherName</th>
+                                                                <th>DptEmpCode</th>
+                                                                <th>DesignationName</th>
+                                                                <th>Gross</th>
+                                                                <th>NetPay</th>
+                                                                <th>Amount</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var item in Model.List)
+                                                            {
+                                                                <tr role="row" class="odd">
+                                                                    <td>@item.DepartmentHead</td>
+                                                                    <td>@item.SubdeptName</td>
+                                                                    <td>@item.EmpName</td>
+                                                                    <td>@item.FatherName</td>
+                                                                    <td>@item.DptEMpCode</td>
+                                                                    <td>@item.DesignationName</td>
+                                                                    <td>@item.Gross</td>
+                                                                    <td>@item.NetPay</td>
+                                                                    <td>@item.Amount</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    if (Model.DeductionType == "ESIC" || Model.DeductionType == "EPF")
+                    {
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>Employee Deduction Report</h5>
+                                            <div class="table" id="ticket_list">
+                                                <div class="table-responsive">
+                                                    <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr role="row" class="bg-secondary">
+                                                                <th>EmpId</th>
+                                                                <th>PFMSCode</th>
+                                                                <th>Department Name</th>
+                                                                <th>Sub Department Name</th>
+                                                                <th>EPFCode</th>
+                                                                <th>EmpName</th>
+                                                                <th>FatherName</th>
+                                                                <th>DOB</th>
+                                                                <th>DptEmpCode</th>
+                                                                <th>WorkDays</th>
+                                                                <th>GISCode</th>
+                                                                <th>BasicSalary</th>
+                                                                <th>DesignationName</th>
+                                                                <th>BranchName</th>
+                                                                <th>RTGSCode</th>
+                                                                <th>AccountNo</th>
+                                                                <th>AdharNo</th>
+                                                                <th>PanNo</th>
+                                                                <th>MobileNo</th>
+                                                                <th>Nominee</th>
+                                                                <th>DOJ</th>
+                                                                <th>UANNO</th>
+                                                                <th>Code</th>
+                                                                <th>Gross</th>
+                                                                <th>DAAmount</th>
+                                                                <th>Amount</th>
+                                                                <th>Amount1</th>
+                                                                <th>BankName</th>
+                                                                <th>GISNo</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var item in Model.List)
+                                                            {
+                                                                <tr role="row" class="odd">
+                                                                    <td>@item.EmpId</td>
+                                                                    <td>@item.Pfmscode</td>
+                                                                    <td>@item.DepartmentHead</td>
+                                                                    <td>@item.SubdeptName</td>
+                                                                    <td>@item.EPFCode</td>
+                                                                    <td>@item.EmpName</td>
+                                                                    <td>@item.FatherName</td>
+                                                                    <td>@item.DOB</td>
+                                                                    <td>@item.DptEMpCode</td>
+                                                                    <td>@item.WorkDays</td>
+                                                                    <td>@item.GISCode</td>
+                                                                    <td>@item.BasicSalary</td>
+                                                                    <td>@item.DesignationName</td>
+                                                                    <td>@item.BranchName</td>
+                                                                    <td>@item.RTGSCode</td>
+                                                                    <td>@item.AccountNo</td>
+                                                                    <td>@item.AdharNo</td>
+                                                                    <td>@item.Panno</td>
+                                                                    <td>@item.Mobileno</td>
+                                                                    <td>@item.Nominee</td>
+                                                                    <td>@item.DOJ</td>
+                                                                    <td>@item.UANNO</td>
+                                                                    <td>@item.Code</td>
+                                                                    <td>@item.Gross</td>
+                                                                    <td>@item.DAAmount</td>
+                                                                    <td>@item.Amount</td>
+                                                                    <td>@item.Amount1</td>
+                                                                    <td>@item.BankName</td>
+                                                                    <td>@item.GISNO</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    if (Model.DeductionType == "PEN(BASIC)" || Model.DeductionType == "PEN(BASIC+DA)" || Model.DeductionType == "GIS"||Model.DeductionType == "Vehicle User Charges" || Model.DeductionType== "TDS"|| Model.DeductionType == "SOCIETY"||Model.DeductionType == "BANKLOAN" || Model.DeductionType == "QUARTERRENT" || Model.DeductionType == "COURTRECOVERY" || Model.DeductionType == "MOBILEADVANCE"||Model.DeductionType == "HBA"||Model.DeductionType == "ReliefFund" || Model.DeductionType == "PAYRECOVERY" || Model.DeductionType == "MISCRECOVERY" || Model.DeductionType == "OTHERRECOVERY" ||Model.DeductionType == "STAFFADVANCE" || Model.DeductionType == "COOPERATIVE" || Model.DeductionType == "PENALTY" || Model.DeductionType == "Other Deduction" || Model.DeductionType == "Misc Deduction")
+                    {
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>Employee Deduction Report</h5>
+                                            <div class="table" id="ticket_list">
+                                                <div class="table-responsive">
+                                                    <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr role="row" class="bg-secondary">
+                                                                <th>EmpId</th>
+                                                                <th>PFMSCode</th>
+                                                                <th>Department Name</th>
+                                                                <th>Sub Department Name</th>
+                                                                <th>EPFCode</th>
+                                                                <th>NPSCode</th>
+                                                                <th>EmpName</th>
+                                                                <th>FatherName</th>
+                                                                <th>DOB</th>
+                                                                <th>DptEmpCode</th>
+                                                                <th>WorkDays</th>
+                                                                <th>GISCode</th>
+                                                                <th>BasicSalary</th>
+                                                                <th>DesignationName</th>
+                                                                <th>BranchName</th>
+                                                                <th>RTGSCode</th>
+                                                                <th>AccountNo</th>
+                                                                <th>AdharNo</th>
+                                                                <th>PanNo</th>
+                                                                <th>MobileNo</th>
+                                                                <th>Nominee</th>
+                                                                <th>DOJ</th>
+                                                                <th>UANNO</th>
+                                                                <th>Code</th>
+                                                                <th>Gross</th>
+                                                                <th>NetPay</th>
+                                                                <th>DAAmount</th>
+                                                                <th>Amount</th>
+                                                                <th>BankName</th>
+                                                                <th>GISNo</th>
+                                                                <th>AcNo</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var item in Model.List)
+                                                            {
+                                                                <tr role="row" class="odd">
+                                                                    <td>@item.EmpId</td>
+                                                                    <td>@item.Pfmscode</td>
+                                                                    <td>@item.DepartmentHead</td>
+                                                                    <td>@item.SubdeptName</td>
+                                                                    <td>@item.EPFCode</td>
+                                                                    <td>@item.EmpName</td>
+                                                                    <td>@item.FatherName</td>
+                                                                    <td>@item.DOB</td>
+                                                                    <td>@item.DptEMpCode</td>
+                                                                    <td>@item.WorkDays</td>
+                                                                    <td>@item.GISCode</td>
+                                                                    <td>@item.BasicSalary</td>
+                                                                    <td>@item.DesignationName</td>
+                                                                    <td>@item.BranchName</td>
+                                                                    <td>@item.RTGSCode</td>
+                                                                    <td>@item.AccountNo</td>
+                                                                    <td>@item.AdharNo</td>
+                                                                    <td>@item.Panno</td>
+                                                                    <td>@item.Mobileno</td>
+                                                                    <td>@item.Nominee</td>
+                                                                    <td>@item.DOJ</td>
+                                                                    <td>@item.UANNO</td>
+                                                                    <td>@item.Code</td>
+                                                                    <td>@item.Gross</td>
+                                                                    <td>@item.NetPay</td>
+                                                                    <td>@item.DAAmount</td>
+                                                                    <td>@item.Amount</td>
+                                                                    <td>@item.BankName</td>
+                                                                    <td>@item.GISNO</td>
+                                                                    <td>@item.AcNo</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Reports/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+    function BindEmpType(id) {
+        debugger;
+        var empCategory = $('#WTypeId').val();
+        if (empCategory > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Reports/GetEmployeeType',
+                data: { empCategory: empCategory },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpType').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+                    }
+                    else {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#EmpType').val(id)
+                    }
+                },
+                error: function (e) {
+                    $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+            })
+        }
+        else {
+            $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+    function BindEmployee(id) {
+        debugger;
+        var SubDeptId = $('#Fk_SubDeptId').val();
+        var DptEpCode = "";
+        var PFMSCODE = $('#PFMSCode').val();
+        var EmpName = $('#EmpName').val();
+        $.ajax({
+            url: '/Reports/GetEmpSalDetail',
+            type: 'post',
+            data: { SubDeptId: SubDeptId, DptEpCode: DptEpCode, PFMSCODE: PFMSCODE, EmpName: EmpName },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#EmpId').empty();
+                    $('#EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2000; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+    function filldepartment() {
+        debugger;
+        var WTypeId = $('#WTypeId').val();
+        if ($('#WTypeId').val() == "" || $('#WTypeId').val() == undefined || $('#WTypeId').val() == null) {
+            swal("", "Please Select Category Type", "warning");
+            return false;
+        }
+        if (WTypeId == 1) {
+
+            $.ajax({
+                url: '/Reports/filldepartment',
+                type: 'post',
+                data: { EmpType: $("#EmpType").val(), WTypeId: $("#WTypeId").val(), Month: $("#Month").val(), Year: $("#Year").val() },
+                dataType: 'json',
+                containtType: 'aplication/json;charset=utf-8',
+                success: function (data) {
+                    if (data != null) {
+                        $('#Fk_DepartmentId').empty();
+                        $('#Fk_DepartmentId').append('<option>---Select----</option>');
+                        for (var i = 0; i < data.length; i++) {
+                            $('#Fk_DepartmentId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                        }
+                        if (id > 0) {
+
+                        }
+                    }
+                },
+                error: function (error) {
+                }
+            });
+        }
+
+        else {
+            $.ajax({
+                url: '/Reports/filldepartment1',
+                type: 'post',
+                data: { EmpType: $("#EmpType").val(), WTypeId: $("#WTypeId").val(), Month: $("#Month").val(), Year: $("#Year").val() },
+                dataType: 'json',
+                containtType: 'aplication/json;charset=utf-8',
+                success: function (data) {
+                    if (data != null) {
+                        $('#Fk_DepartmentId').empty();
+                        $('#Fk_DepartmentId').append('<option>---Select----</option>');
+                        for (var i = 0; i < data.length; i++) {
+                            $('#Fk_DepartmentId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                        }
+                        if (id > 0) {
+
+                        }
+                    }
+                },
+                error: function (error) {
+                }
+            });
+        }
+    }
+    function SubmitForm() {
+
+        debugger;
+        if ($('#WTypeId').val() == "" || $('#WTypeId').val() == undefined || $('#WTypeId').val() == null) {
+            swal("", "Please Select Category Type", "warning");
+            return false;
+        }
+
+        if ($('#Year').val() == "" || $('#Year').val() == undefined || $('#Year').val() == null) {
+            swal("", "Please Select Year  ", "warning");
+            return false;
+        }
+
+        if ($('#Month').val() == "" || $('#Month').val() == undefined || $('#Month').val() == null) {
+            swal("", "Please Select Month", "warning");
+            return false;
+        }
+
+        $("#_Data").html('');
+        $.ajax({
+            url: "/Reports/Show_RptLicDetail",
+            type: "POST",
+            processData: false,
+            data: JSON.stringify({ EmpType: $("#EmpType").val(), WTypeId: $("#WTypeId").val(), Month: $("#Month").val(), Year: $("#Year").val(), SalaryType: $("#SalaryType").val(), OrderBy: $("#OrderBy").val(), EmpId: $("#EmpId").val(), Fk_SubDeptId: $("#Fk_SubDeptId").val(), Fk_DepartmentId: $("#Fk_DepartmentId").val() }),
+            dataType: 'html',
+            contentType: 'application/json',
+            success: function (data) {
+                debugger;
+                $('#close').removeClass("d-none");
+                $("#_Data").html(data);
+            },
+            error: function (error) {
+
+                $("#_Data").html('No Record found')
+            }
+        });
+
+
+    }
+    function ValidateForm() {
+        debugger;
+        if ($('#Year').val() == "" || $('#Year').val() == undefined || $('#Year').val() == null) {
+            swal("", "Please Select Year  ", "warning");
+            return false;
+        }
+        if ($('#Month').val() == "" || $('#Month').val() == undefined || $('#Month').val() == null) {
+            swal("", "Please Select Month", "warning");
+            return false;
+        }
+        if ($('#WTypeId').val() == "" || $('#WTypeId').val() == undefined || $('#WTypeId').val() == null) {
+            swal("", "Please Select Working Type ", "warning");
+            return false;
+        }
+        //if ($('#EmpType').val() == "" || $('#EmpType').val() == undefined || $('#EmpType').val() == null) {
+        //    swal("", "Please Select Emp Type", "warning");
+        //    return false;
+        //}
+        if ($('#SalaryType').val() == "" || $('#SalaryType').val() == undefined || $('#SalaryType').val() == null) {
+            swal("", "Please Select Salary Type  ", "warning");
+            return false;
+        }
+        //if ($('#Fk_DepartmentId').val() == "" || $('#Fk_DepartmentId').val() == undefined || $('#Fk_DepartmentId').val() == null) {
+        //    swal("", "Please Select Department", "warning");
+        //    return false;
+        //}
+        //if ($('#Fk_SubDeptId').val() == "" || $('#Fk_SubDeptId').val() == undefined || $('#Fk_SubDeptId').val() == null) {
+        //    swal("", "Please Select SubDept  ", "warning");
+        //    return false;
+        //}
+        if ($('#DeductionType').val() == "" || $('#DeductionType').val() == undefined || $('#DeductionType').val() == null) {
+            swal("", "Please Select Deduction Type", "warning");
+            return false;
+        }
+        if ($('#OrderBy').val() == "" || $('#OrderBy').val() == undefined || $('#OrderBy').val() == null) {
+            swal("", "Please Select OrderBy", "warning");
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+
+</script>
+
+

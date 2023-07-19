@@ -1,0 +1,77 @@
+﻿@model HRPayroll.Models.EmpStatus
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    <link href="~/assets/css/custom.css" rel="stylesheet" />
+    <link href="~/assets/css/ListPage.css" rel="stylesheet" />
+    <link href="~/assets/plugin/sweetalert/sweetalert.css" rel="stylesheet" />
+    <link href="~/assets/css/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/assets/plugin/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <link href="~/assets/css/dataTables.min.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="row" id="EmpTable">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table">
+                        <div class="table-responsive">
+                            <table class="table dataTable table-striped">
+                                <thead id="tbl">
+                                    <tr role="row" class="bg-secondary">
+                                        <th>S.No</th>
+                                        <th>Employee Name</th>
+                                        <th>Father's Name</th>
+                                        <th>PFMS Code</th>
+                                        <th>Salary Status</th>
+                                        <th>EO Name</th>
+                                        <th>Mobile No</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null &&  Model.EmpStatusList != null)
+                                    {
+                                        if (Model.EmpStatusList.Count() > 0)
+                                        {
+                                            var Sn = 0;
+                                            foreach (var item in Model.EmpStatusList)
+                                            {
+                                                Sn = Sn + 1;
+                                                <tr role="row" class="odd">
+                                                    <td>  @Sn</td>
+                                                    <td>@item.EmpName </td>
+                                                    <td>@item.fathername</td>
+                                                    <td>@item.PFMSCode</td>
+                                                    <td>@item.SalaryStatus</td>
+                                                    <td>@item.EOName</td>
+                                                    <td>@item.EOMobileNo</td>
+                                                     
+                                                     
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="6"><span>No Data Available</span></td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+
+    
+</body>
+</html>

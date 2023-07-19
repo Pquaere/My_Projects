@@ -1,0 +1,136 @@
+﻿@model HRPayroll.Models.AccountLedger
+@{
+    ViewBag.Title = "AccountLedger";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+    <div class="card-body p-4">
+        <h3 class="mb-4 pb-2">Account Ledger</h3>
+        @using (Html.BeginForm("AccountLedger", "Account", FormMethod.Post))
+        {
+            @Html.Partial("_ResponseMessage")
+            @Html.HiddenFor(x => x.Ledger_Id)
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-outline">
+                <label class="form-label">Ledger Name</label>
+                @Html.TextBoxFor(x => x.Ledger_Name, new { @class = "form-control form-control-md", @maxlength = "20" })
+            </div>
+        </div>
+        <div class="col-md-6 mt-2">
+            <div class="form-outline">
+                <label class="form-label">Account Perent Group</label>
+                @Html.DropDownListFor(m => m.Account_Perent_Group_Id, new SelectList(ViewBag.AccountGroups, "Value", "Text"), "-- Select --", new { @class = "form-control form-control-md" })
+            </div>
+        </div>
+        <div class="col-md-6 mt-2">
+            <div class="form-outline">
+                <label class="form-label">Current Balance</label>
+                @Html.TextBoxFor(x => x.Current_Balance, new { @class = "form-control form-control-md only-numeric", @maxlength = "10" })
+            </div>
+        </div>
+        <div class="col-md-6 mt-2">
+            <div class="form-outline">
+                <label class="form-label">Financial Year</label>
+                @Html.DropDownListFor(m => m.Fy_Id, new SelectList(ViewBag.FnYear, "Value", "Text"), "-- Select --", new { @class = "form-control form-control-md" })
+            </div>
+        </div>
+        <div class="col-md-6 mt-2">
+            <div class="form-outline">
+                <label class="form-label">Depreciation</label>
+                @Html.TextBoxFor(x => x.Depreciation, new { @class = "form-control form-control-md only-numeric", @maxlength = "100" })
+            </div>
+        </div>
+        <div class="col-md-6 mt-2">
+            <div class="form-outline">
+                <label class="form-label">Account Type</label>
+                @Html.DropDownListFor(m => m.Account_Type, new SelectList(ViewBag.AccountType, "Value", "Text"), "-- Select --", new { @class = "form-control form-control-md" })
+            </div>
+        </div>
+        <div class="col-md-6 mt-2">
+            <div class="form-outline">
+                <label class="form-label">Nature</label>
+                @Html.TextAreaFor(x => x.Nature, new { @class = "form-control form-control-md", @maxlength = "20" })
+            </div>
+        </div>
+        <div class="col-md-3 mt-3">
+            @if (Model.Is_Reserved == 1)
+            {
+                <div class="form-group form-check">
+                    <label class="form-check-label" for="chk">Reserve Ledger</label>
+                    <input type="checkbox" class="form-check-input " id="chk" checked>
+                    @Html.HiddenFor(x => x.Is_Reserved)
+                </div>
+            }
+            else
+            {
+                <div class="form-group form-check">
+                    <label class="form-check-label" for="chk">Reserve Ledger</label>
+                    <input type="checkbox" class="form-check-input " id="chk">
+                    @Html.HiddenFor(x => x.Is_Reserved)
+                </div>
+            }
+
+        </div>
+        <div class="col-md-3 mt-3">
+            @if (Model.Is_Addinlist == 1)
+            {
+                <div class="form-group form-check">
+                    <label class="form-check-label" for="isPrimary">Add In Voucher list</label>
+                    <input type="checkbox" class="form-check-input " id="isPrimary" checked>
+                    @Html.HiddenFor(x => x.Is_Addinlist)
+                </div>
+            }
+            else
+            {
+                <div class="form-group form-check">
+                    <label class="form-check-label" for="isPrimary">Add In Voucher list</label>
+                    <input type="checkbox" class="form-check-input " id="isPrimary">
+                    @Html.HiddenFor(x => x.Is_Addinlist)
+                </div>
+            }
+        </div>
+    </div>
+            <div class="mt-4 pt-2">
+                <input class="btn btn-primary btn-lg" type="submit" value="Submit" />
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+
+    $('#chk').on("change", function () {
+
+        if ($("#chk").prop('checked') == true) {
+            $('#Is_Reserved').val(1);
+        }
+        else {
+            $('#Is_Reserved').val(0);
+        }
+
+    })
+
+    $('#isPrimary').on("change", function () {
+
+        if ($("#isPrimary").prop('checked') == true) {
+            $('#Is_Addinlist').val(1);
+        }
+        else {
+            $('#Is_Addinlist').val(0);
+        }
+
+    })
+
+    $(".only-numeric").bind("keypress", function (e) {
+        var keyCode = e.which ? e.which : e.keyCode
+        if (!(keyCode >= 48 && keyCode <= 57)) {
+            //swal("", "Please enter numeric digit only", "warning");
+            return false;
+        }
+        return true;
+    });
+
+</script>
+

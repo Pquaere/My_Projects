@@ -1,0 +1,592 @@
+﻿@model HRPayroll.Models.LoanReport
+@{
+    ViewBag.Title = "LoanReport";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-lg-4 py-3">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Loan Report</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-outline-info">
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @{
+                                        string Code = (string)TempData["code"];
+                                        string msg = (string)TempData["Msg"];
+                                        if (!string.IsNullOrEmpty(Code))
+                                        {
+                                            if (Code == "1")
+                                            {
+                                                <div class="alert alert-success msgdiv">
+                                                    <strong>Success!</strong> @msg
+                                                </div>
+                                                <script type="text/javascript">
+                                                    window.setTimeout(function () {
+                                                        location.href = '/Admin/LeaveInsert';
+                                                    }, 2000);
+                                                </script>
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-danger msgdiv">
+                                                    <strong>Error!</strong> @msg
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <form method="post" action="/Reports/LoanReport" id="form" onsubmit="return ValidateForm()">
+                                <div class="form-body">
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-12">
+                                                    <h4>Search</h4>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Year<span class="text-danger">*</span></label>
+                                                        @*@Html.DropDownListFor(model => model.Year, new SelectList( "Value", "Text"), "-Select Year-", new { @class = "form-control" })*@
+                                                        <select id="Year" name="Year" class="form-control">
+                                                            <option value="">Select</option>
+                                                        </select>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Month <span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            Employee Category <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(model => model.Wtype, new SelectList(ViewBag.EmpCategory1, "Value", "Text"), "-Select -", new { @class = "form-control", @onchange = "BindEmpType()" })
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            Employee Type <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(model => model.EmpType, new SelectList(String.Empty, "Value", "Text"), "-Select -", new { @class = "form-control", })
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Salary Type:   <span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(m => m.SalaryType, new List<SelectListItem>
+                                                  {
+                                                  new SelectListItem{ Text="Select ", Value = "A" ,Selected=true},
+                                                   new SelectListItem{ Text="Regular Salary ", Value = "L" },
+                                                     new SelectListItem{ Text="Supplementary", Value = "S" },
+                                             }, new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="button" class="btn btn-success" value="FillDepartment" onclick="GetDepartment()" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select  Department <span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Department, new SelectList(String.Empty, "Value", "Text"), "-Select -", new { @class = "form-control", @onchange = "GetSubDepartment()" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department <span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.SubDepartment, new SelectList(String.Empty, "Value", "Text"), "-Select -", new { @class = "form-control", @onchange = "GetEmployee()" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            Employee <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(model => model.EmployeeID, new SelectList(String.Empty
+                                                       , "Value", "Text"), "-Select -", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            Loan Type <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(model => model.LoanType, new SelectList(ViewBag.LoanType, "Value", "Text"), "-Select -", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            Order By <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(m => m.OrderBy, new List<SelectListItem>
+                                                          {
+                                                       new SelectListItem{ Text="Select", Value = "" },
+                                                       new SelectListItem{ Text="Employee Name", Value = "EmpName" },
+                                                        new SelectListItem{ Text="Dpt. Employee Code", Value = "dptEmpCode" },
+                                                     }, new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="submit" value="Search" class="btn btn-success" />
+                                                        <a href="/Reports/LoanReport" class="btn btn-danger"> Reset</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        @if (Model.LoanReportLists != null)
+        {
+            if (Model.LoanReportLists.Count() > 0)
+            {
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- column -->
+                        <div class="col-12">
+                            <div class="card mt-2">
+                                <div class="card-body">
+                                    <div class="row">
+                                    </div>
+                                    <div class="table">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr role="row" class="bg-secondary">
+                                                        <th align="center"><b>S.No.</b></th>
+                                                        <th align="center"><b>Subdepartment Name</b></th>
+                                                        <th align="center"><b>Employee Name</b></th>
+                                                        <th align="center"><b>Emp Code</b></th>
+                                                        <th align="center"><b>Father Name</b></th>
+                                                        <th align="center"><b>Designation</b></th>
+                                                        <th align="center"><b>Gross Pay</b></th>
+                                                        <th align="center"><b>Net Pay</b></th>
+                                                        <th align="center"><b>Loan No</b></th>
+                                                        <th align="center">Co-Operative Loan Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model != null)
+                                                    {
+                                                        var sn = 1;
+                                                        double grosstotal = 0;
+                                                        double NJettotal = 0;
+                                                        double Loantotal = 0;
+                                                        double subdepgrosstotal = 0;
+                                                        double subdepNJettotal = 0;
+                                                        double subdepLoantotal = 0;
+                                                        double depgrosstotal = 0;
+                                                        double depNJettotal = 0;
+                                                        double depLoantotal = 0;
+                                                        string Dep = "";
+                                                        foreach (var item in Model.LoanReportLists.Select(x => x.DepartmentHead).Distinct())
+                                                        {
+                                                            depgrosstotal = 0;
+                                                            depNJettotal = 0;
+                                                            depLoantotal = 0;
+                                                            string Subdep = "";
+                                                            Dep = item;
+                                                            <tr role="row" class="odd">
+                                                                <td colspan="10" style="text-align:center"><strong> Departmnet</strong> : @item</td>
+                                                            </tr>
+                                                            foreach (var item1 in Model.LoanReportLists.Where(x => x.DepartmentHead == item).Select(x => x.SubdeptName).Distinct())
+                                                            {
+                                                                subdepgrosstotal = 0;
+                                                                subdepNJettotal = 0;
+                                                                subdepLoantotal = 0;
+                                                                Subdep = item1;
+
+                                                                <tr role="row" class="odd">
+                                                                    <td colspan="10" style="text-align:right"><strong> Subdepartment</strong> : @item1</td>
+                                                                </tr>
+
+                                                                foreach (var item3 in Model.LoanReportLists.Where(x => x.DepartmentHead == item && x.SubdeptName == item1))
+                                                                {
+                                                                    <tr role="row" class="odd">
+                                                                        <td>@sn</td>
+                                                                        <td>@item3.SubdeptName</td>
+                                                                        <td>@item3.EmpName</td>
+                                                                        <td>@item3.DptEMpCode</td>
+                                                                        <td>@item3.FatherName</td>
+                                                                        <td>@item3.DesignationName</td>
+                                                                        <td>@item3.gross</td>
+                                                                        <td>@item3.NetPay</td>
+                                                                        <td>@item3.AcNO</td>
+                                                                        <td>@item3.Amount </td>
+                                                                    </tr>
+                                                                    sn++;
+                                                                    subdepgrosstotal += Convert.ToDouble(item3.gross);
+                                                                    subdepNJettotal += Convert.ToDouble(item3.NetPay);
+                                                                    subdepLoantotal += Convert.ToDouble(item3.Amount);
+                                                                    depgrosstotal += Convert.ToDouble(item3.gross);
+                                                                    depNJettotal += Convert.ToDouble(item3.NetPay);
+                                                                    depLoantotal += Convert.ToDouble(item3.Amount);
+                                                                    grosstotal += Convert.ToDouble(item3.gross);
+                                                                    NJettotal += Convert.ToDouble(item3.NetPay);
+                                                                    Loantotal += Convert.ToDouble(item3.Amount);
+                                                                }
+                                                                <tr role="row" class="odd">
+                                                                    <td colspan="6" style="text-align:right">@Subdep :Sub Department wise Total</td>
+                                                                    <td>@subdepgrosstotal.ToString("#0.00")</td>
+                                                                    <td>@subdepNJettotal.ToString("#0.00")</td>
+                                                                    <td></td>
+                                                                    <td>@subdepLoantotal.ToString("#0.00")</td>
+                                                                </tr>
+                                                            }
+                                                            <tr role="row" class="odd">
+                                                                <td colspan="6" style="text-align:right">@Dep : Department wise Total</td>
+                                                                <td>@depgrosstotal.ToString("#0.00")</td>
+                                                                <td>@depNJettotal.ToString("#0.00")</td>
+                                                                <td></td>
+                                                                <td>@depLoantotal.ToString("#0.00")</td>
+                                                            </tr>
+
+                                                        }
+                                                        <tr role="row" class="odd">
+                                                            <td colspan="6" style="text-align:right">Grand Total:</td>
+                                                            <td>@grosstotal.ToString("#0.00")</td>
+                                                            <td>@NJettotal.ToString("#0.00")</td>
+                                                            <td></td>
+                                                            <td>@Loantotal.ToString("#0.00")</td>
+                                                        </tr>
+
+                                                        @*foreach (var itm in Model.LoanReportLists.GroupBy(x => x.SubdeptName))
+                                                            {
+                                                                <tr role="row" class="odd">
+
+                                                                    <td>@itm.AcNO</td>
+                                                                </tr>
+                                                                sn++;
+                                                            }
+
+                                                        }*@
+                                                    }
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            else
+            {
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- column -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                    </div>
+                                    <div class="table">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped">
+                                                <thead>
+                                                    <tr role="row" class="bg-secondary">
+                                                        <th align="center"><b>S.No.</b></th>
+                                                        <th align="center"><b>Subdepartment Name</b></th>
+                                                        <th align="center"><b>Employee Name</b></th>
+                                                        <th align="center"><b>Emp Code</b></th>
+                                                        <th align="center"><b>Father Name</b></th>
+                                                        <th align="center"><b>Designation</b></th>
+                                                        <th align="center"><b>Gross Pay</b></th>
+                                                        <th align="center"><b>Net Pay</b></th>
+                                                        <th align="center"><b>Loan No</b></th>
+                                                        <th align="center">Co-Operative Loan Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="10" style="text-align:center">No reocrd found</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    }
+
+                    }
+
+
+                </div>
+            </div>
+  
+
+<script>
+
+    $(document).ready(function () {
+        debugger;
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2017; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+
+        debugger;
+        if ($('#Wtype').val() > 0) {
+            BindEmpType('@Model.EmpType');
+        }
+        if ($('#Department').val() > 0) {
+            GetSubDepartment('@Model.SubDepartment');
+        }
+        /*if ($('#SubDepartment').val()>0)*/
+        if ('@Model.Year' > 0) {
+
+            $('#Year').val(@Model.Year)
+        }
+
+        if ('@Model.Year' > 0 && '@Model.Month'>0 && '@Model.Wtype'>0) {
+            GetDepartment('@Model.Department');
+        }
+
+       
+
+
+    })
+
+    function BindEmpType(id) {
+        debugger;
+        var empCategory = $('#Wtype').val();
+        if (empCategory > 0) {
+
+            $.ajax({
+                type: 'post',
+                url: '/Reports/GetEmployeeType',
+                data: { empCategory: empCategory },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("Select "));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpType').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("Select "));
+                    }
+                    if (id > 0) {
+                        $('#EmpType').val(id)
+                    }
+                },
+                error: function (e) {
+                    $("#EmpType").children().remove().end().append($("<option></option>").val("").text("Select "));
+                }
+
+            })
+        }
+        else {
+            $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+    function GetDepartment(id) {
+
+        var Year = $('#Year').val();
+        var Month = $('#Month').val();
+        var EmpType = $('#EmpType').val();
+        var Department = $('#Department').val();
+        var SubDepartment = $('#SubDepartment').val();
+        var EmployeeID = $('#EmployeeID').val();
+        var empCategory = $('#Wtype').val();
+        $.ajax({
+            type: 'post',
+            url: '/Reports/BindDepartmentByWorkingType',
+            data: { Year: Year, Month: Month, EmpType: EmpType, Department: Department, SubDepartment: SubDepartment, EmployeeID: EmployeeID, empCategory: empCategory},
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $("#Department").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Department').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                    }
+
+                }
+                else {
+                    $("#Department").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+                if (id > 0) {
+                    $('#Department').val(id);
+
+                }
+                if (@Model.Department> 0) {
+                    GetSubDepartment('@Model.SubDepartment')
+                }
+     },
+            error: function (e) {
+                $("#Department").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+            }
+
+        })
+    }
+
+   function GetSubDepartment(id) {
+        debugger;
+        var Year = $('#Year').val();
+        var Month = $('#Month').val();
+        var EmpType = $('#EmpType').val();
+        var Department = $('#Department').val();
+        var SubDepartment = $('#SubDepartment').val();
+        var EmployeeID = $('#EmployeeID').val();
+        var empCategory = $('#Wtype').val();
+        if (Department > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Reports/GetDepartmnetSubGategory',
+                data: { Year: Year, Month: Month, EmpType: EmpType, Department: Department, SubDepartment: SubDepartment, EmployeeID: EmployeeID, empCategory: empCategory },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#SubDepartment').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#SubDepartment').val(id);
+
+                    }
+                    if (id > 0) {
+                         GetEmployee(id);
+                    }
+                    if (@Model.SubDepartment> 0) {
+                        GetEmployee('@Model.EmployeeID')
+                    }
+                },
+                error: function (e) {
+                    $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+    function GetEmployee(id) {
+        debugger;
+        var Year = $('#Year').val();
+        var Month = $('#Month').val();
+        var EmpType = $('#EmpType').val();
+        var Department = $('#Department').val();
+        var SubDepartment = $('#SubDepartment').val();
+        var EmployeeID = $('#EmployeeID').val();
+        var empCategory = $('#Wtype').val();
+        if (Department > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Reports/GetEmpForLoan',
+                data: { Year: Year, Month: Month, EmpType: EmpType, Department: Department, SubDepartment: SubDepartment, EmployeeID: EmployeeID, empCategory: empCategory },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmployeeID").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmployeeID').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#EmployeeID").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#EmployeeID').val(id);
+
+                    }
+                },
+                error: function (e) {
+                    $("#EmployeeID").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#EmployeeID").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+    function ValidateForm() {
+
+        if ($('#Year').val() == "" || $('#Year').val() == null || $('#Year').val() == undefined) {
+            swal("", "Please select Year", "warning");
+            return false;
+        }
+        if ($('#Month').val() == "" || $('#Month').val() == null || $('#Month').val() == undefined) {
+            swal("", "Please select Month", "warning");
+            return false;
+        }
+        if ($('#Wtype').val() == "" || $('#Wtype').val() == null || $('#Wtype').val() == undefined) {
+            swal("", "Please select Employee Category", "warning");
+            return false;
+        }
+        if ($('#LoanType').val() == "" || $('#LoanType').val() == null || $('#LoanType').val() == undefined) {
+            swal("", "Please select loan type", "warning");
+            return false;
+        }
+
+
+
+        else {
+            $('#form').submit();
+        }
+    }
+</script>
+
+
+

@@ -1,0 +1,312 @@
+﻿@model HRPayroll.Models.VariationReport
+@{
+    ViewBag.Title = "variationReport";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Vartiation Report</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        @{
+                            string Code = (string)TempData["code"];
+                            string msg = (string)TempData["Msg"];
+                            if (!string.IsNullOrEmpty(Code))
+                            {
+                                if (Code == "1")
+                                {
+                                    <div class="alert alert-success msgdiv">
+                                        <strong>Success!</strong> @msg
+                                    </div>
+                                    <script type="text/javascript">
+                                        window.setTimeout(function () {
+                                            location.href = '/Reports/variationReport';
+                                        }, 5000);
+                                    </script>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-danger msgdiv">
+                                        <strong>Error!</strong> @msg
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+                <form method="post" id="form" action="/Reports/variationReport" onsubmit="return ValidateForm()">
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+
+                                        <h5>Search</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">District</label>
+                                                        @Html.DropDownListFor(model => model.District, new SelectList(ViewBag.ddlDistrict, "Value", "Text"), "-Select District-", new { @class = "form-control", @disabled = true })
+                                                        @Html.HiddenFor(model => model.ID)
+                                                        @Html.HiddenFor(model => model.District)
+                                                        @Html.ValidationMessageFor(m => m.District, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">ULB Type</label>
+                                                        @Html.DropDownListFor(model => model.ULBType, new SelectList(ViewBag.Agency, "Value", "Text"), new { @class = "form-control", @disabled = true })
+                                                        @Html.HiddenFor(model => model.ULBType)
+                                                        @Html.ValidationMessageFor(m => m.ULBType, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">ULB Name</label>                                                       @Html.DropDownListFor(model => model.ULBName, new SelectList(ViewBag.Office, "Value", "Text"), "-Select Office-", new { @class = "form-control", @disabled = true })
+                                                        @Html.HiddenFor(model => model.ULBName)
+                                                        @Html.ValidationMessageFor(m => m.ULBName, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Bill Month</label><br />
+
+                                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.Month)
+                                                        @Html.ValidationMessageFor(m => m.Month, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Bill Year</label>
+                                                        <select class="form-control" id="Year" name="Year">
+                                                            <option value="">--select--</option>
+                                                        </select>
+                                                        @Html.HiddenFor(model => model.Year)
+                                                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">WorkingType</label>
+                                                        @Html.DropDownListFor(model => model.WorkingType, new SelectList(ViewBag.Type, "Value", "Text"), "-Select WorkingType-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.WorkingType)
+                                                        @Html.ValidationMessageFor(m => m.WorkingType, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <input type="submit" value="Show Report" class="btn btn-success" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            @if (Model.List != null && Model.List.Count > 0)
+            {
+                <div class="row" id="EmpTable">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table">
+                                    <div class="table-responsive">
+                                        <table class="table dataTable table-striped table-bordered">
+                                            <thead id="tbl">
+                                                <tr role="row" class="bg-secondary">
+                                                    <th colspan="3" style="text-align:center">Variation</th>
+                                                    <th colspan="6" style="text-align:center">@Model.List[0].CurMonth - @Model.Year</th>
+                                                    <th colspan="6" style="text-align:center">@Model.List[0].Premonth - @Model.Year</th>
+                                                    <th colspan="6" style="text-align:center">Difference</th>
+                                                </tr>
+                                                <tr role="row" class="bg-secondary">
+                                                    <th>S No</th>
+                                                    <th class="two">Working Type</th>
+                                                    <th>
+                                                        Employement
+                                                    </th>
+                                                    <th>
+                                                        Total Employee
+                                                    </th>
+                                                    <th>
+                                                        Retired Employee
+                                                    </th>
+                                                    <th>
+                                                        Expire Employee
+                                                    </th>
+                                                    <th>
+                                                        Gross Pay
+                                                    </th>
+                                                    <th>
+                                                        Deduction
+                                                    </th>
+                                                    <th>
+                                                        Net Pay
+                                                    </th>
+                                                    <th>
+                                                        Total Employee
+                                                    </th>
+                                                    <th>
+                                                        Retired Employee
+                                                    </th>
+                                                    <th>
+                                                        Expire Employee
+                                                    </th>
+                                                    <th>
+                                                        Gross Pay
+                                                    </th>
+                                                    <th>
+                                                        Deduction
+                                                    </th>
+                                                    <th>
+                                                        Net Pay
+                                                    </th>
+                                                    <th>
+                                                        Total Employee
+                                                    </th>
+                                                    <th>
+                                                        Retired Employee
+                                                    </th>
+                                                    <th>
+                                                        Expire Employee
+                                                    </th>
+                                                    <th>
+                                                        Gross Pay
+                                                    </th>
+                                                    <th>
+                                                        Deduction
+                                                    </th>
+                                                    <th>
+                                                        Net Pay
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="text-center">
+                                                @if (Model != null && Model.List != null)
+                                                {
+                                                    if (Model.List.Count() > 0)
+                                                    {
+                                                        var Sn = 0;
+                                                        foreach (var item in Model.List)
+                                                        {
+                                                            Sn = Sn + 1;
+                                                <tr role="row" class="odd">
+                                                    <td>  @Sn</td>
+                                                    <td class="two"> @item.WType </td>
+                                                    <td ><a
+    target="_blank"  href="/Reports/DeptwiseVariationReport?eid=@item.E1EmployementId&fmid=@Model.Month&fyid=@Model.Year"  > @item.Employement 
+</a></td>
+                                                    <td> @item.P1TotalEmp </td>
+                                                    <td> @item.P1Retirement </td>
+                                                    <td> @item.P1Expire </td>
+                                                    <td> @item.P1GrossPay </td>
+                                                    <td> @item.P1Deduction </td>
+                                                    <td> @item.P1NetPay </td>
+                                                    <td> @item.P2TotalEmp </td>
+                                                    <td> @item.P2Retirement </td>
+                                                    <td> @item.P2Expire </td>
+                                                    <td> @item.P2GrossPay </td>
+                                                    <td> @item.P2Deduction </td>
+                                                    <td> @item.P2NetPay </td>
+                                                    <td>  @(item.P1TotalEmp - item.P2TotalEmp )</td>
+                                                    <td> @(item.P1Retirement - item.P2Retirement) </td>
+                                                    <td> @(item.P1Expire - item.P2Expire) </td>
+                                                    <td>@(item.P1GrossPay - item.P2GrossPay) </td>
+                                                    <td> @(item.P1Deduction - item.P2Deduction) </td>
+                                                    <td> @(item.P1NetPay - item.P2NetPay) </td>                                                    
+                                                </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="21"><span>No Data Available</span></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var ddlYears = $("#Year");
+
+        var currentYear = (new Date()).getFullYear();
+
+        for (var i = 2000; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+        $('#Year').val('@Model.Year');
+
+    })
+
+
+    function ValidateForm() {
+        debugger;
+        if ($('#Month').val() == '' || $('#Month').val() == '0' || $('#Month').val() == null) {
+            swal("", "Please Select Month...", "warning");
+            $('#Month').focus();
+            return false;
+        }
+        if ($('#Year').val() == '' || $('#Year').val() == null || $('#Year').val() == '0') {
+            swal("", "Please Select Year...", "warning");
+            $('#Year').focus();
+            return false;
+        }
+        if ($('#WorkingType').val() == '' || $('#WorkingType').val() == null || $('#WorkingType').val() == '0') {
+            swal("", "Please select Working Type..", "warning");
+            $('#WorkingType').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+
+     $(function () {
+
+     });
+
+</script>
+
+
+
+

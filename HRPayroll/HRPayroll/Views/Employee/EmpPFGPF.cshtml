@@ -1,0 +1,430 @@
+﻿@model HRPayroll.Models.EmployeePF
+
+@{
+    ViewBag.Title = "EmpPFGPF";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+      <div class="card">
+          <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+              <div class="block-header py-lg-4 py-3">
+                  <div class="row page-titles">
+                      <div class="col-md-12 align-self-center">
+                          <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Employee PF/GPF Account Detail Form</h3>
+                      </div>
+                  </div>
+              </div>
+              <form method="post" id="form" onsubmit="return ValidateForm()">
+                  <div class="container-fluid">
+                      <div class="row mb-3">
+                          <div class="col-lg-12">
+                              <div class="card card-outline-info">
+                                  <div class="card-body">
+                                      <div class="row">
+                                          <div class="col-sm-12">
+                                              @{
+                                                  string Code = (string)TempData["code"];
+                                                  string msg = (string)TempData["Msg"];
+                                                  if (!string.IsNullOrEmpty(Code))
+                                                  {
+                                                      if (Code == "1")
+                                                      {
+                                                          <div class="alert alert-success msgdiv">
+                                                              <strong>Success!</strong> @msg
+                                                          </div>
+                                                          <script type="text/javascript">
+                                                              window.setTimeout(function () {
+                                                                  location.href = '/Employee/EmpPFGPF';
+                                                              }, 4000);
+                                                          </script>
+                                                      }
+                                                      else
+                                                      {
+                                                          <div class="alert alert-danger msgdiv">
+                                                              <strong>Error!</strong> @msg
+                                                          </div>
+                                                      }
+                                                  }
+                                              }
+                                          </div>
+                                      </div>
+
+
+                                      <h5>Search</h5>
+                                      <div class="form-body">
+                                          <div class="row p-t-20">
+                                              <div class="col-md-4">
+                                                  <div class="form-group">
+                                                      <label class="form-label">Employee Category<span class="text-danger">*</span></label>
+                                                      @Html.DropDownListFor(model => model.Fk_CategoryId, new SelectList(ViewBag.Category, "Value", "Text"), "-Select Category-", new { @class = "form-control" })
+                                                      @Html.HiddenFor(model => model.ID)
+                                                      @Html.HiddenFor(model => model.Fk_CategoryId)
+                                                  </div>
+                                              </div>
+
+                                              <div class="col-md-4">
+                                                  <div class="form-group">
+                                                      <label class="form-label">Select Department<span class="text-danger">*</span></label>
+                                                      @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                      @Html.HiddenFor(model => model.Fk_DepartmentId)
+                                                  </div>
+                                              </div>
+
+                                              <div class="col-md-4">
+                                                  <div class="form-group">
+                                                      <label class="form-label">Select Sub Department<span class="text-danger">*</span></label>
+                                                      @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control", @onchange = "BindEmployee();" })
+                                                      @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                  </div>
+                                              </div>
+                                              <div class="col-md-4">
+                                                  <div class="form-group">
+                                                      <label class="form-label">Search Employee<span class="text-danger">*</span></label>
+                                                      @Html.DropDownListFor(model => model.Fk_EmpId, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control", @onchange = "BindEmpDetail();" })
+                                                      @Html.HiddenFor(model => model.Fk_EmpId)
+                                                  </div>
+                                              </div>
+
+                                          </div>
+                                      </div>
+
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="container-fluid">
+                      <div class="row mb-3">
+                          <div class="col-lg-12">
+                              <div class="card card-outline-info">
+
+                                  <div class="card-body">
+                                      <div class="row">
+                                          <div class="col-lg-12">
+                                              <div class="card card-outline-info">
+                                                  <div class="card-body">
+                                                      <h5>Personal Detail</h5>
+                                                      <div class="row p-t-20">
+                                                          <div class="col-md-4">
+                                                              <div class="form-group">
+                                                                  <label class="form-label">Employee Name</label>
+                                                                  @Html.TextBoxFor(M => M.EmpName, new { @class = "form-control", @placeholder = "Employee Name", @readonly = "readonly" })
+
+                                                              </div>
+                                                          </div>
+
+                                                          <div class="col-md-4">
+                                                              <div class="form-group">
+                                                                  <label class="form-label">Father's - W/O Name </label>
+                                                                  @Html.TextBoxFor(M => M.FatherName, new { @class = "form-control", @placeholder = "Father Name", @readonly = "readonly" })
+
+                                                              </div>
+                                                          </div>
+
+                                                          <div class="col-md-4">
+                                                              <div class="form-group">
+                                                                  <label class="form-label">Bank Account Number</label>
+                                                                  @Html.TextBoxFor(M => M.AccountNo, new { @class = "form-control", @placeholder = "Enter  Bank Account Number ", @readonly = "readonly" })
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="container-fluid">
+                      <div class="row mb-3">
+                          <div class="col-lg-12">
+                              <div class="card card-outline-info">
+
+                                  <div class="card-body">
+                                      <div class="row">
+                                          <div class="col-lg-12">
+                                              <div class="card card-outline-info">
+                                                  <div class="card-body">
+                                                      <h5>PF/GPF Bank Account Detail</h5>
+                                                      <div class="row p-t-20">
+                                                          <div class="col-md-4">
+                                                              <div class="form-group">
+                                                                  <label class="form-label">Account Type<span class="text-danger">*</span></label>
+                                                                  @Html.DropDownListFor(m => m.TypeId, new List<SelectListItem>
+                                                                        {
+                                                            new SelectListItem{ Text="-- Select Account Type--", Value = "" },
+                                                                        new SelectListItem{ Text="PF", Value = "1" },
+                                                                        new SelectListItem{ Text="GPF", Value = "2" },
+                                                               }, new { @class = "form-control" })
+                                                                  <input type="hidden" value="@Model.ID" class="ID" />
+                                                              </div>
+                                                          </div>
+
+                                                          <div class="col-md-4">
+                                                              <div class="form-group">
+                                                                  <label class="form-label">
+                                                                      IFSC<span class="text-danger">*</span>
+                                                                  </label>
+                                                                  @Html.TextBoxFor(M => M.IFSC, new { @class = "form-control", @placeholder = "Enter IFSC Code", @maxLength = "20",@onkeypress= " return PanAndIfsc(event)" })
+                                                                  @Html.ValidationMessageFor(m => m.IFSC, "", new { @class = "text-danger" })
+
+                                                              </div>
+                                                          </div>
+
+                                                          <div class="col-md-4">
+                                                              <div class="form-group">
+                                                                  <label class="form-label">
+                                                                      Bank<span class="text-danger">*</span>
+                                                                  </label>
+                                                                  @Html.DropDownListFor(model => model.FK_BankId, new SelectList(ViewBag.Bank, "Value", "Text"), "-Select Bank-", new { @class = "form-control" })
+                                                                  @Html.HiddenFor(model => model.ID)
+                                                                  @Html.HiddenFor(model => model.FK_BankId)
+
+                                                              </div>
+                                                          </div>
+
+                                                          <div class="col-md-4">
+                                                              <div class="form-group">
+                                                                  <label class="form-label">
+                                                                      Account No<span class="text-danger">*</span>
+                                                                  </label>
+                                                                  @Html.TextBoxFor(M => M.PAccountNo, new { @class = "form-control", @placeholder = "Enter GPF Account No", @maxLength = "20", @onkeypress = "return onlyNos(event,this)" })
+
+                                                              </div>
+                                                          </div>
+
+                                                          <div class="col-md-4">
+                                                              <div class="form-group">
+                                                                  <label class="form-label">
+                                                                      Confirm Account No<span class="text-danger">*</span>
+                                                                  </label>
+                                                                  @Html.TextBoxFor(M => M.CAccountNo, new { @class = "form-control",@type="password", @placeholder = "Enter Confirm GPF Account No", @maxLength = "20", @onkeypress = "return onlyNos(event,this)" })
+
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  @if (Model.ID > 0)
+                  {
+                      <div class="row justify-content-center">
+                          <div class="col-md-4">
+                              <div class="text-center">
+                                  <button class="btn btn-success"> <i class="fa fa-check"></i> Update</button>
+                              </div>
+                          </div>
+                      </div>
+                  }
+                  else
+                  {
+                      <div class="row justify-content-center">
+                          <div class="col-md-4">
+                              <div class="text-center">
+                                  <button class="btn btn-success"> <i class="fa fa-check"></i> Submit</button>
+                              </div>
+                          </div>
+                      </div>
+                  }
+              </form>
+          </div>
+      </div>
+    </div>
+</div>
+<script>
+
+    function onlyNos(e, t) {
+        try {
+            if (window.event) {
+                var charCode = window.event.keyCode;
+            }
+            else if (e) {
+                var charCode = e.which;
+            }
+            else { return true; }
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+        catch (err) {
+            alert(err.Description);
+        }
+
+    }
+    function PanAndIfsc(e) {
+        debugger;
+        var k;
+        document.all ? k = e.keyCode : k = e.which;
+        return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+    }
+
+    @*if (@Model.Fk_DepartmentId > 0) {
+        debugger;
+        BindSubDepartment(@Model.Fk_DepartmentId);
+    }*@
+
+    @*if (@Model.Fk_SubDeptId > 0) {
+        debugger;
+        BindEmployee(@Model.Fk_SubDeptId);
+    }
+
+     if (@Model.Fk_SubDeptId > 0) {
+        debugger;
+         BindEmpDetail(@Model.Fk_SubDeptId);
+    }*@
+
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Employee/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#Fk_SubDeptId").val(@Model.Fk_DepartmentId);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindEmployee(id) {
+        debugger;
+        var WTypeId = $('#Fk_CategoryId').val();
+        var SubDeptId = $('#Fk_SubDeptId').val();
+        $.ajax({
+            url: '/Employee/GetEmp',
+            type: 'post',
+            data: { SubDeptId: SubDeptId, WTypeId: WTypeId},
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_EmpId').empty();
+                    $('#Fk_EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindEmpDetail(id) {
+        debugger;
+        var EmpId = $('#Fk_EmpId').val();
+        $.ajax({
+            url: '/Employee/GetEmpDetails',
+            type: 'post',
+            data: { EmpId: EmpId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    $('#EmpName').val(data.EmpName);
+                    $('#FatherName').val(data.FatherName);
+                    $('#AccountNo').val(data.AccountNo);
+                    if (data.TypeId > 0) {
+                        $('#TypeId').val(data.TypeId);
+                    }
+                    $('#IFSC').val(data.IFSC);
+                    if (data.FK_BankId > 0) {
+                        $('#FK_BankId').val(data.FK_BankId);
+                    }
+                    $('#PAccountNo').val(data.PAccountNo);
+                    $('#CAccountNo').val(data.CAccountNo);
+                    $('#ID').val(data.ID);
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+
+    function ValidateForm() {
+        debugger;
+        if ($('#Fk_CategoryId').val() == '' || $('#Fk_CategoryId').val() == '0' || $('#Fk_CategoryId').val() == null) {
+            swal("", "Please select Category..", "warning");
+            $('#Fk_CategoryId').focus();
+            return false;
+        }
+        if ($('#Fk_DepartmentId').val() == '' || $('#Fk_DepartmentId').val() == '0' || $('#Fk_DepartmentId').val() == null) {
+            swal("", "Please select Department..", "warning");
+            $('#Fk_DepartmentId').focus();
+            return false;
+        }
+        if ($('#Fk_SubDeptId').val() == '' || $('#Fk_SubDeptId').val() == '0' || $('#Fk_SubDeptId').val() == null) {
+            swal("", "Please select Sub Department..", "warning");
+            $('#Fk_SubDeptId').focus();
+            return false;
+        }
+        if ($('#Fk_EmpId').val() == '' || $('#Fk_EmpId').val() == '0' || $('#Fk_EmpId').val() == null) {
+            swal("", "Please select Employee..", "warning");
+            $('#Fk_EmpId').focus();
+            return false;
+        }
+        if ($('#TypeId').val() == '' || $('#TypeId').val() == '0' || $('#TypeId').val() == null ) {
+            swal("", "Please select Account Type..", "warning");
+            $('#TypeId').focus();
+            return false;
+        }
+        if ($('#IFSC').val() == '' || $('#IFSC').val() == '0' || $('#IFSC').val() == null) {
+            swal("", "Please Enter IFSC Code..", "warning");
+            $('#IFSC').focus();
+            return false;
+        }
+        if ($('#FK_BankId').val() == '' || $('#FK_BankId').val() == '0' || $('#FK_BankId').val() == null) {
+            swal("", "Please select Bank..", "warning");
+            $('#FK_BankId').focus();
+            return false;
+        }
+        if ($('#PAccountNo').val() == '' || $('#PAccountNo').val() == '0' || $('#PAccountNo').val() == null) {
+            swal("", "Please Enter Account Number..", "warning");
+            $('#PAccountNo').focus();
+            return false;
+        }
+        if ($('#CAccountNo').val() == '' || $('#CAccountNo').val() == '0' || $('#CAccountNo').val() == null) {
+            swal("", "Please Enter Confirm AccountNo..", "warning");
+            $('#CAccountNo').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+
+</script>
+

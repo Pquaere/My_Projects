@@ -1,0 +1,422 @@
+﻿
+@{
+    Layout = null;
+}
+
+@using HRPayroll.Models.Manager
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>@ViewBag.Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="HR & Project Admin Dashboard Template with Bootstrap 5x">
+    <meta name="author" content="WrapTheme, design by: ThemeMakker.com">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    <link href="~/assets/css/custom.css" rel="stylesheet" />
+    <link href="~/assets/css/ListPage.css" rel="stylesheet" />
+    <link href="~/assets/plugin/sweetalert/sweetalert.css" rel="stylesheet" />
+    <link href="~/assets/css/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/assets/plugin/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <link href="~/assets/css/dataTables.min.css" rel="stylesheet" />
+    <link href="~/assets/css/select2.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+    @if (SessionManager.UTypeId == 5 || SessionManager.UTypeId == 0)
+    {
+        Response.Redirect("/Home/Index");
+    }
+    else
+    {
+        <div id="layout" class="theme-orange">
+            <!-- Page Loader -->
+            <div class="page-loader-wrapper text-center">
+                <div class="loader">
+
+                    <h4>HR PAYROLL</h4>
+                    <div class="h5 fw-light mt-3">Please wait...</div>
+                </div>
+            </div>
+            <!-- Overlay For Sidebars -->
+
+            <div id="wrapper">
+
+                <!-- top navbar -->
+                <nav class="navbar navbar-fixed-top">
+                    <div class="container-fluid">
+                        <div class="navbar-btn">
+                            <button type="button" class="btn-toggle-offcanvas"><i class="fa fa-bars"></i></button>
+                        </div>
+
+                        <div class="navbar-brand ps-2">
+                            <a href="#">
+                                <img src="~/assets/images/quaere-software-company-logo1.svg" width="150px" />
+                            </a>
+                        </div>
+
+
+                    </div>
+                </nav>
+
+                <!-- Sidbar menu -->
+                <!-- Sidbar menu -->
+                <div id="left-sidebar" class="sidebar">
+                    <div class="user-account ">
+                        <div class="d-flex mb-3 pb-3 border-bottom align-items-center">
+                            <img src="~/assets/images/user.png" class="avatar lg rounded me-3" alt="User Profile Picture">
+                            <div class="dropdown flex-grow-1">
+                                <span class="d-block">Welcome,</span>
+                                <a href="#" class="dropdown-toggle user-name" data-bs-toggle="dropdown"><strong>@SessionManager.Name</strong></a>
+                                <ul class="dropdown-menu p-2 shadow-sm">
+                                    <li><a href="/Account/ChangePassword"><i class="fa fa-cog me-2"></i>Change Password</a></li>
+                                    <li><a href="/Account/Logout"><i class="fa fa-power-off me-2"></i>Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- nav tab: content -->
+                    <div class="tab-content px-0">
+                        <div class="tab-pane fade show active" id="hr_menu" role="tabpanel">
+                            <nav class="sidebar-nav">
+                                <ul class="metismenu list-unstyled">
+                                    <li class="">
+                                        <a href="/Employee/Dashboard">
+                                            <i class="fa fa-tachometer"></i><span>Dashboard</span>
+                                        </a>
+                                    </li>
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Approve Or Decline Leave</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="/Employee/ApproveOrDeclineLeave">Approve Or Decline Leave</a></li>
+                                            </ul>
+                                        </li>*@
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>MSC Report</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/SearchEmployee">Search Employee</a></li>
+                                            @*<li><a href="#">Employee's Custom Report</a></li>
+                                                <li><a href="#">Employee's Net Payment Report</a></li>
+                                                <li><a href="#">Journal Voucher</a></li>
+                                                <li><a href="#">Permanent's Earning & Deduction Summery</a></li>
+                                                <li><a href="#">Increment Report</a></li>
+                                                <li><a href="#">Pansion Report</a></li>
+                                                <li><a href="#">Income Tax Report</a></li>*@
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Payment Of E-Vetan</span></a>
+                                        <ul class="list-unstyled">
+                                            @*<li><a href="#">Payment Details</a></li>*@
+                                            <li><a href="/Employee/OfficePayment">Payment Of E-Vetan</a></li>
+                                        </ul>
+                                    </li>
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Department And Payment Head</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="/Master/DepartmentList">Department Master</a></li>
+                                                <li><a href="/Master/SubDepartmentList">Sub-Departments Master</a></li>
+                                                <li><a href="#">Payment Head Master</a></li>
+                                                <li><a href="#">Add Sanctioned Designation</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Employee Registration Using Excel</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Permanent/Contractual/ Pensioner Reg-using Excel</a></li>
+                                            </ul>
+                                        </li>*@
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Employee</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/EmployeeRegistration">Add New</a></li>
+                                            <li><a href="/Employee/RegisteredEmployee">Manage/ Edit(Bank Report)</a></li>
+                                            <li><a href="/Employee/SearchEmployee">Employees Detailed Report</a></li>
+                                            <li><a href="/Employee/EmpPFGPF">Add PF/GPF/ NPS Account</a></li>
+                                        </ul>
+                                    </li>
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Constractual Employee</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Add New</a></li>
+                                                <li><a href="#">Manage/ Edit(Bank Report)</a></li>
+                                                <li><a href="#">Employees Detailed Report</a></li>
+                                                <li><a href="#">Add PF Account</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Daily Wages Employee</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Add New</a></li>
+                                                <li><a href="#">Manage/ Edit(Bank Report)</a></li>
+                                                <li><a href="#">Employees Detailed Report</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>OutSourcing Agency Info</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Add New/Registered By Me</a></li>
+                                                <li><a href="#">Manage Vendor Mapping</a></li>
+                                                <li><a href="#">Save Vendor Bill Details</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Pansioner</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Add New</a></li>
+                                                <li><a href="#">Manage/ Edit(Bank Report)</a></li>
+                                                <li><a href="#">Pansioners Detailed Report</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li class="">
+                                            <a href="#-">
+                                                <i class="fa fa-users"></i><span>Payment By Court Order</span>
+                                            </a>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>ULB Share</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Add New Pension Nidhi Account</a></li>
+                                                <li><a href="#">Map Pension Nidhi Account</a></li>
+                                                <li><a href="#">Update GIS No.</a></li>
+                                            </ul>
+                                        </li>*@
+                                    <li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Data Lock Finalization</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="/Employee/FrmFinalizeData">Lock Data</a></li>
+                                                <li><a href="/Employee/FrmUnsettleData">Unlock Data</a></li>
+                                                @*<li><a href="#">Lock Status Report</a></li>*@
+                                            </ul>
+                                        </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Salary Basic Detail</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/UpdateEmpSalary">Update Employee Salary</a></li>
+                                            <li><a href="/Master/SalaryStopAndSuspend">Salary Stop or Suspend</a></li>
+                                            <li><a href="/Employee/EmpSalaryDelete">Delete Salary from Bill</a></li>
+                                            <li><a href="/Employee/ClearEmpData">Clear Previous Earning and Deduction</a></li>
+                                            @*<li><a href="#">Basic Increment</a></li>*@
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>GPF Advance/Loan/LIC</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/EmployeeLoan">Add New Loan/Advance </a></li>
+                                            <li><a href="/Employee/EmployeeLIC">Add New LIC</a></li>
+                                            <li><a href="/Report/AdvanceLoanReport">Advance/Loan Report</a></li>
+                                            <li><a href="/Report/RptEmpLicdetail">LIC Report</a></li>
+                                            <li><a href="/Employee/EmpGISDetail">Add New GIS</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Leave/Supplementary Days </span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/AddEmpLeave">Apply for Leave / Suspend / Supplementary Days</a></li>
+                                            @*<li><a href="#">Generate Excel For Leave</a></li>
+                                                <li><a href="#">Upload Excel For Leave</a></li>*@
+                                            <li><a href="/Report/EmpLeaveSuspendDelete">Delete Leave</a></li>
+                                            <li><a href="/Report/RptEmpLeaveDetail">Leave Report</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Salary(Payroll) </span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/EmpEarningAndDeductionDetail">Earning & Deduction (Permanent)</a></li>
+                                            <li><a href="/Employee/EarningandDeductionContractual">Earning & Deduction (Contractual)</a></li>
+                                            @*<li><a href="#">Earning & Deduction (Pensioner)</a></li>*@
+                                            <li><a href="/Employee/DAilyWagesEarDed">Earning & Deduction (Daily Wages)</a></li>
+                                        </ul>
+                                    </li>
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Salary(Payroll) Using Excel</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Generate Excel Earnings (Permanent)</a></li>
+                                                <li><a href="#">Generate Excel Deductions (Permanent)</a></li>
+                                                <li><a href="#">Upload Excel Earnings (Permanent)</a></li>
+                                                <li><a href="#">Upload Excel Deductions (Permanent)</a></li>
+                                                <li><a href="#">Generate Excel Earning & Deduction (Contractual)</a></li>
+                                                <li><a href="#">Upload Excel Earning & Deduction (Contractual)</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Supplementary Salary</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Supplementary Salary</a></li>
+                                            </ul>
+                                        </li>*@
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Generate Salary</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/GenerateSalary">Permanent Employee</a></li>
+                                            <li><a href="/Employee/GenerateSalary">Contractual Employee</a></li>
+                                            @*<li><a href="/Employee/GenerateSalary">Pensioner</a></li>*@
+                                            <li><a href="/Employee/GenerateSalary">Daily Wages</a></li>
+                                            @*<li><a href="#">Check Salary Before Generate</a></li>*@
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Salary Report</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Report/SalaryBillRpt">Customized Salary Bill</a></li>
+                                            <li><a href="/Report/RptSubDepWiseSummaryCustom">Sub-Department Wise Salary</a></li>
+                                            <li><a href="/Report/RptDepWiseSummaryCustom">Department Wise Summary Custom</a></li>
+                                            <li><a href="/Report/DesigWiseSummery">Designation Wise Summary Custom</a></li>
+                                            <li><a href="/Report/SalarySummery">Department Wise Salary Summary</a></li>
+                                            <li><a href="/Report/SupplementaryReport">Customized Supplementory Bill </a></li>
+                                            <li><a href="/Report/SalaryBillReport">Salary Bill(Permanent)</a></li>
+                                            <li><a href="/Report/RptSamvidaBill">Salary Bill(Contractual)</a></li>
+                                            @*<li><a href="#">Salary Bill(Pensioners)</a></li>*@
+                                            <li><a href="/Report/LeaveDedReport">Leave Deduction Report</a></li>
+                                            <li><a href="/Report/variationReport">Variation Report</a></li>
+                                        </ul>
+                                    </li>
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Pay Slip</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Permanent's Pay Slip</a></li>
+                                                <li><a href="#">Contractual's Pay Slip</a></li>
+                                                <li><a href="#">Pensioners's Pay Slip</a></li>
+                                                <li><a href="#">Permanent's Pay Slip Month Wise</a></li>
+                                                <li><a href="#">Contractual's Pay Slip Month Wise</a></li>
+                                                <li><a href="#">Pensioners's Pay Slip Month Wise</a></li>
+                                            </ul>
+                                        </li>*@
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Deduction Report</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Report/DeductionReport">Deduction Report</a></li>
+                                            <li><a href="/Report/FinancialDedReport">Deduction Report(Financial Report)</a></li>
+                                            <li><a href="/Report/RptEmpLicdetail">LIC Report</a></li>
+                                            <li><a href="/Report/LoanReport">Loan Report</a></li>
+                                        </ul>
+                                    </li>
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>PFMS</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Exclude Employee from PFMS</a></li>
+                                                <li><a href="#">Regular Salary in  PFMS Format for Permanent Emp.</a></li>
+                                                <li><a href="#">Sub Department Wise PFMS for Permanent Emp.</a></li>
+                                                <li><a href="#">Salary Bill in PFMS Format for Contractual Emp.</a></li>
+                                                <li><a href="#">Sub Department Wise PFMS for Contractual Emp.</a></li>
+                                                <li><a href="#">EPF/NPS Employer PFMS Report</a></li>
+                                                <li><a href="#">Bill in PFMS Format for Pensioner's Emp.</a></li>
+                                                <li><a href="#"> Bill in PFMS Format for Agency/Vendor</a></li>
+                                                <li><a href="#">Supplementary Salary in  PFMS Format for Permanent Emp.</a></li>
+                                                <li><a href="#">Supplementary Salary in  PFMS Format for Contractual Emp. </a></li>
+                                                <li><a href="#">Bill in PFMS Format for Daily Wages</a></li>
+                                                <li><a href="#">Bonus Bill in PFMS Format</a></li>
+                                            </ul>
+                                        </li>*@
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Banking Report</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Report/Rptemppayment">Payment By Bank Report</a></li>
+                                        </ul>
+                                    </li>
+                                    @*<li class="">
+                                            <a href="#-">
+                                                <i class="fa fa-users"></i><span>Deduction Filling</span>
+                                            </a>
+                                        </li>*@
+                                    @*<li class="">
+                                            <a href="#-">
+                                                <i class="fa fa-users"></i><span>Employee Other Expenditure</span>
+                                            </a>
+                                        </li>*@
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Transfer Employee Data</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/InternalTransfer">Internal Transfer & Promotion</a></li>
+                                            <li><a href="/Employee/EmployeeTransfer">Transfer Employee</a></li>
+                                            <li><a href="/Employee/Accept_RollbackEmployee">AcceptTransfered Employee</a></li>
+                                            <li><a href="/Employee/Accept_RollbackEmployee">Rollback Transfered Employee</a></li>
+                                            <li><a href="/Employee/EmpStatus">Employee Present Status</a></li>
+                                            <li><a href="/Report/EmpServiceBook">Employee Service Book</a></li>
+                                            <li><a href="/Report/CompensativeReport">Compensative Employees Report</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Bonus</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/GenExcelForBonus">Generate Excel for Bonus</a></li>
+                                                @*<li><a href="#">Upload Excel for Bonus</a></li>*@
+                                            <li>
+                                                <a href="/Employee/GenerateSalaryBonus">Generate Bonus</a>
+                                            </li>
+                                            <li><a href="/Employee/BonusReport"> Bonus Report</a></li>
+                                            @*<li><a href="#">Bonus Deduction Report</a></li>
+                                                <li><a href="#">Delete Bonus</a></li>
+                                                <li><a href="#">Department Wise Bonus Summery</a></li>
+                                                <li><a href="#">Sub Department Wise Bonus Summer</a></li>*@
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Leave Encashment</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/EmpLeaveEncashment">Leave Encashment Details</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>DA Arrear</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/DAArrear">DA Arrear</a></li>
+                                            <li><a href="/Employee/ManageDAArrear">Manage DA Arrear</a></li>
+                                            <li><a href="/Report/DAReport">DA Arrear Report</a></li>
+                                            @*<li><a href="#">DA Arrear Report For July Month</a></li>
+                                                <li><a href="#">DA Arrear Deduction Report</a></li>
+                                                <li><a href="#">NPS Employer PFMS Report</a></li>*@
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="main-content">
+                @RenderBody()
+
+            </div>
+        </div>
+        <!-- page js file -->
+        @*<script src="~/assets/bundles/mainscripts.bundle.js"></script>*@
+
+        <!-- core js file -->
+        <script src="~/assets/bundles/libscripts.bundle.js"></script>
+        <!-- page js file -->
+        <script src="~/assets/bundles/mainscripts.bundle.js"></script>
+        @*<script src="~/assets/bundles/dataTables.bundle.js"></script>*@
+        <script src="../js/pages/index.js"></script>
+
+
+
+        <!-- Sweet-Alert  -->
+        <script src="~/assets/plugin/sweetalert/sweetalert.min.js"></script>
+        <script src="~/assets/js/jquery-confirm.min.js"></script>
+        <script src="~/assets/plugin/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+        <script src="~/assets/plugin/datatables/jquery.dataTables.min.js"></script>
+        <script src="~/assets/plugin/sweetalert/jquery.sweet-alert.custom.js"></script>
+        <script src="~/assets/plugin/styleswitcher/jQuery.style.switcher.js"></script>
+        <script src="~/assets/bundles/select2.bundle.js"></script>
+        <script src="~/assets/js/Custom.js"></script>
+        <script src="~/assets/bundles/dataTables.bundle.js"></script>
+        <script>
+            jQuery(document).ready(function () {
+                $('.dataTable').DataTable();
+                $('.datepicker').datepicker({
+                    format: 'dd-mm-yyyy',
+                    autoclose: true
+                });
+            });
+
+        </script>
+
+        @RenderSection("scripts", required: false)
+    }
+</body>
+</html>

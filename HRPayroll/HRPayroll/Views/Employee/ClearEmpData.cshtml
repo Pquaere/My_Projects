@@ -1,0 +1,252 @@
+﻿@model HRPayroll.Models.ClearData
+
+@{
+    ViewBag.Title = "ClearEmpData";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Clear Employee's Changeable Data Form</h3>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" id="form" onsubmit="return ValidateForm()">
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv" id="msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    /*location.href = '';*/
+                                                                    $('#msgdiv').hide();
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+
+                                        <h5>Search</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                        @Html.HiddenFor(model => model.ID)
+                                                        @Html.HiddenFor(model => model.Fk_DepartmentId)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.Fk_SubDeptId)
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Clear Earning Head<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(m => m.Earnhead, new List<SelectListItem>
+                                                                {
+                                                    new SelectListItem{ Text="-- Select --", Value = "" },
+                                                                new SelectListItem{ Text="Other Allowance", Value = "OtherAllow" },
+                                                                new SelectListItem{ Text="Broom Allowance", Value = "BroomAllow" },
+                                                                new SelectListItem{ Text="Cleaning Allowance", Value = "CleaningAllow" },
+                                                                new SelectListItem{ Text="Chatva Allowance", Value = "ChatvaAllow" },
+                                                                new SelectListItem{ Text="Misc1. Allowance", Value = "MiscAmt1" },
+                                                                new SelectListItem{ Text="Misc2. Allowance", Value = "MiscAmt2" },
+                                                                new SelectListItem{ Text="Misc3. Allowance", Value = "MiscAmt3" },
+                                                                new SelectListItem{ Text="Misc4. Allowance", Value = "MiscAmt4" },
+                                                                new SelectListItem{ Text="SpecPay", Value = "SpecPay" },
+                                                                new SelectListItem{ Text="BilangAllow", Value = "BilangAllow" },
+                                                                new SelectListItem{ Text="DisAllow", Value = "DisAllow" },
+                                                                new SelectListItem{ Text="DepAllow", Value = "DepAllow" },
+                                                                new SelectListItem{ Text="VehicleAllow", Value = "VehicleAllow" },
+                                                       }, new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="text-center">
+                                                        <button class="btn btn-success" onclick="validateEarn()" type="button" style="margin-top: 31px; margin-right: 28rem;"> <i class="fa fa-check"></i> Clear </button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Clear Deduction Head<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(m => m.Dedhead, new List<SelectListItem>
+                                                                {
+                                                    new SelectListItem{ Text="-- Select --", Value = "" },
+                                                                new SelectListItem{ Text="Court. Recovery", Value = "CourtReco" },
+                                                                new SelectListItem{ Text="Vehicle Charges", Value = "VehicleCharges" },
+                                                                new SelectListItem{ Text="Income Tax", Value = "IncomeTax" },
+                                                                new SelectListItem{ Text="Quarter Rent", Value = "QtrRent" },
+                                                                new SelectListItem{ Text="RD", Value = "RD" },
+                                                                new SelectListItem{ Text="Penalty", Value = "Penalty" },
+                                                                new SelectListItem{ Text="Misc. recovery", Value = "MiscReco" },
+                                                                new SelectListItem{ Text="Other Recovery", Value = "OtherReco" },
+                                                                new SelectListItem{ Text="GPF", Value = "GPF" },
+                                                                new SelectListItem{ Text="PPF", Value = "PPF" },
+                                                                new SelectListItem{ Text="GIS", Value = "GIS" },
+                                                                new SelectListItem{ Text="Pay Recovery", Value = "PayReco" },
+                                                                new SelectListItem{ Text="Staff Advance", Value = "StaffAdv" },
+                                                                new SelectListItem{ Text="Cooperative", Value = "CoOperative" },
+                                                                new SelectListItem{ Text="Misc1. Allowance", Value = "MiscAmt1" },
+                                                                new SelectListItem{ Text="Misc2. Allowance", Value = "MiscAmt2" },
+                                                                new SelectListItem{ Text="Misc3. Allowance", Value = "MiscAmt3" },
+                                                                new SelectListItem{ Text="Misc4. Allowance", Value = "MiscAmt4" },
+                                                       }, new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="text-center">
+                                                        <button class="btn btn-success" type="button" onclick="validateDed()" style="margin-top: 30px; margin-right: 28rem; "> <i class="fa fa-check"></i> Clear </button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        debugger;
+        if (@Model.Fk_DepartmentId> 0) {
+            $('#Fk_DepartmentId').val('@Model.Fk_DepartmentId')
+        }
+        if (@Model.Fk_DepartmentId> 0) {
+            BindSubDepartment('@Model.Fk_SubDeptId');
+        }
+
+
+    })
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Employee/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+
+                    }
+
+                }
+                else {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                }
+                if (id > 0) {
+                    $('#Fk_SubDeptId').val(id)
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function validateEarn()
+    {
+        $('#Dedhead').val('');
+        var dep = $('#Fk_DepartmentId').val();
+        if ($('#Fk_DepartmentId').val() == '' || $('#DepartmentId').val() == '0' || $('#Fk_DepartmentId').val() == null) {
+            swal("", "Please Select Department...", "warning");
+            $('#Fk_DepartmentId').focus();
+            return false;
+        }
+
+        if ($('#Earnhead').val() == '' || $('#Earnhead').val() == '0' || $('#Earnhead').val() == null)
+        {
+            swal("", "Please select Earning head..", "warning");
+            $('#Earnhead').focus();
+            return false;
+        }
+        $("#form").submit();
+        $('#Fk_DepartmentId').val(dep);
+    }
+
+    function validateDed() {
+        $('#Earnhead').val('');
+        if ($('#Fk_DepartmentId').val() == '' || $('#DepartmentId').val() == '0' || $('#Fk_DepartmentId').val() == null) {
+            swal("", "Please Select Fk_DepartmentId...", "warning");
+            $('#Fk_DepartmentId').focus();
+            return false;
+        }
+
+        if ($('#Dedhead').val() == '' || $('#Dedhead').val() == '0' || $('#Dedhead').val() == null) {
+            swal("", "Please select Deduction head..", "warning");
+            $('#Dedhead').focus();
+            return false;
+        }
+        $("#form").submit();
+    }
+
+    function ValidateForm() {
+        debugger;
+        if ($('#Fk_DepartmentId').val() == '' || $('#Fk_DepartmentId').val() == '0' || $('#Fk_DepartmentId').val() == null) {
+            swal("", "Please Select DepartmentId...", "warning");
+            $('#Fk_DepartmentId').focus();
+            return false;
+        }
+
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+</script>

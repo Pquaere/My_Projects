@@ -1,0 +1,269 @@
+﻿@model HRPayroll.Models.ServiceBook
+
+@{
+    ViewBag.Title = "EmpServiceBook";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Employee History Report</h3>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" id="form" onsubmit="return ValidateForm()">
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <h5>Search</h5>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv" id="msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    /*location.href = '';*/
+                                                                    $('#msgdiv').hide();
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                        @Html.HiddenFor(model => model.Fk_DepartmentId)
+                                                        @Html.ValidationMessageFor(m => m.Fk_DepartmentId, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                        @Html.ValidationMessageFor(m => m.Fk_SubDeptId, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">PFMS Code:</label>
+                                                        @Html.TextBoxFor(M => M.EmpPFMSCODE, new { @class = "form-control", @placeholder = "Employee PFMS Code" })
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Departmental Employee Unique Code:</label>
+                                                        @Html.TextBoxFor(M => M.DptEmpCode, new { @class = "form-control", @placeholder = "Employee Code" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Search By Name:</label>
+                                                        @Html.TextBoxFor(M => M.EmpName, new { @class = "form-control", @placeholder = "Employee Name" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <button class="btn btn-info mb-2" style="color:white;margin-top:22px;" type="button" onclick="BindEmployee()">
+                                                        Fill Employee
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Employee</label>
+                                                        @Html.DropDownListFor(model => model.Fk_EmpId, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control", @onchange = "BindEmpDetail()" })
+                                                        @Html.HiddenFor(model => model.Fk_EmpId)
+                                                        @Html.ValidationMessageFor(m => m.Fk_EmpId, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <!-- column -->
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5>Employee Service Details</h5>
+                                        <div class="table" id="tbl">
+                                            <div class="table-responsive">
+                                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr role="row" class="bg-secondary">
+                                                            <th>Working Type</th>
+                                                            <th>PFMS Code</th>
+                                                            <th>Employee Name</th>
+                                                            <th>Designation Name</th>
+                                                            <th>Department Name</th>
+                                                            <th>Sub Department Name</th>
+                                                            <th>From Date</th>
+                                                            <th>To Date</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr role="row" class="odd">
+                                                            <td id="WorkingType"></td>
+                                                            <td id="PFMSCODE"></td>
+                                                            <td id="EmployeeName"></td>
+                                                            <td id="DesignationName"></td>
+                                                            <td id="DepartmentName"></td>
+                                                            <td id="SubDepartmentName"> </td>
+                                                            <td id="FromDate"></td>
+                                                            <td id="ToDate"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Reports/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindEmployee(id) {
+        debugger;
+        var SubDeptId = $('#Fk_SubDeptId').val();
+        var DptEpCode = $('#DptEmpCode').val();
+        var PFMSCODE = $('#EmpPFMSCODE').val();
+        var EmpName = $('#EmpName').val();
+        $.ajax({
+            url: '/Reports/GetEmpSalDetail',
+            type: 'post',
+            data: { SubDeptId: SubDeptId, DptEpCode: DptEpCode, PFMSCODE: PFMSCODE, EmpName: EmpName },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_EmpId').empty();
+                    $('#Fk_EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindEmpDetail(id) {
+        debugger;
+        var EmpId = $('#Fk_EmpId').val();
+        $.ajax({
+            url: '/Reports/GetEmpServiceDetails',
+            type: 'post',
+            data: { EmpId: EmpId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    $('#WorkingType').html(data.WorkingType);
+                    $('#PFMSCODE').html(data.PFMSCODE);
+                    $('#EmployeeName').html(data.EmployeeName);
+                    $('#DesignationName').html(data.DesignationName);
+                    $('#DepartmentName').html(data.DepartmentName);
+                    $('#SubDepartmentName').html(data.SubDepartmentName);
+                    $('#FromDate').html(data.FromDate);
+                    $('#ToDate').html(data.ToDate);
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function ValidateForm() {
+        debugger;
+        if ($('#Fk_DepartmentId').val() == '' || $('#Fk_DepartmentId').val() == '0' || $('#Fk_DepartmentId').val() == null) {
+            swal("", "Please select Department..", "warning");
+            $('#Fk_DepartmentId').focus();
+            return false;
+        }
+        if ($('#Fk_SubDeptId').val() == '' || $('#Fk_SubDeptId').val() == '0' || $('#Fk_SubDeptId').val() == null) {
+            swal("", "Please select Sub Department..", "warning");
+            $('#Fk_SubDeptId').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+
+</script>
+
+

@@ -1,0 +1,156 @@
+﻿@model HRPayroll.Models.EmpStatus
+@{
+    ViewBag.Title = "EmpStatus";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Employee Present Status</h3>
+        </div>
+    </div>
+   
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-body">
+                         
+                            <div class="form-body">
+
+                                <div class="row p-t-20">
+                                    <!--/span-->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Search By PFMS Code:
+                                            </label>
+                                            @Html.TextBoxFor(M => M.PFMSCode, new { @class = "form-control", })
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2" style="margin-top:25px">
+                                        <button class="btn btn-success" onclick="Search()" >
+
+                                            Search
+                                        </button>
+                                    </div>
+
+                                </div>
+                                <div class="row p-t-20">
+                                    <!--/span-->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Search By Mobile No:
+                                            </label>
+                                            @Html.TextBoxFor(M => M.MobileNo, new { @class = "form-control", })
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2" style="margin-top:25px">
+                                        <button class="btn btn-success" onclick="Search()">
+
+                                            Search
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row p-t-20">
+                                    <!--/span-->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Search By Account No:
+                                            </label>
+                                            @Html.TextBoxFor(M => M.AccountNo, new { @class = "form-control", })
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2" style="margin-top:25px">
+                                        <button class="btn btn-success" onclick="Search()">
+
+                                            Search
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row p-t-20">
+                                    <!--/span-->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+
+
+                                                Search By Name:
+                                            </label>
+                                            @Html.TextBoxFor(M => M.Name, new { @class = "form-control", })
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2" style="margin-top:25px">
+                                        <button class="btn btn-success" onclick="Search()">
+
+                                            Search
+                                        </button>
+                                    </div>
+
+
+                                    <div class="row">
+                                        <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                                            <div class="card">
+                                                <div id="_Data">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</div>
+
+ <script>
+
+     function Search(id) {
+         debugger;
+         var Name = $('#Name').val();
+         var PFMSCode = $('#PFMSCode').val();
+         var AccountNo = $('#AccountNo').val();
+         var MobileNo = $('#MobileNo').val();
+         $("#_Data").html('');
+
+         $.ajax({
+             url: "/Employee/GetEmpStatus",
+             type: "POST",
+             processData: false,
+             data: JSON.stringify({ Name: Name, PFMSCode: PFMSCode, AccountNo: AccountNo, MobileNo: MobileNo}),
+             dataType: 'html',
+             contentType: 'application/json',
+             success: function (data) {
+                 
+                 debugger;
+                 $('#close').removeClass("d-none");
+                 $("#_Data").html(data);
+
+             },
+             error: function (error) {
+                 $("#_Data").html('No Record found')
+             }
+         });
+     }
+ </script>
+

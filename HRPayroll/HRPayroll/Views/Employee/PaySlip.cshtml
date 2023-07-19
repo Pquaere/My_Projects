@@ -1,0 +1,117 @@
+﻿@model HRPayroll.Models.PaySlip
+@using HRPayroll.Models.Manager;
+@{
+    ViewBag.Title = "PaySlip";
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Pay Slip</h3>
+        </div>
+    </div>
+    <div class="row">
+
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-body">
+
+                        <div class="form-body">
+
+                            <div class="row p-t-20">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Select Year<span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-control" id="Year" name="Year"><option>--Select Year--</option></select>
+                                        @Html.HiddenFor(model => model.Year)
+                                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })  
+                                    </div>
+                                </div>
+                                <!--/span-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Select Month <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-success hstheme-button-o text-white" onclick="ShowReport()">
+                                <i class="fa fa-check"></i>
+                                Show Report
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    @*var Type =@SessionManager.Usertype;*@
+
+    var Wtypeid =@SessionManager.WTypeId;
+     
+
+    $(function () {
+        var ddlYears = $("#Year");
+        var currentYear = (new Date()).getFullYear();
+        for (var i = 2020; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    function ShowReport() {
+        debugger;
+        var Type = "D";
+        
+        const d = new Date();
+        var Month = $('#Month').val();
+        var Year = $('#Year').val();
+        if ($('#Year').val() == "" || $('#Year').val() == undefined || $('#Year').val() == null) {
+            swal("", "Please Select Year  ", "warning");
+            return false;
+        }
+
+        if ($('#Month').val() == "" || $('#Month').val() == undefined || $('#Month').val() == null) {
+            swal("", "Please Select Month", "warning");
+            return false;
+        }
+        if (Year == d.getFullYear()) {
+            if (Month == (d.getMonth() + 1)) {
+                swal("", "You can not see Payslip for Current month.", "warning");
+                return false;
+            }
+        }
+            if (Type == "H") {
+                window.location.href ="/Employee/RptHQEmpPaySlip?Year=" + Year + "&Month=" + Month + "";
+            }
+            else if (Type == "D") {
+                if (Wtypeid == 2) {
+                    window.location.href ="/Employee/ContPaySlip?Year=" + Year + "&Month=" + Month + "";
+                }
+                else {
+                    window.location.href ="/Employee/RptDPPaySlip?Year=" + Year + "&Month=" + Month + "";
+                }
+            }
+        }
+    
+
+</script>

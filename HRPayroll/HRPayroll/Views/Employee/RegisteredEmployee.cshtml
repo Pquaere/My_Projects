@@ -1,0 +1,293 @@
+﻿@model HRPayroll.Models.ListEmpReg
+@{
+    ViewBag.Title = "RegisteredEmployee";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+
+@{
+
+    //var EmpType = (Request.QueryString["Type"] + "").ToString();
+
+
+}
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-2">
+            <div class="row page-titles">
+                <div class="col-md-6 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Registered Employee</h3>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="pbutton" style="text-align: right">
+                        <div class="right text-right">
+                            @*<a href="/Master/Desigation" id="btnAdd" class="btn btn-success btn-sm">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Add Designation*@
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="row">
+                        <form action=" /Employee/RegisteredEmployee" method="get">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Employee Category</label>
+                                        @Html.DropDownListFor(m => m.EmpCategory, new SelectList(ViewBag.EmpCategory1, "Value", "Text"), "-select-", new { @class = "form-control", @onchange = "BindEmpType()" })
+                                        @Html.HiddenFor(m => m.EmpType)
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Employee Type</label>
+                                        @Html.DropDownListFor(m => m.EmpployeType, new SelectList(String.Empty, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+
+                                        <label class="form-label">Employee Name</label>
+                                        @Html.TextBoxFor(m => m.EmPName, new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Employee Code</label>
+                                        @Html.TextBoxFor(m => m.EmpCode, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Employee PFMS Code</label>
+                                        @Html.TextBoxFor(m => m.PFMSCODE, new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Department*</label>
+                                        @Html.DropDownListFor(m => m.Department, new SelectList(ViewBag.Department, "Value", "Text"), "-select-", new { @class = "form-control", @onchange = "GetSubCategory()" })
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Sub Department*</label>
+                                        @Html.DropDownListFor(m => m.SubDepartment, new SelectList(String.Empty, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Designation</label>
+                                        @Html.DropDownListFor(m => m.Designation, new SelectList(ViewBag.Designation, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <input type="submit" value="search" class="btn btn-success" />
+
+                                    <a href="/Employee/RegisteredEmployee" class="btn btn-danger"> Reset</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    @{
+                        string Code = (string)TempData["code"];
+                        string msg = (string)TempData["Msg"];
+                        if (!string.IsNullOrEmpty(Code))
+                        {
+                            if (Code == "1")
+                            {
+                                <div class="alert alert-success msgdiv">
+                                    <strong>Success!</strong> @msg
+                                </div>
+                                <script type="text/javascript">
+                                    window.setTimeout(function () {
+                                        location.href = '/Employee/RegisteredEmployee';
+                                    }, 3000);
+                                </script>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger msgdiv">
+                                    <strong>Error!</strong> @msg
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped datatable">
+                                    <thead>
+                                        <tr role="row" class="bg-secondary">
+                                            <th>S.NO </th>
+                                            <th>Employee Category </th>
+                                            <th>Employee Type </th>
+                                            <th> Department Name</th>
+                                            <th> Sub Department Name</th>
+                                            <th> Employee Name</th>
+                                            <th> Father's/Husband's Name</th>
+                                            <th> Designation</th>
+                                            <th> Recruitment mode</th>
+                                            <th> PFMS Code </th>
+                                            <th>Service Quota</th>
+                                            <th> Bank Name</th>
+                                            <th>IFSC Code</th>
+                                            <th> Account No</th>
+                                            <th>PAN</th>
+                                            <th>BasicSalary</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null && Model.lst != null)
+                                        {
+                                            if (Model.lst.Count() > 0)
+                                            {
+                                                var Sn = 0;
+                                                foreach (var item in Model.lst)
+                                                {
+                                                    Sn = Sn + 1;
+                                                    <tr role="row" class="odd">
+                                                        <td>  @Sn</td>
+                                                        @*<td> @item.IsLock </td>*@
+
+                                                        <td> @item.WorkingType </td>
+                                                        <td> @item.EmpType </td>
+
+                                                        <td> @item.DepartmentHead </td>
+                                                        <td> @item.SubDeptName </td>
+                                                        <td> @item.EmPName </td>
+                                                        <td> @item.FatherName </td>
+                                                        <td> @item.DesignationName </td>
+                                                        <td> @item.RecruitMode </td>
+                                                        <td> @item.PFMSCODE </td>
+                                                        <td> @item.QuotaName </td>
+                                                        <td> @item.BankName </td>
+                                                        <td> @item.RTGSCode </td>
+                                                        <td> @item.AccountNo </td>
+                                                        <td> @item.PANNo </td>
+                                                        <td> @item.BasicSalary </td>
+
+                                                        <td> <a href="@Url.Action("EmployeeRegistration","Employee",new {EmpId=item.EmpId,type=item.EmpCategory })" title="Edit"><i class="fa fa-pencil"></i> </a></td>
+
+
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        if ($('#EmpCategory').val() != null) {
+            debugger;
+            BindEmpType('@Model.EmpType');
+        }
+        if ($('#Department').val() != null) {
+            debugger;
+            GetSubCategory('@Model.SubDepartment');
+        }
+    })
+    function BindEmpType(Id) {
+        debugger;
+        var empCategory = $('#EmpCategory').val();
+        if (empCategory > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetEmployeeType',
+                data: { empCategory: empCategory },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpployeType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpployeType').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#EmpployeType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (Id > 0) {
+                        $("#EmpployeType").val(Id)
+                    }
+                },
+                error: function (e) {
+                    $("#EmpployeType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#EmpployeType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+    function GetSubCategory(id) {
+        debugger;
+        var DepartmentId = $('#Department').val();
+        if (DepartmentId > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetSubCategory',
+                data: { DepartmentId: DepartmentId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#SubDepartment').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#SubDepartment').val(id);
+                    }
+                },
+                error: function (e) {
+                    $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+</script>

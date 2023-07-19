@@ -1,0 +1,783 @@
+﻿@model HRPayroll.Models.EDContractual
+@{
+    ViewBag.Title = "EarningandDeductionContractual";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Contractual Earnings & Deductions Form</h3>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" id="form1" >
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv" id="divmsg">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    $('#divmsg').hide();
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5>Search Employee</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                        @Html.HiddenFor(model => model.Fk_DepartmentId)
+                                                        @Html.HiddenFor(model => model.SaveUpdate)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.ID)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4" style="margin-top:31px;">
+                                                    <button type="button" class="btn btn-info mb-2 col-md-12" style="color:white;" onclick="BindEmployee()">
+                                                        Search
+                                                    </button>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Employee</label>
+                                                        @Html.DropDownListFor(model => model.EmpId, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control", @onchange = "BindEmpDetail();" })
+                                                        @Html.HiddenFor(model => model.ID)
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Order By</label>
+                                                        @Html.DropDownListFor(model => model.OrderName, new List<SelectListItem>
+                                                           {
+                                                               new SelectListItem{ Text="Name", Value = "EmpName" },
+                                                               new SelectListItem{ Text="Employee Code", Value = "EmpCode" },
+                                                               new SelectListItem{ Text="Mobile No.", Value = "MobileNo" }
+                                                            }, new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">&nbsp;</label>
+                                                        @Html.DropDownListFor(model => model.AscDesc, new List<SelectListItem>
+                                                           {
+                                                               new SelectListItem{ Text="Ascending", Value = "Asc" },
+                                                               new SelectListItem{ Text="Descending", Value = "Desc" },
+                                                            }, new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <h5>Personal Detail</h5>
+                                        <div class="row p-t-20">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Employee Name</label>
+                                                    @Html.TextBoxFor(M => M.EmpName, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.EmpName, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Father's  Name</label>
+                                                    @Html.TextBoxFor(M => M.FatherName, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.FatherName, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Basic Salary</label>
+                                                    @Html.TextBoxFor(M => M.BasicSalary, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.FatherName, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <h5>Add Earnings</h5>
+                                        <div class="row p-t-20">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">DA Status</label>
+                                                    @Html.DropDownListFor(model => model.DaStatus, new List<SelectListItem>
+                                                       {
+                                                           new SelectListItem{ Text="Admissible", Value = "A" },
+                                                           new SelectListItem{ Text="Manual", Value = "M" },
+                                                           new SelectListItem{ Text="Stop DA", Value = "S" },
+                                                        }, new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>D.A.</label><br />
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            @Html.TextBoxFor(M => M.DAPer, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <b style="color: Red; font-size: larger; display: inline-block; width: 10%; text-align: center;">%</b>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.TextBoxFor(M => M.DA, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Festival  Bonus</label>
+                                                    @Html.TextBoxFor(M => M.Festival, new { @class = "form-control", @maxLength = "20" })
+                                                    @Html.ValidationMessageFor(m => m.Festival, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Other Earnings</label>
+                                                    @Html.TextBoxFor(M => M.EOther, new { @class = "form-control", @maxLength = "20" })
+                                                    @Html.ValidationMessageFor(m => m.EOther, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Misc Earning</label>
+                                                    @Html.TextBoxFor(M => M.EMisc, new { @class = "form-control", @maxLength = "20" })
+                                                    @Html.ValidationMessageFor(m => m.EMisc, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">EPF Employer</label>
+                                                    @Html.TextBoxFor(M => M.EMisc2, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.EMisc2, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">ESIC Employer</label>
+                                                    @Html.TextBoxFor(M => M.EMisc3, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.EMisc3, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <h5>Add Deductions</h5>
+                                        <div class="row p-t-20">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Income Tax</label>
+                                                    @Html.TextBoxFor(M => M.Penality, new { @class = "form-control", @maxLength = "20" })
+                                                    @Html.ValidationMessageFor(m => m.Penality, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">EPF Deduction</label>
+                                                    @Html.TextBoxFor(M => M.PPPfCont, new { @class = "form-control", @maxLength = "20" })
+                                                    @Html.ValidationMessageFor(m => m.PPPfCont, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Other Deduction</label>
+                                                    @Html.TextBoxFor(M => M.DOther, new { @class = "form-control", @maxLength = "20" })
+                                                    @Html.ValidationMessageFor(m => m.DOther, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Misc Deduction</label>
+                                                    @Html.TextBoxFor(M => M.DMisc, new { @class = "form-control", @maxLength = "20" })
+                                                    @Html.ValidationMessageFor(m => m.DMisc, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Court Ded</label>
+                                                    @Html.TextBoxFor(M => M.CourtDed, new { @class = "form-control", @maxLength = "20" })
+                                                    @Html.ValidationMessageFor(m => m.CourtDed, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">EPF Employer</label>
+                                                    @Html.TextBoxFor(M => M.SEPFEmployer, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.SEPFEmployer, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">EPF Employee</label>
+                                                    @Html.TextBoxFor(M => M.SEPFEmployee, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.SEPFEmployee, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">ESIC Employer</label>
+                                                    @Html.TextBoxFor(M => M.SESICEmployer, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.SESICEmployer, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">ESIC Employee</label>
+                                                    @Html.TextBoxFor(M => M.SESICEmployee, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.SESICEmployee, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">ESIC Employee</label>
+                                                    @Html.TextBoxFor(M => M.SESICEmployee, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.SESICEmployee, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">LIC</label>
+                                                    @Html.TextBoxFor(M => M.LicAmount, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(m => m.LicAmount, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="border-form">
+                                                    <div class="row p-t-20">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Total Earnings</label>
+                                                                @Html.TextBoxFor(M => M.TotalEarning, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                @Html.ValidationMessageFor(m => m.TotalEarning, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Total Deduction</label>
+                                                                @Html.TextBoxFor(M => M.TotalDeduction, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                @Html.ValidationMessageFor(m => m.TotalDeduction, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="border-form1">
+                                                    <div class="row p-t-20">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Gross Pay</label>
+                                                                @Html.TextBoxFor(M => M.GrossPay, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                @Html.ValidationMessageFor(m => m.GrossPay, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Net Pay</label>
+                                                                @Html.TextBoxFor(M => M.NetPay, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                @Html.ValidationMessageFor(m => m.NetPay, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mt-2">
+                                                @*<div class="form-group text-center">*@
+                                                    <button type="button" class="btn btn-info mb-2" style="color:white;" id="save" onclick="checkSaveUpdate('S')">
+                                                        Save
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger mb-2" style="color:white;" name="Update" id="Update" onclick="checkSaveUpdate('U')">
+                                                        Update
+                                                    </button>
+                                                    @*</div>*@
+                                                </div>
+
+
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Employee/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#Fk_SubDeptId").val(@Model.Fk_DepartmentId);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindEmployee() {
+        debugger;
+    
+        var WTypeId = 2;
+        var Fk_SubDeptId = parseInt($('#Fk_SubDeptId').val());
+        var DepartmentId = parseInt($('#Fk_DepartmentId').val());
+
+        if (DepartmentId > 0 && WTypeId > 0 && Fk_SubDeptId>0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetEmployeeDropdown',
+                data: { WTypeId: WTypeId, DepartmentId: DepartmentId, Fk_SubDeptId: Fk_SubDeptId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#EmpId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    
+                },
+                error: function (e) {
+                    $("#EmpId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#EmpId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+    //function BindEmployee() {
+
+    //    debugger;
+    //    var SubDeptId = $('#Fk_SubDeptId').val();
+    //    $.ajax({
+    //        url: '/Employee/GetEmpCode',
+    //        type: 'post',
+    //        data: { SubDeptId: SubDeptId },
+    //        dataType: 'json',
+    //        containtType: 'aplication/json;charset=utf-8',
+    //        success: function (data) {
+    //            if (data != null) {
+    //                $('#EmpId').empty();
+    //                $('#EmpId').append('<option>---Select----</option>');
+    //                for (var i = 0; i < data.length; i++) {
+    //                    $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+    //                }
+    //            }
+    //        },
+    //        error: function (error) {
+    //        }
+    //    })
+    //}
+
+    function BindEmpDetail(id) {
+        debugger;
+        var EmpId = $('#EmpId').val();
+        $.ajax({
+            url: '/Employee/GetEmployeeDetail2',
+            type: 'post',
+            data: { EmpID: EmpId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    debugger;
+                    if (data.list.length == 0 && data.list2.length == 0) {
+                        $('#save').prop('disabled', false);
+                        $('#Update').prop('disabled', true);
+
+                    }
+                    else {
+                        $('#save').prop('disabled', true);
+                        $('#Update').prop('disabled', false);
+                    }
+                    //$('#ID').val(data.ID);
+                    //$('#ID').val(data.DepartmentID);
+                    //$('#ID').val(data.SubDeptID);
+                    $('#EmpName').val(data.list.EmpName);
+                    $('#FatherName').val(data.list.FatherName);
+                    $('#BasicSalary').val(data.list.BasicSalary);
+                    $('#EMisc').val(data.list.EMisc);
+                    $('#EMisc2').val(data.list.EMisc2);
+                    $('#EOther').val(data.list.EOther);
+                    $('#Festival').val(data.list.Festival);
+                    $('#Penality').val(data.list.Penality);
+                    $('#PPPfCont').val(data.list2.PPPfCont);
+                    $('#DOther').val(data.list.DOther);
+                    $('#DMisc').val(data.list.DMisc);
+                    $('#CourtDed').val(data.list.CourtDed);
+                    $('#LicAmount').val(data.list.LicAmount);
+                    $('#SESICEmployee').val(data.list2.SESICEmployee);
+                    $('#SESICEmployer').val(data.list2.SESICEmployer);
+                    $('#SEPFEmployee').val(data.list2.SEPFEmployee);
+                    $('#SEPFEmployer').val(data.list2.SEPFEmployer);
+
+
+                    if (parseInt(data.list.DAPer) > 0) {
+                        $('#DAPer').val(data.list.DAPer);
+                        var per = (parseInt(data.list.DAPer) / 100) * (parseInt(data.list.BasicSalary));
+                        $('#DA').val(per);
+                    }
+                    else {
+                        $('#DAPer').val(data.list1.DAPer);
+                        var per = (parseInt(data.list1.DAPer) / 100) * (parseInt(data.list.BasicSalary));
+                        $('#DA').val(per);
+                    }
+
+                    if (parseFloat(data.list.EMisc) >0) {
+                        if (parseFloat($('#BasicSalary').val()) + parseFloat($('#DA').val()) > 15000) {
+                            $('#EMisc').value = (15000 * parseFloat(DTFixHeads.Rows(0)("SEPFEmployer")) / 100, 0)
+                            $('SEPFEmployer').value = (15000 * Val(DTFixHeads.Rows(0)("SEPFEmployer")) / 100, 0)
+                            $('SESICEmployer').value = (15000 * Val(DTFixHeads.Rows(0)("SEPFEmployee")) / 100, 0)
+                        }
+
+                        else {
+                            $('#EMisc').value = (parseFloat($('#BasicSalary').val()) + parseFloat($('#DA').val()) * Val(DTFixHeads.Rows(0)("SEPFEmployer")) / 100, 0)
+                            $('SEPFEmployer').value = (parseFloat($('#BasicSalary').val()) + parseFloat($('#DA').val()) * Val(DTFixHeads.Rows(0)("SEPFEmployer")) / 100, 0)
+                            $('SESICEmployer').value = (parseFloat($('#BasicSalary').val()) + parseFloat($('#DA').val()) * Val(DTFixHeads.Rows(0)("SEPFEmployee")) / 100, 0)
+                        }
+
+                    }
+
+                    else if (parseFloat(data.list.EMisc2) >0)
+                    {
+                        if(parseFloat($('#BasicSalary').val()) + parseFloat($('#DA').val()) > 15000)
+                        {
+                            $('#EMisc').value = (15000 * parseFloat(DTFixHeads.Rows(0)("SESICEmployer")) / 100, 0)
+                            $('SESICEmployer').value = (15000 * parseFloat(DTFixHeads.Rows(0)("SESICEmployer")) / 100, 0)
+                            $('SESICEmployee').value = (15000 * parseFloat(DTFixHeads.Rows(0)("SESICEmployee")) / 100, 0)
+                        }
+
+                        else
+                        {
+                            $('#EMisc').value = (parseFloat($('#BasicSalary').val()) + parseFloat($('#DA').val()) * Val(DTFixHeads.Rows(0)("SESICEmployer")) / 100, 0)
+                            $('SESICEmployer').value = (parseFloat($('#BasicSalary').val()) + parseFloat($('#DA').val()) * parseFloat(DTFixHeads.Rows(0)("SESICEmployer")) / 100, 0)
+                            $('SESICEmployee').value = (parseFloat($('#BasicSalary').val()) + parseFloat($('#DA').val()) * parseFloat(DTFixHeads.Rows(0)("SESICEmployee")) / 100, 0)
+                        }
+                    }
+
+                    $('#TotalEarning').val((parseFloat($('#EMisc2').val())) + parseFloat($('#EMisc2').val()) + parseFloat($('#EMisc2').val()) + parseFloat($('#EMisc2').val()) + parseFloat($('#DA').val()) + parseFloat($('#EOther').val()))
+
+
+                    $('#GrossPay').val((parseFloat($('#TotalEarning').val())) + parseFloat($('#BasicSalary').val()))
+                    var licamt = $('#LicAmount').val()
+                    if (licamt == "") {
+                        licamt = "0";
+                    }
+                    var totalDed = (parseFloat($('#SEPFEmployer').val()) + parseFloat($('#SESICEmployer').val()) + parseFloat($('#SEPFEmployee').val()) + parseFloat($('#SESICEmployee').val()) + parseFloat($('#Penality').val()) + parseFloat($('#DMisc').val()) + parseFloat($('#CourtDed').val()) + parseFloat($('#DOther').val()) + parseFloat($('#PPPfCont').val()) + parseFloat(licamt))
+
+                    if (isNaN(totalDed)) totalDed = 0;
+                    $('#TotalDeduction').val(totalDed)
+
+                    var net = (parseFloat($('#GrossPay').val()) - parseFloat($('#TotalDeduction').val()))
+                    if (isNaN(net)) net=0
+                    $('#NetPay').val(net)
+
+                }
+
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+        function calculate() {
+            var a = $('#DAPer').val();
+            var b = $('#BasicSalary').val();
+            //alert(a * b / 100);
+            //$('#ContentPlaceHolder1_txtBasicSal').prop('disabled',false)
+            $('#DA').val(a * b / 100)
+            //$('#ContentPlaceHolder1_hdn1').val(a)
+            CalculateEarn();
+            CalculateDed();
+        }
+       
+        function CalculateEarn() {
+            var a = (parseInt($('#DA').val()));
+            var b = (parseInt($('#Festival').val()));
+            var c = (parseInt($('#EOther').val()));
+            var d = (parseInt($('#EMisc').val()));
+            var e = (parseInt($('#EMisc2').val()));
+            var f = (parseInt($('#EMisc3').val()));
+            if (isNaN(a)) {
+                a = 0;
+            }
+            if (isNaN(b)) {
+                b = 0;
+            }
+            if (isNaN(c)) {
+                c = 0;
+            }
+            if (isNaN(d)) {
+                d = 0;
+            }
+            if (isNaN(e)) {
+                e = 0;
+            }
+            if (isNaN(f)) {
+                f = 0;
+            }
+            var amt = a + b + c + d + e + f;
+            $('#TotalEarning').val(a + b + c + d + e + f);
+            var e = (parseInt($('#TotalEarning').val()));
+            var f = (parseInt($('#TotalDeduction').val()));
+            var g = (parseInt($('#BasicSalary').val()));
+            $('#GrossPay').val(e + g );
+            //CalculateDed();
+        }
+        function CalculateDed() {
+            var a = (parseInt($('#Penality').val()));
+            var b = (parseInt($('#PPPfCont').val()));
+            var c = (parseInt($('#DOther').val())); 
+            var d = (parseInt($('#DMisc').val()));
+            var e = (parseInt($('#SEPFEmployer').val()));
+            var f = (parseInt($('#SEPFEmployee').val()));
+            var g = (parseInt($('#SESICEmployer').val()));
+            var h = (parseInt($('#SESICEmployee').val()));
+            var i = (parseInt($('#LicAmount').val()));
+            var j = (parseInt($('#CourtDed').val()));
+            if (isNaN(a)) {
+                a = 0;
+            }
+            if (isNaN(b)) {
+                b = 0;
+            }
+            if (isNaN(c)) {
+                c = 0;
+            }
+            if (isNaN(d)) {
+                d = 0;
+            }
+            if (isNaN(e)) {
+                e = 0;
+            }
+            if (isNaN(f)) {
+                f = 0;
+            }
+            if (isNaN(g)) {
+                g = 0;
+            }
+            if (isNaN(h)) {
+                h = 0;
+            }
+            if (isNaN(i)) {
+                i = 0;
+            }
+           
+            if (isNaN(j)) {
+                j = 0;
+            }
+
+
+
+
+
+            $('#TotalDeduction').val(a + b + c + d + e + f + g + h + i +j);
+            var ee = (parseInt($('#GrossPay').val()));
+            var ff = (parseInt($('#TotalDeduction').val()));
+            $('#NetPay').val(ee - ff);
+        }
+
+    function checkSaveUpdate(form) {
+
+        debugger;
+
+        var EmpId = $('#EmpId').val();
+        if ($('#EmpId').val() == "" || $('#EmpId').val() == null || $('#EmpId').val() == undefined) {
+            swal("", "Please select Employee first", "warning")
+            return false;
+        }
+        
+
+            if (form == "U") {
+                var y = "Update"
+                $('#SaveUpdate').val(y)
+
+            }
+            else {
+                var y = "Save"
+                $('#SaveUpdate').val(y)
+            }
+            $('#form1').submit();
+       
+        }
+
+    $(document).ready(function () {
+            $('#DAPer').blur(function () {
+                calculate();
+            })
+            $('#DA').blur(function () {
+                calculate();
+            })
+            $('#Festival').blur(function () {
+                calculate();
+            })
+            $('#EOther').blur(function () {
+                calculate();
+            })
+            $('#EMisc').blur(function () {
+                calculate();
+            })
+            $('#EMisc2').blur(function () {
+            calculate3();
+            })
+             $('#EMisc3').blur(function () {
+                calculate();
+             })
+             $('#Penality').blur(function () {
+                calculate();
+             })
+            $('#PPPfCont').blur(function () {
+                calculate();
+            })
+            $('#DOther').blur(function () {
+                calculate();
+            })
+            $('#DMisc').blur(function () {
+                calculate();
+            })
+             $('#SEPFEmployer').blur(function () {
+                calculate();
+            })
+        
+            $('#SEPFEmployee').blur(function () {
+                calculate();
+            })
+            $('#SESICEmployer').blur(function () {
+                calculate();
+            })
+            $('#SESICEmployee').blur(function () {
+                calculate();
+            })
+            $('#LicAmount').blur(function () {
+                calculate();
+            })
+            $('#CourtDed').blur(function () {
+                calculate();
+            })
+            $('#DaStatus').change(function () {
+                dadetail();
+            })
+    })
+
+     function dadetail() {
+        var b = $('#DaStatus').val();
+
+        if (b == 2) {
+            $('#DAPer').prop('readonly', false);
+        }
+        else {
+            $('#DAPer').prop('readonly', true);
+        }
+    }
+</script>

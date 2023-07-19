@@ -1,0 +1,155 @@
+﻿@model HRPayroll.Models.ServiceType
+@{
+    ViewBag.Title = "ServiceTypeList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-2">
+            <div class="row page-titles">
+                <div class="col-md-6 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Service Type List </h3>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="pbutton" style="text-align: right">
+                        <div class="right text-right">
+                            <a href="/Master/ServiceType" id="btnAdd" class="btn btn-success btn-sm">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Add Service Type
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    @{
+                        string Code = (string)TempData["code"];
+                        string msg = (string)TempData["Msg"];
+                        if (!string.IsNullOrEmpty(Code))
+                        {
+                            if (Code == "1")
+                            {
+                                <div class="alert alert-success msgdiv">
+                                    <strong>Success!</strong> @msg
+                                </div>
+                                <script type="text/javascript">
+                                    window.setTimeout(function () {
+                                        location.href = '/Master/ServiceTypeList';
+                                    }, 3000);
+                                </script>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger msgdiv">
+                                    <strong>Error!</strong> @msg
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+
+                <div class="col-md-12">
+
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped datatable">
+                                    <thead>
+                                        <tr role="row" class="bg-secondary">
+                                            <th>S.No</th>
+                                            <th>Office Name</th>
+
+                                            <th> Per. Pension %</th>
+                                            <th>Per. PPF %</th>
+                                            <th>Per. NPS Employee</th>
+                                            <th>Per. NPS Employer</th>
+
+                                            <th>Cont. EPF Employee</th>
+                                            <th>Cont. EPF Employer</th>
+                                            <th>Cont. ESIC Employee</th>
+                                            <th>Cont ESIC Employer</th>
+
+                                            <th>Cont. PPF %%</th>
+                                            <th>Cont DA %%</th>
+                                            <th>Cont PF %%</th>
+
+                                            <th>Py Commision Id</th>
+                                            <th>Effective From Date</th>
+                                            <th>Action</th>
+                                            <th>Status</th>
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null && Model.ServiceTypeList != null)
+                                        {
+                                            if (Model.ServiceTypeList.Count() > 0)
+                                            {
+                                                var Sn = 0;
+                                                foreach (var item in Model.ServiceTypeList)
+                                                {
+                                                    Sn = Sn + 1;
+                                                    <tr role="row" class="odd">
+                                                        <td>  @Sn</td>
+                                                        <td> @item.ServiceName </td>
+                                                        <td> @item.PPenCont </td>
+                                                        <td> @item.PPPFCont </td>
+                                                        <td> @item.PNPSEmployee </td>
+                                                        <td> @item.PNPSEmployer </td>
+
+                                                        <td> @item.SEPFEmployee </td>
+                                                        <td> @item.SEPFEmployer </td>
+                                                        <td> @item.SESICEmployee </td>
+                                                        <td> @item.SESICEmployer </td>
+
+                                                        <td> @item.SPFPercent </td>
+                                                        <td> @item.SDAPercent </td>
+                                                        <td> @item.SPFPercent </td>
+                                                        <td>@item.PayComId</td>
+                                                        <td> @item.ActiveDate </td>
+
+                                                        <td>
+                                                            <a href="/Master/ServiceType?Id=@item.Id" title="Edit"><i class="fa fa-pencil"></i> </a>
+                                                        </td>
+                                                        <td>
+                                                            @if (item.IsActive == 0)
+                                                            {
+                                                                <a href="@Url.Action("ChangeServiceTypeStatus","Master",new { IsActive=1,ID=item.Id})"><span class=" p-1 badge-success">Active</span> </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="@Url.Action("ChangeServiceTypeStatus","Master",new { IsActive=0,ID=item.Id})"><span class=" p-1 badge-danger">In-Active</span> </a>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

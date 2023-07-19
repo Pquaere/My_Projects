@@ -1,0 +1,410 @@
+﻿@model HRPayroll.Models.FrmUnsettleData
+@{
+    ViewBag.Title = "FrmUnsettleData";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Unsettle Data</h3>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="container-fluid">
+                    <div class="row mb-3">
+                        <div class="col-lg-12">
+                            <div class="card card-outline-info">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            @{
+                                                string Code = (string)TempData["code"];
+                                                string msg = (string)TempData["Msg"];
+                                                if (!string.IsNullOrEmpty(Code))
+                                                {
+                                                    if (Code == "1")
+                                                    {
+                                                        <div class="alert alert-success msgdiv">
+                                                            <strong>Success!</strong> @msg
+                                                        </div>
+                                                        <script type="text/javascript">
+                                                            window.setTimeout(function () {
+                                                                location.href = '/Employee/FrmUnsettleData';
+                                                            }, 5000);
+                                                        </script>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="alert alert-danger msgdiv">
+                                                            <strong>Error!</strong> @msg
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+
+
+                                    <h5>Search</h5>
+                                    <div class="form-body">
+                                        <div class="row p-t-20">
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">District</label>
+                                                    @Html.DropDownListFor(model => model.District, new SelectList(ViewBag.ddlDistrict, "Value", "Text"), "-Select District-", new { @class = "form-control", @disabled = true })
+
+                                                    @Html.HiddenFor(model => model.District)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">ULB Type</label>
+                                                    @Html.DropDownListFor(model => model.ULBType, new SelectList(ViewBag.Agency, "Value", "Text"), new { @class = "form-control", @disabled = true })
+                                                    @Html.HiddenFor(model => model.ULBType)
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">ULB Name</label>                                                       @Html.DropDownListFor(model => model.ULBName, new SelectList(ViewBag.Office, "Value", "Text"), "-Select Office-", new { @class = "form-control", @disabled = true })
+                                                    @Html.HiddenFor(model => model.ULBName)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        Bill Year
+                                                    </label>
+                                                    <select class="form-control" id="Year" name="Year"><option>-- Select --</option></select>
+                                                    @Html.HiddenFor(model => model.Year)
+                                                    @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="col-md-4">
+                                                <div>
+                                                    <div class="form-group">
+                                                        <label class="control-label">
+                                                            Bill  Month
+                                                        </label>
+                                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Employee Category<span class="text-danger">*</span></label>
+
+                                                    @Html.DropDownListFor(model => model.WTypeId, new SelectList(ViewBag.EmployeeCategory, "Value", "Text"), "-Select Category-", new { @class = "form-control", @onchange = "BindEmpType();" })
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Select Department<span class="text-danger">*</span></label>
+                                                    @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Select Sub Department<span class="text-danger">*</span></label>
+                                                    @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control" })
+                                                    @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                </div>
+                                            </div>
+
+                                            @*<div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">
+                                                        Order By
+                                                    </label>
+                                                    @Html.DropDownListFor(model => model.OrderBy, new List<SelectListItem>
+   {
+                                                     new SelectListItem{ Text="Order by Name", Value = "1" },
+       new SelectListItem{ Text="Order by PFMS Code", Value = "2" },
+       new SelectListItem{ Text="Order by Department Code", Value = "3" },
+       new SelectListItem{ Text="Order by PPO No", Value = "4" },
+
+    }, "-- Select Order By--", new { @class = "form-control" })
+                                                </div>
+                                            </div>*@
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label"> Salary Type<span class="text-danger">*</span></label>
+                                                    @Html.DropDownListFor(model => model.SalaryType, new List<SelectListItem>
+   {
+        new SelectListItem{ Text="Regular Salary", Value = "C" },
+       new SelectListItem{ Text="Supplementary", Value = "S" },
+    }, "-- Select Type--", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-4 mt-2">
+                                                <button class="btn btn-info mb-2" style="color:white;margin-top:20px;" type="button" onclick="ShowRecord()">
+                                                    Show
+                                                </button>
+                                            </div>
+
+                                            <br />
+                                            <br />
+                                            <br />
+
+                                            <div class="container-fluid  d-none" id="d1">
+                                                <div class="row mb-3">
+                                                    <!-- column -->
+                                                    <div class="col-12">
+                                                        <div class="card">
+                                                            <div class="card-body">
+
+                                                                <div class="table" id="ticket_list">
+                                                                    <div class="table-responsive">
+                                                                        <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                                            <thead>
+                                                                                <tr role="row" class="bg-secondary">
+                                                                                    <th>S.No</th>
+                                                                                    <th>PFMS Code</th>
+                                                                                    <th>Department Name</th>
+                                                                                    <th>Employee Name</th>
+                                                                                   
+                                                                                    <th>Father's Name</th>
+                                                                                    <th>Designation</th>
+                                                                                    <th>Grade</th>
+                                                                                    <th>Level</th>
+                                                                                    <th>SubDept</th>
+                                                                                    <th>Net Amount</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody id="table2">
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <div class="col-md-4 mt-2 d-none" id="d2">
+                                                                 
+
+                                                                            <button type="button" class="btn btn-primary" onclick="Unsettle()">Unsettle Data</button>
+                                                                            <a href="/Employee/FrmUnsettleData" class="btn btn-info">
+                                                                                <i class="fa fa-crosshairs"></i>
+                                                                                Cancel
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2020; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Employee/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+
+    function Unsettle() {
+        debugger;
+        const d = new Date();
+        var Month = $('#Month').val();
+        var Year = $('#Year').val();
+        var SalaryType = $('#SalaryType').val();
+        if ($('#WTypeId').val() == '' || $('#WTypeId').val() == 0) {
+
+            swal("", "Please Select Employee Category   ", "warning");
+            return false;
+        }
+        if ($('#Fk_DepartmentId').val() == '' || $('#Fk_DepartmentId').val() == 0) {
+
+            swal("", "Please Select Department Type  ", "warning");
+            return false;
+        }
+        if ($('#Fk_SubDeptId').val() == '' || $('#Fk_SubDeptId').val() == 0) {
+
+            swal("", "Please Select SubDept  Type  ", "warning");
+            return false;
+        }
+        if ($('#SalaryType').val() == '' || $('#SalaryType').val() == 0) {
+
+            swal("", "Please Select Salary Type   ", "warning");
+            return false;
+        } 
+        if (Year == d.getFullYear()) {
+            if (Month == (d.getMonth() + 1) - 1 && d.getDate() > 20) {
+                swal("", "You can only UnLock salary for previous month within 20 days this month.", "warning");
+                return false;
+            }
+            else if (Month < (d.getMonth() + 1) - 1) {
+                swal("", "You can't UnLock salary for that month.", "warning");
+                return false;
+            }
+            else if (Month > (d.getMonth() + 1) + 1) {
+                swal("", "You can't UnLock salary for upcoming month.", "warning");
+                return false;
+            }
+
+        }
+        else if (Year < d.getFullYear()) {
+            if ((d.getMonth() + 1) == 1 && Month == 12 && d.getDate() > 29) {
+                swal("", "You can only UnLock salary for previous month within 20 days this month.", "warning");
+                return false;
+            }
+            else if (Month < 12) {
+                swal("", "You can't UnLock salary for that month and year.", "warning");
+                return false;
+            }
+            else if ((d.getMonth() + 1) < 12 && (d.getMonth() + 1) > 1 && Month == 12) {
+                swal("", "You can't UnLock salary for that month and year.", "warning");
+                return false;
+            }
+        }
+        else if (Year > d.getFullYear()) {
+            swal("", "You can't UnLock salary for upcoming year.", "warning");
+            return false;
+        }
+
+        $.ajax({
+            url: "/Employee/UnsettleData",
+            type: "POST",
+            data: { WTypeId: $("#WTypeId").val(), Fk_DepartmentId: $("#Fk_DepartmentId").val(), Fk_SubDeptId: $("#Fk_SubDeptId").val(), SalaryType: $("#SalaryType").val(), OrderBy: $("#OrderBy").val(), Month: $("#Month").val(), Year: $("#Year").val(),},
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data.flag == 1) {
+                    swal("", data.message, "success");
+                    window.setTimeout(function () {
+                        debugger
+                        window.location.reload();
+                    }, 3000);
+                }
+                else {
+                    swal("", "Somthing Went Wrong  ", "warning");
+                }
+            },
+            error: function (error) {
+
+            }
+        });
+
+
+    }
+
+
+    function ShowRecord() {
+        debugger;
+        var SalaryType = $('#SalaryType').val();
+        if ($('#WTypeId').val() == '' || $('#WTypeId').val() == 0) {
+
+            swal("", "Please Select Employee Category   ", "warning");
+            return false;
+        }
+        if ($('#Fk_DepartmentId').val() == '' || $('#Fk_DepartmentId').val() == 0) {
+
+            swal("", "Please Select Department Type  ", "warning");
+            return false;
+        }
+        if ($('#Fk_SubDeptId').val() == '' || $('#Fk_SubDeptId').val() == 0) {
+
+            swal("", "Please Select SubDept  Type  ", "warning");
+            return false;
+        }
+        if ($('#SalaryType').val() == '' || $('#SalaryType').val() == 0) {
+
+            swal("", "Please Select Salary Type   ", "warning");
+            return false;
+        }
+
+        $.ajax({
+            url: "/Employee/GetUnsettleData",
+            type: "POST",
+            data: { WTypeId: $("#WTypeId").val(), Fk_DepartmentId: $("#Fk_DepartmentId").val(), Fk_SubDeptId: $("#Fk_SubDeptId").val(), SalaryType: $("#SalaryType").val(), OrderBy: $("#OrderBy").val(), Month: $("#Month").val(), Year: $("#Year").val(), },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data.List.length>0) {
+                    $('#table2').empty();
+                    $('#d1').removeClass('d-none');
+                    $('#d2').removeClass('d-none');
+                    var Sno = 1;
+                    for (var i = 0; i < data.List.length; i++) {
+                        $("#table2").append('<tr><td>' + Sno++ + '</td><td>' + data.List[i].pfmscode + '</td><td>' + data.List[i].departmenthead + '</td><td>' + data.List[i].empname + '</td> <td>' + data.List[i].fathername + '</td><td>' + data.List[i].designationname + '</td><td>' + data.List[i].gradepay + '</td><td>' + data.List[i].LevelID + '</td><td>' + data.List[i].SubDeptId + '</td><td>' + data.List[i].BasicSalary + '</td></tr>');
+
+
+                    }
+                }
+                else {
+                    swal("", "No Record found", "warning");
+                }
+            },
+            error: function (error) {
+
+            }
+        });
+
+
+    }
+</script>

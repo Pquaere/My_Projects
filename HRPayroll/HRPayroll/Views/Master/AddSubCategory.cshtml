@@ -1,0 +1,145 @@
+﻿@model HRPayroll.Models.SubCategory
+@{
+    ViewBag.Title = "AddSubCategory";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Add Sub Category</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                        </div>
+                        <script type="text/javascript">
+                            window.setTimeout(function () {
+                                location.href = '/Master/AddSubCategory';
+                            }, 3000);
+                        </script>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-body">
+                        <form action="/Master/AddSubCategory" method="post" id="FormSubmit" onsubmit="return ValidateForm();">
+                            <div class="form-body">
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Select Category<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(model => model.FK_CategoryId, new SelectList(ViewBag.Category, "Value", "Text"), "-Select Category-", new { @class = "form-control" })
+                                            @Html.HiddenFor(model => model.ID)
+                                            @Html.ValidationMessageFor(m => m.FK_CategoryId, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Sub Category Name<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.SubCategoryName, new { @class = "form-control", @placeholder = "Enter SubCategory Name", @maxlength = "50" })
+                                            @Html.ValidationMessageFor(m => m.SubCategoryName, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Description<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextAreaFor(M => M.Description, new { @class = "form-control", @placeholder = "Enter Description", @maxlength = "100" })
+                                            @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                @if (Model.ID > 0)
+                                {
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Update
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Submit
+                                    </button>
+                                }
+
+                                <a href="/Master/SubCategoryList" class="btn btn-danger hstheme-button-o text-white">
+                                    <i class="fa fa-crosshairs"></i>
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</div>
+<script>
+
+    function ValidateForm() {
+        debugger;
+        if ($('#FK_CategoryId').val() == '' || $('#FK_CategoryId').val() == '0') {
+            swal("", "Please Select Category..", "warning");
+            $('#FK_CategoryId').focus();
+            return false;
+
+        }
+        if ($('#SubCategoryName').val() == '' || $('#SubCategoryName').val() == '0' || $('#SubCategoryName').val() == null) {
+            swal("", "Please Enter SubCategory Name..", "warning");
+            $('#SubCategoryName').focus();
+            return false;
+        }
+        if ($('#Description').val() == '' || $('#Description').val() == '0' || $('#Description').val() == null) {
+            swal("", "Please Enter Description..", "warning");
+            $('#Description').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#FormSubmit").submit();
+        }
+    }
+
+</script>
+
+

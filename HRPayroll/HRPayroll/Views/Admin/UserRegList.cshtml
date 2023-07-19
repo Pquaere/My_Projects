@@ -1,0 +1,163 @@
+﻿@model HRPayroll.Models.User
+@{
+    ViewBag.Title = "UserRegList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-2">
+            <div class="row page-titles">
+                <div class="col-md-6 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Users List</h3>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="pbutton" style="text-align: right">
+                        <div class="right text-right">
+                            @*<a href="/Master/AddActivities" id="btnAdd" class="btn btn-success btn-sm">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>Add Activities
+                                </a>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    @{
+                        string Code = (string)TempData["code"];
+                        string msg = (string)TempData["Msg"];
+                        if (!string.IsNullOrEmpty(Code))
+                        {
+                            if (Code == "1")
+                            {
+                                <div class="alert alert-success msgdiv" id="msgdiv">
+                                    <strong>Success!</strong> @msg
+                                </div>
+                                <script type="text/javascript">
+                                    window.setTimeout(function () {
+                                        /*location.href = '';*/
+                                        $('#msgdiv').hide();
+                                    }, 5000);
+                                </script>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger msgdiv">
+                                    <strong>Error!</strong> @msg
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+
+                <div class="col-md-12">
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <div class="row">
+                                <form action=" /Admin/UserRegList" method="get">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Working Type</label>
+                                                @Html.DropDownListFor(model => model.WTypeId, new SelectList(ViewBag.Type, "Value", "Text"), "-Select-", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+
+                                       
+                                      
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Circle</label>
+                                                @Html.DropDownListFor(model => model.CircleId, new SelectList(ViewBag.Circle, "Value", "Text"), "-Select-", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="form-label">UserName</label>
+                                               @Html.TextBoxFor(m=>m.UserName ,new { @class = "form-control" })
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <input type="submit" value="search" class="btn btn-success" />
+
+                                                <a href="/Admin/UserRegList" class="btn btn-danger"> Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table">
+                                <div class="table-responsive ">
+                                    <table class="table table-striped dataTable">
+                                        <thead id="tbl">
+                                            <tr role="row" class="bg-secondary">
+                                                <th>S.No</th>
+                                                <th>Officer Name</th>
+                                                <th>User Name</th>
+                                                <th>Password </th>
+                                                <th>Email </th>
+                                                <th>Office Name </th>
+                                                <th>Working Type  </th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model != null && Model.UList != null)
+                                            {
+                                                if (Model.UList.Count() > 0)
+                                                {
+                                                    var Sn = 0;
+                                                    foreach (var item in Model.UList)
+                                                    {
+                                                        Sn = Sn + 1;
+                                            <tr role="row" class="odd">
+                                                <input type="hidden" value="@item.ID" class="ID" />
+                                                <td>  @Sn</td>
+                                                <td>@item.EOName</td>
+                                                <td>@item.UserName</td>
+                                                @*<td class="hidetext">@item.Password*@
+                                                <td>
+                                                    <i class="fa fa-eye" onclick="ShowPassword('@item.Password',@Sn)"></i>
+                                                    <span id="txtpassord_@Sn"></span>
+                                                </td>
+                                                <td>@item.EmailId</td>
+                                                <td>@item.OfficeName</td>
+                                                <td>@item.WorkingType</td>                                              
+                                            </tr>
+                                                    }
+                                                }
+                                            }
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ShowPassword(Password, i) {
+        debugger;
+        $('#txtpassord_' + i).text(Password);
+    }
+</script>

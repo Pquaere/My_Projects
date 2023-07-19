@@ -1,0 +1,374 @@
+﻿@model HRPayroll.Models.EmpLeaveSuspendDelete
+@{
+    ViewBag.Title = "EmpLeaveSuspendDelete";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Employee Leave Delete</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                        </div>
+                        <script type="text/javascript">
+                            window.setTimeout(function () {
+                                location.href = '/Employee/EmpLeaveSuspendDelete';
+                            }, 3000);
+                        </script>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-body">
+
+                        <div class="form-body">
+
+                            <div class="row p-t-20">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Select Year<span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-control" id="Year" name="Year"><option>-- Select Year --</option></select>
+                                        @Html.HiddenFor(model => model.Year)
+                                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Select Month<span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Select Employee Type<span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(model => model.WtypeId, new SelectList(ViewBag.WorkingType, "Value", "Text"), "-Select Type-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            PFMS Code
+                                        </label>
+                                        @Html.TextBoxFor(M => M.PFMSCod, new { @class = "form-control", @maxlength = "50" })
+                                        @Html.HiddenFor(M => M.DeleteID, new { @class = "form-control", @maxlength = "50" })
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Departmental Employee Unique Code
+                                        </label>
+                                        @Html.TextBoxFor(M => M.UniqueCode, new { @class = "form-control", @maxlength = "50" })
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4" style="margin-top:20px">
+                                    <div class="form-group">
+                                        <button class="btn btn-success" onclick="fillEmployee()">
+                                            Fill Employee
+                                        </button>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="form-label">Select Employee</label>
+                                        @Html.DropDownListFor(model => model.EmpId, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <!--/span-->
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Select Leave Type
+                                        </label>
+                                        @Html.DropDownListFor(model => model.LeaveType, new List<SelectListItem>
+            {
+                new SelectListItem{ Text="Leave Days", Value = "L" },
+                new SelectListItem{ Text="Suspended", Value = "S" },
+                new SelectListItem{ Text="Hourly Salary", Value = "H" },
+                new SelectListItem{ Text="Break Salary", Value = "V" },
+
+
+             }, "--- Select ---", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4" style="margin-top:20px">
+                                    <button class="btn btn-success" onclick="submit()">
+
+                                        Search
+                                    </button>
+
+                                    <button class="btn btn-danger" id="Delete" onclick="Delete()">
+
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br />
+                        <br />
+                        <br />
+
+                        <div class="container-fluid d-none" id="d1">
+                            <div class="row mb-3">
+                                <!-- column -->
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                           
+                                            <div class="table" id="ticket_list">
+                                                <div class="table-responsive">
+                                                    <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr role="row" class="bg-secondary">
+                                                                <th>S.No</th>
+                                                                <th>Employee Name</th>
+                                                                <th>Father Name</th>
+                                                                <th>PFMS Code</th>
+                                                                <th>Employee Code</th>
+                                                                <th>No. Of Days</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="table2">
+                                                     
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script>
+     
+        $('#Delete').prop('disabled', true);
+    
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2020; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+
+    function submit() {
+        debugger;
+        const d = new Date();
+        var Month = $('#Month').val();
+        var Year = $('#Year').val();
+        
+        if ($('#WtypeId').val() == '' || $('#WtypeId').val() == 0) {
+
+            swal("", "Please Select Employee Type  ", "warning");
+            return false;
+        }
+        if ($('#Year').val() == '' || $('#Year').val() == 0) {
+
+            swal("", "Please Select Year    ", "warning");
+            return false;
+        }
+        if ($('#Month').val() == '' || $('#Month').val() == 0) {
+
+            swal("", "Please Select Month    ", "warning");
+            return false;
+        }
+        if ($('#EmpId').val() == '' || $('#EmpId').val() == 0) {
+
+            swal("", "Please Select Employee  ", "warning");
+            return false;
+        }
+        if (Year == d.getFullYear()) {
+            if (Month == (d.getMonth() + 1) - 3 && d.getDate() > 10) {
+                swal("", "You can only delete data for previous month within 10 days this month.", "warning");
+                return false;
+            }
+            else if (Month < (d.getMonth() + 1) - 3) {
+                swal("", "You can't delete data for that month.", "warning");
+                return false;
+            }
+            else if (Month > (d.getMonth() + 1) + 3) {
+                swal("", "You can't delete data for upcoming month.", "warning");
+                return false;
+            }
+
+        }
+        else if (Year < d.getFullYear()) {
+            if ((d.getMonth() + 1) == 1 && Month == 12 && d.getDate() > 10) {
+                swal("", "You can only delete data for previous month within 10 days this month..", "warning");
+                return false;
+            }
+            else if (Month < 12) {
+                swal("", "You can't delete data for that month and year.", "warning");
+                return false;
+            }
+            else if ((d.getMonth() + 1) < 12 && (d.getMonth() + 1) > 3 && Month == 12) {
+                swal("", "You can't delete data for that month and year.", "warning");
+                return false;
+            }
+        }
+        else if (Year > d.getFullYear()) {
+            swal("", "You can't delete data for upcoming year.", "warning");
+            return false;
+        }
+        
+        $.ajax({
+            url: "/Reports/Report_LeaveDelete",
+            type: "POST",     
+            data:{ EmpId: $("#EmpId").val(), Month: $("#Month").val(), Year: $("#Year").val(), LeaveType: $("#LeaveType").val() },     
+            success: function (data) {
+              
+                 
+                if (data != null) {
+                    $('#table2').empty();
+                    if (data.List.length > 0) {
+                        $('#d1').removeClass('d-none');
+                        $('#Delete').prop('disabled', false);
+                    }
+                    else {
+                        swal("", "No Record found", "warning");
+                    }
+                    var Sno = 1;
+                    for (var i = 0; i < data.List.length; i++) {
+                        $("#table2").append('<tr><td>' + Sno++ + '</td><td>' + data.List[i].EmpName + '</td><td>' + data.List[i].FatherName + '</td><td>' + data.List[i].PFMSCODE + '</td><td>' + data.List[i].DPTEmpCode + '</td><td>' + data.List[i].NoDays + '</td><td style="display:none">' + data.List[i].Id + '</td></tr>');
+
+                        $('#DeleteID').val(data.List[i].Id);
+                    }
+                }
+                else {
+                    swal("", "No Record found", "warning");
+                }
+            },
+            error: function (error) {
+                
+            }
+        });
+
+    }
+
+
+
+    function Delete() {
+        debugger;
+     
+        if ($('#WtypeId').val() == '' || $('#WtypeId').val() == 0) {
+
+            swal("", "Please Select Employee Type  ", "warning");
+            return false;
+        }
+        if ($('#EmpId').val() == '' || $('#EmpId').val() == 0) {
+
+            swal("", "Please Select Employee  ", "warning");
+            return false;
+        }
+        $.ajax({
+            url: '/Reports/LeaveDelete',
+            type: "POST",
+            processData: false,
+            data: JSON.stringify({ EmpId: $("#EmpId").val(), Month: $("#Month").val(), Year: $("#Year").val(), LeaveType: $("#LeaveType").val(), DeleteID: $("#DeleteID").val()  }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data1) {
+                debugger
+                if (data1 != null) {
+                    if (data1.flag == 1) {
+                        swal("", data1.message, "success");
+                    }
+                    else {
+                        swal("", data1.message, "warning");
+                    }
+                }
+               
+            },
+            error: function (error) {
+
+            }
+        });
+
+    }
+
+
+    function fillEmployee(id) {
+        debugger; 
+        var WtypeId = $('#WtypeId').val();
+        if ($('#WtypeId').val() == '' || $('#WtypeId').val() == 0) {
+
+            swal("", "Please Select Employee Type  ", "warning");
+            return false;
+        }
+        $.ajax({
+            url: '/Reports/GetEmployee',
+            type: 'post',
+            data: { WtypeId: WtypeId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#EmpId').empty();
+                    $('#EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+</script>

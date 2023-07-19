@@ -1,0 +1,2018 @@
+﻿@model HRPayroll.Models.EmpReg
+@{
+    ViewBag.Title = "EmployeeRegistration";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+}
+@using HRPayroll.Models.Manager
+
+@*@{
+        var QueryEmpType = (Request.QueryString["Type"] + "").ToString();
+        if (QueryEmpType == "")
+        {
+            QueryEmpType = Model.EmpCategory.ToString();
+            Model.QueryEmpType = Convert.ToInt32(QueryEmpType);
+        }
+        if (Model.EmpCategory > 0)
+        {
+            QueryEmpType = Model.EmpCategory.ToString();
+
+        }
+
+    }*@
+<div class="page-wrapper">
+    <div class="container-fluid">
+
+        <div class="block-header py-lg-4 py-3">
+            <div class="row g-3">
+                <div class="col-md-6 col-sm-12">
+                    <h2 class="m-0 fs-5"><a href="javascript:void(0);" class="btn btn-sm btn-link ps-0 btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a> Employee Registration</h2>
+
+                </div>
+
+            </div>
+        </div>
+        <div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @{
+                    string Code = (string)TempData["code"];
+                    string msg = (string)TempData["Msg"];
+                    if (!string.IsNullOrEmpty(Code))
+                    {
+                        if (Code == "1")
+                        {
+
+                            <script type="text/javascript">
+                             swal({
+                    title: "",
+                    text: "@TempData["Msg"]",
+                    icon: "success",
+
+                })
+                    .then((value) => {
+                        window.location.href = '/Employee/RegisteredEmployee'
+                    });
+
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
+                                swal({
+                                    title: "",
+                                    text: "something went wrong",
+                                    icon: "warning",
+
+                                })
+                                    .then((value) => {
+                                        window.location.href = '/Employee/EmployeeRegistration'
+                                    });
+
+                            </script>
+                        }
+                    }
+                }
+            </div>
+
+
+
+        </div>
+
+        <form action="/Employee/SaveEmployeeRegistration" method="post" onsubmit=" return Validation()" id="from">
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">Employee Category</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Employee Category<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.EmpCategory, new SelectList(ViewBag.EmpCategory1, "Value", "Text"), "-select-", new { @class = "form-control", @onchange = "BindEmpType()" })
+                                        @Html.HiddenFor(m=>m.EmpCategory)
+                                        @Html.HiddenFor(m => m.EId)
+                                        @Html.HiddenFor(mbox => Model.IsLock)
+                                        @Html.HiddenFor(m => m.QueryEmpType)
+
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Employee Type<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.EmpType, new SelectList(String.Empty, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">Personal Detail</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Employee Name<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpName, new { @class = "form-control", @maxlength = "50", @onkeypress = "checkAlphabet(event)" ,@autocomplete="off"})
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Father's/Husband's Name<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpFatherName, new { @class = "form-control", @maxlength = "50", @onkeypress = "checkAlphabet(event)", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Gender<span class="text-danger">*</span></label>
+
+                                        @Html.DropDownListFor(m => m.EmpGender, new List<SelectListItem>
+                                            {
+                                            new SelectListItem{ Text="Male", Value = "1" },
+                                            new SelectListItem{ Text="Female", Value = "2" },
+                                            new SelectListItem{ Text="Other", Value = "3" },
+                                              }, "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Employee Qualification<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpQualification, new { @class = "form-control", @maxlength = "50", @onkeypress = "return blockSpecialChar(event)", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Religion</label>
+                                        @Html.DropDownListFor(m => m.EmpReligion, new List<SelectListItem>
+                                            {
+                                            new SelectListItem{ Text="Buddhists", Value = "1" },
+                                            new SelectListItem{ Text="Hinduism", Value = "2" },
+                                            new SelectListItem{ Text="Islam", Value = "3" },
+                                            new SelectListItem{ Text="Jains", Value = "4" },
+                                            new SelectListItem{ Text="Other", Value = "5" },
+                                            new SelectListItem{ Text="Sikhs", Value = "6" },
+                                              }, "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Blood Group<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.EmpBloodGroup, new List<SelectListItem>
+                                           {
+                                           new SelectListItem{ Text="A+", Value = "1" },
+                                           new SelectListItem{ Text="A-", Value = "2" },
+                                           new SelectListItem{ Text="AB+", Value = "3" },
+                                           new SelectListItem{ Text="AB-", Value = "4" },
+                                           new SelectListItem{ Text="B+", Value = "5" },
+                                           new SelectListItem{ Text="B-", Value = "6" },
+                                           new SelectListItem{ Text="NA", Value = "7" },
+                                           new SelectListItem{ Text="O+", Value = "8" },
+                                           new SelectListItem{ Text="O-", Value = "9" },
+                                             }, "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Home State<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.EmpHomeState, new SelectList(ViewBag.States, "Value", "Text"), "-select-", new { @class = "form-control", @onchange = "BindDistrict()" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Home District<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.EmpHomeDistrict, new SelectList(String.Empty, "Value", "Text"), "-select-", new { @class = "form-control", @onchange = "GetOffice()" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Office<span class="text-danger">*</span></label><br />
+                                        <label><strong>@SessionManager.OfficeName </strong></label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Reporting Perosn<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.ReportinPerson, new SelectList(ViewBag.ReportingPerson, "Value", "Text"), "-select-", new { @class = "form-control", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Marital Status<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.EmpMartialStatus, new List<SelectListItem>
+                                                   {
+                                                   new SelectListItem{ Text="Married", Value = "1" },
+                                                   new SelectListItem{ Text="UnMarried", Value = "2" },
+                                                   new SelectListItem{ Text="Widow/Widower", Value = "3" },
+                                                   new SelectListItem{ Text="Divorced", Value = "4" },
+                                                     }, "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Date of Birth (dd/mm/yyyy) <span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpDob, new { @class = "form-control", @type = "date", @autocomplete = "off" })
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Caste<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.EmpCaste, new List<SelectListItem>
+                                            {
+                                            new SelectListItem{ Text="GENERAL", Value = "1" },
+                                            new SelectListItem{ Text="OBC", Value = "2" },
+                                            new SelectListItem{ Text="SC", Value = "3" },
+                                            new SelectListItem{ Text="ST", Value = "4" },
+                                            }, "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Email Id<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpEmailId, new { @class = "form-control", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Permanent Address<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpPeramanentAddress, new { @class = "form-control", @maxlength = "250", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Mobile Number<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpMob, new { @class = "form-control", @maxlength = "10", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Emergency Contact Number<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpContactNo, new { @class = "form-control", @maxlength = "10", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Postal Address<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpPostalAddress, new { @class = "form-control", @maxlength = "250", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Aadhar Number<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpAadharNumber, new { @class = "form-control", @maxlength = "12", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Departmental Employee Code<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.EmpDepartmentalEmployeeCode, new { @class = "form-control", @maxlength = "15", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Profile<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(x => x.Profile, new { @class = "form-control", @type = "file", @onchange = "Fileupload(this)" })
+                                        @Html.HiddenFor(x => x.hbdnProfile)
+                                        <span id="ProfileAnchor" style="display: none;" class="input-group-text btn-download"></span>
+                                        @if (!string.IsNullOrEmpty(Model.hbdnProfile))
+                                        {
+                                            <img src="@Model.hbdnProfile.Replace("~","")" heigth="100px" width="100px" />
+                                        }
+                                        else
+                                        {
+                                            ;
+
+                                        }
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">Departmental Details</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">PFMS Vendor/Unique Code(Ex. VAUPSN0000xxxx)<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.DeptPFMsVendor, new { @class = "form-control", @maxlength = "20", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="DateOfJoiningservice">
+                                    <div class="form-group">
+                                        <label class="form-label">Date of Joining in Service (dd/mm/yyyy) <span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.DeptDateOfJoiningInService, new { @class = "form-control" ,@type="date", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="DateOfJoining">
+                                    <div class="form-group">
+                                        <label class="form-label">Date of Joining in  (dd/mm/yyyy) <span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.DeptDateOfJoiningInULB, new { @class = "form-control", @type = "date", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="ClassCategory">
+                                    <div class="form-group">
+                                        <label class="form-label">Class Category<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.DeptClassCategory, new SelectList(ViewBag.ClassCategory, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="Department">
+                                    <div class="form-group">
+                                        <label class="form-label">Department<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.DeptDepartment, new SelectList(ViewBag.Department, "Value", "Text"), "-select-", new { @class = "form-control", @onchange = "GetSubCategory()" })
+                                    </div>
+                                </div>
+
+                                <div class="col-6" id="SubDepartment">
+                                    <div class="form-group">
+                                        <label class="form-label">Sub Department<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.DeptSubDepartment, new SelectList(String.Empty, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-6" id="PaymentHead">
+                                    <div class="form-group">
+                                        <label class="form-label">Payment Head<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.DeptPaymentHead, new SelectList(ViewBag.PaymentHead, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-6" id="ModeOfRecuritment">
+                                    <div class="form-group">
+                                        <label class="form-label">Mode Of Recruitment<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.DeptModeOfRecruitment, new SelectList(ViewBag.ModeOfRecruitment, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="SpecialServiceQuota">
+                                    <div class="form-group">
+                                        <label class="form-label">Special Service Quota<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.DeptSpecialServiceQuota, new SelectList(ViewBag.Quota, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="Designation">
+                                    <div class="form-group">
+                                        <label class="form-label">Designation<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.DeptDesignation, new SelectList(ViewBag.Designation, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="monthIncrement">
+                                    <div class="form-group">
+                                        <label class="form-label">Month of Increment <span class="text-danger">*</span></label><br>
+                                        @if (Model.DeptMonthofIncrement == 1)
+                                        {
+                                            <input type="radio" name="DeptMonthofIncrement" value="1" checked><label>July</label>
+                                            <input type="radio" name="DeptMonthofIncrement" value="2"><label>January</label>
+                                            <input type="radio" name="DeptMonthofIncrement" value="3"> <label>No Increament</label>
+                                        }
+                                        else if (Model.DeptMonthofIncrement == 2)
+                                        {
+                                            <input type="radio" name="DeptMonthofIncrement" value="1"><label>July</label>
+                                            <input type="radio" name="DeptMonthofIncrement" value="2" checked><label>January</label>
+                                            <input type="radio" name="DeptMonthofIncrement" value="3"> <label>No Increament</label>
+
+                                        }
+                                        else if (Model.DeptMonthofIncrement == 3)
+                                        {
+                                            <input type="radio" name="DeptMonthofIncrement" value="1"><label>July</label>
+                                            <input type="radio" name="DeptMonthofIncrement" value="2"><label>January</label>
+                                            <input type="radio" name="DeptMonthofIncrement" value="3" checked> <label>No Increament</label>
+                                        }
+                                        else
+                                        { <input type="radio" name="DeptMonthofIncrement" value="1"><label>July</label>
+
+                                            <input type="radio" name="DeptMonthofIncrement" value="2"><label>January</label>
+
+                                            <input type="radio" name="DeptMonthofIncrement" value="3"> <label>No Increament</label>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-6 d-none" id="ContractValidity">
+                                    <div class="form-group">
+                                        <label class="form-label">Contract Validity (Samvida & OutSourcing Emp.)<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.ContractValidity, new { @class = "form-control cv", @type = "date", @autocomplete = "off" })
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">Bank Detail</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">IFSC<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.BIFSC, new { @class = "form-control", @maxlength = "15", @onkeypress = "return PanAndIfsc(event)", @style = "text-transform:uppercase", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Bank<span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.BBank, new SelectList(ViewBag.Bank, "Value", "Text"), "-select-", new { @class = "form-control", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Account Number<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.BAccountNumber, new { @class = "form-control", @maxlength = "20", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Pan Number<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.BPanNumber, new { @class = "form-control", @maxlength = "15", onkeypress = "return PanAndIfsc(event)", @style = "text-transform:uppercase", @autocomplete = "off" })
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">Salary Details</h6>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="row">
+
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Salary Status <span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.SStatus, new List<SelectListItem>
+
+                                           {
+                                                new SelectListItem{ Text="Active", Value = "A" },
+                                                new SelectListItem{ Text="Stop", Value = "S" },
+                                                new SelectListItem{ Text="Suspend", Value = "C" },
+
+                                            }, "-select-", new { @class = "form-control", @onchange = "change()" })
+
+                                    </div>
+                                </div>
+                                <div class="col-6 d-none" id="divstatus">
+                                    <div class="form-group">
+                                        <label class="form-label">Select Salary Weightage <span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.salaryweightage, new List<SelectListItem>
+                                       {
+                                               new SelectListItem{ Text="100% of Total Salary", Value = "100%" },
+                                               new SelectListItem{ Text="75% of Total Salary", Value = "75" },
+                                               new SelectListItem{ Text="50% of Total Salary", Value = "50%" },
+
+                                               }, "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="PayCommison">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            Pay Commission<span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(m => m.SPayCommisson, new SelectList(ViewBag.Paycommission, "Value", "Text"),  new { @class = "form-control",@onchange="Paycommision1()" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="PayScale">
+                                    <div class="form-group">
+                                        <label class="form-label">Pay Scale<span class="text-danger">*</span>  </label>
+                                        @Html.DropDownListFor(m => m.SPayScale, new SelectList(ViewBag.PayScale, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="GradePay">
+                                    <div class="form-group">
+                                        <label class="form-label">Grade Pay </label>
+                                        @Html.DropDownListFor(m => m.SGradePay, new SelectList(ViewBag.GradePay, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="Level">
+                                    <div class="form-group">
+                                        <label class="form-label">Level  <span class="text-danger">*</span></label>
+                                        @Html.DropDownListFor(m => m.SLevel, new SelectList(ViewBag.Level, "Value", "Text"), "-select-", new { @class = "form-control", @onchange = "bindIncrement()" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="Increment">
+                                    <div class="form-group">
+                                        <label class="form-label">Increment <span class="text-danger">*</span> </label>
+                                        @Html.DropDownListFor(m => m.SIncrement, new SelectList(String.Empty, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="BasicSalary">
+                                    <div class="form-group">
+                                        <label class="form-label" id="labelBasicSalary">Basic Salary<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.SBasicSalary, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-6" id="allowedFixed">
+                                    <div class="form-group">
+                                        <label class="form-label">Allowed Fixed Allowance</label><br />
+                                        @if (Model.MA == "Y")
+                                        {
+                                            <input type="checkbox" name="MA" value="1" id="MA" checked> <label>Medical</label>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="MA" value="1" id="MA"><label>Medical</label>
+
+                                        }
+                                        @if (Model.WA == "Y")
+                                        {
+                                            <input type="checkbox" name="WA" value="1" id="WA" checked><label>Washing</label>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="MA" value="1" id="MA"><label>WA</label>
+                                        }
+                                        @if (Model.HRA == "Y")
+                                        {
+                                            <input type="checkbox" name="HRA" value="1" id="HRA" checked><label>  HRA</label>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="MA" value="1" id="MA"><label>  HRA</label>
+                                        }
+
+
+
+                                    </div>
+                                </div>
+                                <div class="col-6" id="NPS">
+
+                                    <label class="form-label">1. यदि कर्मचारी का NPS कटौती हो रही तो विकल्प चुने ✓ <span class="text-danger">*</span></label><br />
+                                    @if (Model.IsNps == "Y")
+                                    {
+                                        <input type="checkbox" name="IsNps" value="1" id="IsNps" onclick="disabledtextbox()" checked><label>NPS</label>
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="IsNps" value="1" id="IsNps" onclick="disabledtextbox()"><label>NPS</label>
+                                    }
+                                </div>
+                                <div class="col-6" id="basicDA">
+                                    <label class="form-label"> 1.(A.) If Pension Contribution is (Basic + DA) then % </label>
+                                    @if (Model.IsNps == "Y")
+                                    {
+
+                                        @Html.TextBoxFor(m => m.BasicDA, new { @class = "form-control", @disabled = "disabled", @onkeypress = "return AmountValidation(event) ",@onkeyup= "validatePer()" })
+                                    }
+                                    else
+                                    { @Html.TextBoxFor(m => m.BasicDA, new { @class = "form-control", @onkeypress = "return AmountValidation(event) ", @onkeyup = "validatePer()" })
+
+                                }
+                                </div>
+                                <div class="col-6" id="basic">
+                                    <label class="form-label">2.(B.) If Pension Contribution is (Basic) then % </label>
+                                    @if (Model.IsNps == "Y")
+                                    {
+
+                                        @Html.TextBoxFor(m => m.Basic, new { @class = "form-control", @disabled = "disabled" , @onkeypress="return AmountValidation(event)" ,@onkeyup= "validatePerentage()" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => m.Basic, new { @class = "form-control", @onkeypress = "return AmountValidation(event) ", @onkeyup = "validatePerentage()" })
+                                    }
+                                </div>
+                                <div class="col-6 d-none" id="FixedDeduction">
+                                    <label class="form-label"> Fixed Deduction</label><br />
+                                    @if (Model.EPF == "Y")
+                                    {<input type="checkbox" id="EPF" name="EPF" value="1" checked /><label>EPF</label>
+
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" id="EPF" name="EPF" value="1" /><label>EPF</label>
+                                    }
+                                    @if (Model.ESIC == "Y")
+                                    {
+
+                                        <input type="checkbox" id="ESIC" name="ESIC" value="1" checked /><label>ESIC</label>
+                                    }
+                                    else
+                                    {
+
+                                        <input type="checkbox" id="ESIC" name="ESIC" value="1" /><label>ESIC</label>
+                                    }
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">Other Details </h6>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div id="Permanent" class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">NPS Account No/PRAN</label>
+                                            @Html.TextBoxFor(m => m.ONPSAccount, new { @class = "form-control", @onkeypress = "return isNumber(event)", @maxlength = "20", @autocomplete = "off" })
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                Nominee Name
+                                            </label>
+                                            @Html.TextBoxFor(m => m.ONomineeName, new { @class = "form-control", @maxlength = "50", @onkeypress = "checkAlphabet(event)", @autocomplete = "off" })
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Nominee Relation</label>
+                                            @Html.DropDownListFor(m => m.ONomineeRelation, new SelectList(ViewBag.Relation, "Value", "Text"), "--select--", new { @class = "form-control", @autocomplete = "off" })
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">G.I.S. Account No  </label>
+                                            @Html.TextBoxFor(m => m.OGISAccountNumber, new { @class = "form-control", @onkeypress = "return isNumber(event)", @maxlength = "20", @autocomplete = "off" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="contractual" class=" row d-none">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Universal A/C No.</label>
+                                            @Html.TextBoxFor(m => m.UANNO, new { @class = "form-control", @onkeypress = "return isNumber(event)", @maxlength = "20", @autocomplete = "off" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">E.P.F. Account No</label>
+                                            @Html.TextBoxFor(m => m.EPFACNo, new { @class = "form-control", @onkeypress = "return isNumber(event)", @maxlength = "20", @autocomplete = "off" })
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label">ESIC Account No. </label>
+                                            @Html.TextBoxFor(m => m.ESICACNo, new { @class = "form-control", @onkeypress = "return isNumber(event)" ,@maxlength="12", @autocomplete = "off" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            Is Finalized Data
+                                        </label><br />
+                                        @if (Model.IsFinalizedData == "F")
+                                        {
+                                            <input type="Checkbox" name="IsFinalizedData" value="1" id="IsFinalizedData" checked>
+                                        }
+                                        else
+                                        {
+                                            <input type="Checkbox" name="IsFinalizedData" value="1" id="IsFinalizedData">
+
+                                        }
+                                    </div>
+                                </div>
+                                @*<div class="col-6">
+                                        <label class="form-label">Order No  </label>
+                                        @Html.TextBoxFor(m => m.OrderNo, new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">
+                                            Order Date .
+                                        </label>
+                                        @Html.TextBoxFor(m => m.OrderDate, new { @class = "form-control", @type = "date" })
+                                    </div>*@
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            Authorised Signatory
+                                            
+                                        </label>
+                                        @Html.TextBoxFor(m => m.AuthorisedSignatory, new { @class = "form-control", @maxlength = "50", @autocomplete = "off" })
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+                @if (Model.EId > 0)
+                {
+                    <div class="col-md-12">
+                        <div class="form-group text-center">
+                            <input type="submit" value="update" class="btn btn-success" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-12">
+                        <div class="form-group text-center">
+                            <input type="submit" value="submit" class="btn btn-success" />
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+<script>
+  
+
+
+    $(document).ready(function () {
+        debugger;
+        $('#EmpCategory').select2();
+        $('#EmpType').select2();
+        $('#EmpGender').select2();
+        $('#EmpReligion').select2();
+        $('#EmpBloodGroup').select2();
+        $('#EmpHomeState').select2();
+        $('#EmpHomeDistrict').select2();
+        $('#office').select2();
+        $('#ReportinPerson').select2();
+        $('#EmpMartialStatus').select2();
+        $('#EmpMartialStatus').select2();
+        $('#EmpCaste').select2();
+        $('#DeptClassCategory').select2();
+        $('#DeptDepartment').select2();
+        $('#DeptSubDepartment').select2();
+        $('#DeptPaymentHead').select2();
+        $('#DeptModeOfRecruitment').select2();
+        $('#DeptSpecialServiceQuota').select2();
+        $('#DeptDesignation').select2();
+        $('#SStatus').select2();
+        $('#salaryweightage').select2();
+        $('#SPayCommisson').select2();
+        $('#SPayScale').select2();
+        $('#SGradePay').select2();
+        $('#SIncrement').select2();
+
+        let state = "";
+        if (@Model.SLevel> 0) {
+            bindIncrement(@Model.SIncrement)
+        }
+        if (@Model.DeptDepartment> 0) {
+            GetSubCategory(@Model.DeptSubDepartment)
+        }
+        if (@Model.EmpCategory> 0) {
+            BindEmpType('@Model.EmpType')
+        }
+
+        if (@Model.EmpHomeState> 0) {
+            BindDistrict('@Model.EmpHomeDistrict')
+        }
+        if ($('#SStatus').val() == 3) {
+            $('#divstatus').removeClass('d-none')
+        }
+
+        //else {
+        //    BindEmpType()
+        //}
+        @*if (@Model.EmpHomeDistrict> 0) {
+            GetOffice('@Model.office')
+        }
+        if (@Model.office> 0) {
+            GetReportingPerosn('@Model.ReportinPerson')
+        }*@
+
+        @*$('#EmpCategory').val('@QueryEmpType')
+        $('#EmpCategory').prop("disabled",true)*@
+
+        if (@Model.EmpCategory== 1) {
+            Paycommision1()
+        }
+
+    })
+
+
+     function disabledtextbox() {
+            debugger;
+            if ($('#IsNps').is(":checked")) {
+                $('#Basic').attr("disabled", "disabled")
+                $('#BasicDA').attr("disabled", "disabled")
+            }
+            else {
+                $('#Basic').removeAttr("disabled", "disabled")
+                $('#BasicDA').removeAttr("disabled", "disabled")
+            }
+        }
+    function change() {
+
+        var status = $('#SStatus').val();
+
+        if (status == "C") {
+            $('#divstatus').removeClass('d-none')
+        }
+        else {
+            $('#divstatus').addClass('d-none') ;
+        }
+    }
+
+
+    function GetOffice(id) {
+        debugger;
+        var district = $('#EmpHomeDistrict').val();
+        if (district > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetOffice',
+                data: { district: district },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#office").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#office').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#office").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#office').val(id)
+                    }
+                    @*if (@Model.office> 0) {
+            GetReportingPerosn('@Model.ReportinPerson')
+        }*@
+                },
+                error: function (e) {
+                    $("#office").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#office").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+    //function GetReportingPerosn(id) {
+    //    debugger;
+    //    var Office = $('#office').val();
+    //    if (Office > 0) {
+    //        $.ajax({
+    //            type: 'post',
+    //            url: '/Employee/GetRportingPerson',
+    //            data: { Office: Office },
+    //            dataType: 'json',
+    //            success: function (data) {
+    //                if (data.length > 0) {
+    //                    $("#ReportinPerson").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+    //                    for (var i = 0; i < data.length; i++) {
+    //                        $('#ReportinPerson').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+    //                    }
+
+    //                }
+    //                else {
+    //                    $("#ReportinPerson").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+    //                }
+    //                if (id > 0) {
+    //                    $('#ReportinPerson').val(id)
+    //                }
+
+
+
+    //            },
+    //            error: function (e) {
+    //                $("#ReportinPerson").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+    //            }
+
+    //        })
+    //    }
+    //    else {
+    //        $("#ReportinPerson").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+    //    }
+    //}
+
+
+    function GetSubCategory(id) {
+        debugger;
+        var DepartmentId = $('#DeptDepartment').val();
+        if (DepartmentId > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetSubCategory',
+                data: { DepartmentId: DepartmentId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#DeptSubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#DeptSubDepartment').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#DeptSubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#DeptSubDepartment').val(id);
+                    }
+                },
+                error: function (e) {
+                    $("#DeptSubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#DeptSubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+    function bindIncrement(Id) {
+        debugger;
+        var LevelId = $('#SLevel').val();
+        if (LevelId > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetIncrement',
+                data: { LevelId: LevelId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#SIncrement").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#SIncrement').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+                        if (Id > 0) {
+                            $('#SIncrement').val(Id)
+                        }
+                    }
+                    else {
+                        $("#SIncrement").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                },
+                error: function (e) {
+                    $("#SIncrement").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#DeptSubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+    function BindDistrict(Id) {
+        debugger;
+        var stateId = $('#EmpHomeState').val();
+        if (stateId > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetDistrictByState',
+                data: { stateId: stateId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpHomeDistrict").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpHomeDistrict').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#EmpHomeDistrict").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+
+                    if (Id > 0) {
+                        $('#EmpHomeDistrict').val(Id);
+                    }
+                            if (@Model.EmpHomeDistrict> 0) {
+            GetOffice('@Model.office')
+        }
+
+
+
+                },
+                error: function (e) {
+                    $("#EmpHomeDistrict").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#EmpHomeDistrict").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+    function BindEmpType(id) {
+        debugger;
+        var empCategory = parseInt($('#EmpCategory').val());
+        if (empCategory == 2 || empCategory == 3) {
+            $('#SBasicSalary').attr("disabled", false)
+        }
+        if (empCategory == 1) {
+            Paycommision1();
+        }
+
+        if (empCategory > 0) {
+            
+           /* $('#EmpCategory').prop("disabled",true);*/
+            ChangeFunctionality();
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetEmployeeType',
+                data: { empCategory: empCategory },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpType').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#EmpType').val(id)
+                    }
+                },
+                error: function (e) {
+                    $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+   function Fileupload(obj) {
+        debugger;
+        var filename = $(obj)[0].files[0].name;
+        var fileId = $(obj).attr("id");
+        var ext = obj.value.match(/\.(.+)$/)[1];
+
+        switch (ext) {
+            case 'pdf':
+            case 'jpg':
+            case 'jpeg':
+                var fileSize = ($("#" + fileId)[0].files[0].size / 1024 / 1024);
+                if (fileSize > 2) {
+                    swal("", "File size should not exceed 2 MB.\r\nफाइल का साइज़ 2 MB से अधिक नहीं होना चाहिए।", "warning");
+                    return false;
+                }
+                else {
+                    var data = new FormData();
+                    var files = $("#" + fileId).get(0).files;
+                    if (files.length > 0) {
+                        data.append("File", files[0]);
+                    }
+                    $("#divLoader").show();
+                    $.ajax({
+                        url: '@Url.Action("UploadFileForRegistration", "Employee")',
+                        type: "POST",
+                        processData: false,
+                        contentType: false,
+                        data: data,
+                        success: function (response) {
+                            $("#divLoader").hide();
+
+                            if (response != null) {
+                                if (response.result) {
+                                    $("#fileName" + fileId).text(filename);
+                                    $("#" + fileId + "Path").val(response.fpath);
+                                    var Url = response.fpath.replace('~/', '');
+                                    $("#" + fileId + "Anchor").empty();
+                                    $("#" + fileId + "Anchor").attr('href', Url);
+                                    $("#" + fileId + "Anchor").show();
+                                    $("#hbdnProfile").val(response.fpath);
+                                    $("#" + fileId + "Anchor").append('<a href="' + '@Url.Content("~/")' + Url + '" target="_blank" class="btn btn-warning anchor"><i class="fa fa-download"></i></a>');
+                                    swal("", "File upload successfully. ", "success")
+                                }
+                                else {
+                                    swal("", response.mesg, "error")
+                                }
+                            }
+                            else {
+                                swal("", "Fail to Upload File", "error")
+                            }
+                            return false;
+
+                        },
+                        error: function (e) {
+
+                            $("#divLoader").hide();
+                            swal("", "An Error Occured while uploading file", "error");
+                        }
+                    });
+
+                }
+                break;
+            default:
+                swal("", 'File should be in PDF/JPG/JPEG format./फाइल PDF/JPG/JPEG प्रारूप में होनी चाहिए।', "warning");
+                this.value = '';
+                return false;
+        }
+
+    }
+
+
+    function Validation() {
+        debugger;
+       /* $('#EmpCategory').attr("disabled", false);*/
+        var empCategory = $('#EmpCategory').val();
+        if ($('#EmpCategory').val() == null || $('#EmpCategory').val() == "" || $('#EmpCategory').val() == undefined || $('#EmpCategory').val() == 0) {
+            $('#EmpCategory').focus();
+            swal("", "Please select employee category", "warning");
+
+            return false;
+
+        }
+        if ($('#EmpType').val() == null || $('#EmpType').val() == "" || $('#EmpType').val() == undefined || $('#EmpType').val() == 0) {
+            $('#EmpType').focus();
+            swal("", "Please select employee type", "warning")
+            return false;
+        }
+        if ($('#EmpName').val() == null || $('#EmpName').val() == "" || $('#EmpName').val() == undefined) {
+            $('#EmpName').focus();
+            swal("", "Please enter employee name", "warning")
+            return false;
+        }
+        if ($('#EmpFatherName').val() == null || $('#EmpFatherName').val() == "" || $('#EmpFatherName').val() == undefined) {
+            $('#EmpFatherName').focus();
+            swal("", "Please enter employee father name", "warning")
+            return false;
+        }
+        if ($('#EmpGender').val() == null || $('#EmpGender').val() == "" || $('#EmpGender').val() == undefined || $('#EmpGender').val() == 0) {
+            $('#EmpGender').focus();
+            swal("", "Please select employee gender", "warning")
+            return false;
+        }
+        if ($('#EmpQualification').val() == null || $('#EmpQualification').val() == "" || $('#EmpQualification').val() == undefined) {
+            $('#EmpQualification').focus();
+            swal("", "Please select employee qualification", "warning")
+            return false;
+        }
+        if ($('#EmpReligion').val() == null || $('#EmpReligion').val() == "" || $('#EmpReligion').val() == undefined) {
+            $('#EmpReligion').focus();
+            swal("", "Please select employee religion", "warning")
+            return false;
+        }
+        if ($('#EmpBloodGroup').val() == null || $('#EmpBloodGroup').val() == "" || $('#EmpBloodGroup').val() == undefined) {
+            $('#EmpBloodGroup').focus();
+            swal("", "Please select  employee blood group", "warning")
+            return false;
+        }
+        if ($('#EmpHomeState').val() == null || $('#EmpHomeState').val() == "" || $('#EmpHomeState').val() == undefined) {
+            $('#EmpHomeState').focus();
+            swal("", "Please select employee employee state", "warning")
+            return false;
+        }
+        if ($('#EmpHomeDistrict').val() == null || $('#EmpHomeDistrict').val() == "" || $('#EmpHomeDistrict').val() == undefined) {
+            $('#EmpHomeDistrict').focus();
+            swal("", "Please select employee  district", "warning")
+            return false;
+        }
+        //if ($('#office').val() == null || $('#office').val() == "" || $('#office').val() == undefined) {
+        //    $('#office').focus();
+        //    swal("", "Please select employee  office", "warning")
+        //    return false;
+        //}
+        //if ($('#ReportinPerson').val() == null || $('#ReportinPerson').val() == "" || $('#ReportinPerson').val() == undefined) {
+        //    swal("", "Please select employee  Reporting Person", "warning")
+        //    return false;
+        //}
+        if ($('#EmpDob').val() == null || $('#EmpDob').val() == "" || $('#EmpDob').val() == undefined) {
+            $('#EmpDob').focus();
+            swal("", "Please enter employee  DOB", "warning")
+            return false;
+        }
+
+        var dob = $('#EmpDob').val();
+        var d = new Date();
+        month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+        var today = [year, month, day].join('-');
+        const dob1 = new Date(dob);
+        const today1 = new Date(today);
+        const age = Math.abs(today1 - dob1);
+        const age1 = Math.ceil(age/(1000*60*60*24*365.25))
+        if (age1 < 18) {
+            $('#EmpDob').focus();
+            swal("", "You must be 18 years or older.", "warning")
+            return false;
+        }
+
+        if ($('#EmpCaste').val() == null || $('#EmpCaste').val() == "" || $('#EmpCaste').val() == undefined) {
+            $('#EmpCaste').focus();
+            swal("", "Please select employee  Cast", "warning")
+            return false;
+        }
+        if ($('#EmpEmailId').val() == null || $('#EmpEmailId').val() == "" || $('#EmpEmailId').val() == undefined) {
+            $('#EmpEmailId').focus();
+            swal("", "Please enter employee  EmailID", "warning")
+            return false;
+        }
+        var email = $("#EmpEmailId").val()
+        var regemail = /^([A-Za-z0-9_\-\.])+\@@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,3})$/;
+        if (regemail.test(email) == false) {
+            $("#EmpEmailId").focus();
+            $("#EmpEmailId").val('');
+            swal("", "Please enter a valid Email Id", "warning");
+            return false;
+        }
+        if ($('#EmpPeramanentAddress').val() == null || $('#EmpPeramanentAddress').val() == "" || $('#EmpPeramanentAddress').val() == undefined) {
+            $('#EmpPeramanentAddress').focus();
+            swal("", "Please enter employee  Permanent Address", "warning")
+            return false;
+        }
+        if ($('#EmpPeramanentAddress').val() == null || $('#EmpPeramanentAddress').val() == "" || $('#EmpPeramanentAddress').val() == undefined) {
+            $('#EmpPeramanentAddress').focus();
+            swal("", "Please enter employee  Permanent Address", "warning")
+            return false;
+        }
+        var mobregex = /^(0|91)?[6-9][0-9]{9}$/;
+        if ($('#EmpMob').val() == null || $('#EmpMob').val() == "" || $('#EmpMob').val() == undefined) {
+            $('#EmpMob').focus();
+            swal("", "Please enter employee  mobile No.", "warning")
+            return false;
+        }
+        if (!$('#EmpMob').val().match(mobregex)) {
+            $('#EmpMob').focus();
+            swal("", "Please enter valid   mobile No.", "warning")
+            return false;
+        }
+        if ($('#EmpContactNo').val() == null || $('#EmpContactNo').val() == "" || $('#EmpContactNo').val() == undefined) {
+            $('#EmpContactNo').focus();
+            swal("", "Please enter employee  emeregeny mobile No.", "warning")
+            return false;
+        }
+
+        if (!$('#EmpContactNo').val().match(mobregex)) {
+            $('#EmpContactNo').focus();
+            swal("", "Please enter valid  emeregeny mobile No.", "warning")
+            return false;
+        }
+        //if ($('#EmpContactNo').val().length <10 ) {
+        //    swal("", "Please enter valid  emeregeny mobile No.", "warning")
+        //    return false;
+        //}
+        if ($('#EmpPostalAddress').val() == null || $('#EmpPostalAddress').val() == "" || $('#EmpPostalAddress').val() == undefined) {
+            $('#EmpPostalAddress').focus();
+            swal("", "Please enter employee  postal address.", "warning")
+            return false;
+        }
+        if ($('#EmpAadharNumber').val() == null || $('#EmpAadharNumber').val() == "" || $('#EmpAadharNumber').val() == undefined) {
+            $('#EmpAadharNumber').focus();
+            swal("", "Please enter employee  aadhar no.", "warning")
+            return false;
+        }
+        if ($('#EmpAadharNumber').val().length < 12) {
+            $('#EmpAadharNumber').focus();
+            swal("", "Please enter valid employee  aadhar no.", "warning")
+            return false;
+        }
+
+        if ($('#EmpDepartmentalEmployeeCode').val() == null || $('#EmpDepartmentalEmployeeCode').val() == "" || $('#EmpDepartmentalEmployeeCode').val() == undefined) {
+            $('#EmpDepartmentalEmployeeCode').focus();
+            swal("", "Please enter employee code", "warning")
+            return false;
+        }
+
+        if ($('#hbdnProfile').val() == null || $('#hbdnProfile').val() == "" || $('#hbdnProfile').val() == undefined) {
+            $('#Profile').focus();
+            swal("", "Please upload employee profile", "warning")
+            return false;
+        }
+        if (empCategory == 1) {
+            if ($('#DeptPFMsVendor').val() == null || $('#DeptPFMsVendor').val() == "" || $('#DeptPFMsVendor').val() == undefined) {
+                $('#DeptPFMsVendor').focus();
+                swal("", "Please enter  PFMS Vendor/Unique Code", "warning")
+                return false;
+            }
+            if ($('#DeptDateOfJoiningInService').val() == null || $('#DeptDateOfJoiningInService').val() == "" || $('#DeptDateOfJoiningInService').val() == undefined) {
+                $('#DeptDateOfJoiningInService').focus();
+                swal("", "Please select  Date of Joining in Service", "warning")
+                return false;
+            }
+            if ($('#DeptDateOfJoiningInULB').val() == null || $('#DeptDateOfJoiningInULB').val() == "" || $('#DeptDateOfJoiningInULB').val() == undefined) {
+                $('#DeptDateOfJoiningInULB').focus();
+                swal("", "Please select  Date of Joining in  (dd/mm/yyyy) ", "warning")
+                return false;
+            }
+            if ($('#DeptDateOfJoiningInULB').val() == null || $('#DeptDateOfJoiningInULB').val() == "" || $('#DeptDateOfJoiningInULB').val() == undefined) {
+                $('#DeptDateOfJoiningInULB').focus();
+                swal("", "Please select  Date of Joining in  (dd/mm/yyyy) ", "warning")
+                return false;
+            }
+            if ($('#DeptClassCategory').val() == null || $('#DeptClassCategory').val() == "" || $('#DeptClassCategory').val() == undefined) {
+                $('#DeptClassCategory').focus();
+                swal("", "Please select class category ", "warning")
+                return false;
+            }
+            if ($('#DeptDepartment').val() == null || $('#DeptDepartment').val() == "" || $('#DeptDepartment').val() == undefined) {
+                $('#DeptDepartment').focus();
+                swal("", "Please select department ", "warning")
+                return false;
+            }
+            if ($('#DeptSubDepartment').val() == null || $('#DeptSubDepartment').val() == "" || $('#DeptSubDepartment').val() == undefined) {
+                $('#DeptSubDepartment').focus();
+                swal("", "Please select sub department ", "warning")
+                return false;
+            }
+
+            //if ($('#DeptPaymentHead').val() == null || $('#DeptPaymentHead').val() == "" || $('#DeptPaymentHead').val() == undefined) {
+            //    swal("", "Please select paymetn head ", "warning")
+            //    return false;
+            //}
+            if ($('#DeptModeOfRecruitment').val() == null || $('#DeptModeOfRecruitment').val() == "" || $('#DeptModeOfRecruitment').val() == undefined) {
+                $('#DeptModeOfRecruitment').focus();
+                swal("", "Please select mode of recuritment", "warning")
+                return false;
+            }
+
+            if ($('#DeptSpecialServiceQuota').val() == null || $('#DeptSpecialServiceQuota').val() == "" || $('#DeptSpecialServiceQuota').val() == undefined) {
+                $('#DeptSpecialServiceQuota').focus();
+                swal("", "Please enter mode special service quota", "warning")
+                return false;
+            }
+            if ($('#DeptDesignation').val() == null || $('#DeptDesignation').val() == "" || $('#DeptDesignation').val() == undefined) {
+                $('#DeptDesignation').focus();
+                swal("", "Please select designation", "warning")
+                return false;
+            }
+
+            //bank
+            if ($('#BIFSC').val() == null || $('#BIFSC').val() == "" || $('#BIFSC').val() == undefined) {
+                $('#BIFSC').focus();
+                swal("", "Please enter IFSC code", "warning")
+                return false;
+            }
+            if ($('#BBank').val() == null || $('#BBank').val() == "" || $('#BBank').val() == undefined) {
+                $('#BBank').focus();
+                swal("", "Please select bank", "warning")
+                return false;
+            }
+
+            if ($('#BAccountNumber').val() == null || $('#BAccountNumber').val() == "" || $('#BAccountNumber').val() == undefined) {
+                $('#BAccountNumber').focus();
+                swal("", "Please enter account no.", "warning")
+                return false;
+            }
+
+            if ($('#BPanNumber').val() == null || $('#BPanNumber').val() == "" || $('#BPanNumber').val() == undefined) {
+                $('#BPanNumber').focus();
+                swal("", "Please enter pan no..", "warning")
+                return false;
+            }
+            var panRegx = /([A-Za-z]){5}([0-9]){4}([A-Za-z]){1}$/;
+            if (panRegx.test($('#BPanNumber').val()) == false) {
+                $("#BPanNumber").focus();
+                $("#BPanNumber").val('');
+                swal("", "Please enter valid pan number", "warning");
+                return false;
+            }
+            if ($('#SStatus').val() == null || $('#SStatus').val() == "" || $('#SStatus').val() == undefined) {
+                $('#SStatus').focus()
+                swal("", "Please select salary status", "warning")
+                return false;
+            }
+            if ($('#SStatus').val() == "C") {
+                if ($('#salaryweightage').val() == "" || $('#salaryweightage').val() == null || $('#salaryweightage').val() == undefined) {
+                    $('#salaryweightage').focus();
+                    swal("", "Please Select Salary weightage", "warning")
+                    return false;
+                }
+               
+                
+            }
+
+            if ($('#SPayCommisson').val() == null || $('#SPayCommisson').val() == "" || $('#SPayCommisson').val() == undefined) {
+                $('#SPayCommisson').focus()
+                swal("", "Please select  Pay Commission", "warning")
+                return false;
+            }
+            if ($('#SPayScale').val() == null || $('#SPayScale').val() == "" || $('#SPayScale').val() == undefined) {
+                $('#SPayScale').focus()
+                swal("", "Please select  Pay Scale", "warning")
+                return false;
+            }
+            if ($('#SPayCommisson').val() == 5) {
+                if ($('#SLevel').val() == null || $('#SLevel').val() == "" || $('#SLevel').val() == undefined) {
+                    $('#SLevel').focus();
+                    swal("", "Please select  level", "warning")
+                    return false;
+                }
+
+                if ($('#SIncrement').val() == null || $('#SIncrement').val() == "" || $('#SIncrement').val() == undefined) {
+                    $('#SIncrement').focus();
+                    swal("", "Please select  Increment", "warning")
+                    return false;
+                }
+            }
+            if ($('#SPayCommisson').val() == 4 || $('#SPayCommisson').val() == 3 || $('#SPayCommisson').val() == 2 || $('#SPayCommisson').val() == 1) {
+                
+                if ($('#SGradePay').val() == null || $('#SGradePay').val() == "" || $('#SGradePay').val() == undefined) {
+                    $('#SGradePay').focus();
+                    swal("", "Please select  Grade pay", "warning")
+                    return false;
+                }
+
+                if ($('#SBasicSalary').val() == null || $('#SBasicSalary').val() == "" || $('#SBasicSalary').val() == undefined || parseInt($('#SBasicSalary').val()) <=0) {
+                    $('#SBasicSalary').focus()
+                    swal("", "Please select  basic salary", "warning")
+                    return false;
+                }
+            }
+
+            
+            if ($('#IsNps').is(":checked")) {
+
+            }
+            else {
+                if ($('#BasicDA').val() == null || $('#BasicDA').val() == "" || $('#BasicDA').val() == undefined || parseInt($('#BasicDA').val())<=0) {
+                    $('#BasicDA').focus()
+                    swal("", "Please enter 2.(A.) If Pension Contribution is (Basic + DA) then %", "warning")
+                    return false;
+                }
+                if ($('#Basic').val() == null || $('#Basic').val() == "" || $('#Basic').val() == undefined || parseInt($('#Basic').val())<=0) {
+                    $('#Basic').focus()
+                    swal("", "Please enter 2.(A.) If Pension Contribution is (Basic + DA) then %", "warning")
+                    return false;
+                }
+            }
+           
+                $('#from').submit();
+            
+            
+            //other
+            //if ($('#ONPSAccount').val() == "" || $('#ONPSAccount').val() == null || $('#ONPSAccount').val() == undefined) {
+            //    $('#ONPSAccount').focus()
+            //    swal("", "Please enter  NPS Account No/PRAN", "warning")
+
+            //    return false;
+            //}
+            //if ($('#ONomineeName').val() == "" || $('#ONomineeName').val() == null || $('#ONomineeName').val() == undefined) {
+            //    $('#ONomineeName').focus()
+            //    swal("", "Please enter  Nominee Name", "warning")
+
+            //    return false;
+            //}
+
+            //if ($('#ONomineeRelation').val() == "" || $('#ONomineeRelation').val() == null || $('#ONomineeRelation').val() == undefined) {
+            //    $('#ONomineeRelation').focus()
+            //    swal("", "Please select  nominee relation", "warning")
+
+            //    return false;
+            //}
+            //if ($('#OGISAccountNumber').val() == "" || $('#OGISAccountNumber').val() == null || $('#OGISAccountNumber').val() == undefined) {
+            //    $('#OGISAccountNumber').focus()
+            //    swal("", "Please enter  nominee relation", "warning")
+
+            //    return false;
+            //}
+            //if ($('#AuthorisedSignatory').val() == "" || $('#AuthorisedSignatory').val() == null || $('#AuthorisedSignatory').val() == undefined) {
+            //    $('#AuthorisedSignatory').focus()
+            //    swal("", "Please enter  Authorised Signatory", "warning")
+
+            //    return false;
+            //}
+
+           
+
+        }
+
+
+
+        else if (empCategory == 2) {
+           
+            if ($('#DeptPFMsVendor').val() == null || $('#DeptPFMsVendor').val() == "" || $('#DeptPFMsVendor').val() == undefined) {
+                $('#DeptPFMsVendor').focus()
+                swal("", "Please enter  PFMS Vendor/Unique Code", "warning")
+                return false;
+            }
+
+            if ($('#DeptDateOfJoiningInULB').val() == null || $('#DeptDateOfJoiningInULB').val() == "" || $('#DeptDateOfJoiningInULB').val() == undefined) {
+                $('#DeptDateOfJoiningInULB').focus()
+                swal("", "Please select  Date of Joining in  (dd/mm/yyyy) ", "warning")
+                return false;
+            }
+
+            if ($('#DeptClassCategory').val() == null || $('#DeptClassCategory').val() == "" || $('#DeptClassCategory').val() == undefined) {
+                $('#DeptClassCategory').focus()
+                swal("", "Please select class category ", "warning")
+                return false;
+            }
+            if ($('#DeptDepartment').val() == null || $('#DeptDepartment').val() == "" || $('#DeptDepartment').val() == undefined) {
+                $('#DeptDepartment').focus()
+                swal("", "Please select department ", "warning")
+                return false;
+            }
+            if ($('#DeptSubDepartment').val() == null || $('#DeptSubDepartment').val() == "" || $('#DeptSubDepartment').val() == undefined) {
+                $('#DeptSubDepartment').focus()
+                swal("", "Please select sub department ", "warning")
+                return false;
+            }
+
+            if ($('#DeptPaymentHead').val() == null || $('#DeptPaymentHead').val() == "" || $('#DeptPaymentHead').val() == undefined)
+            {
+                $('#DeptPaymentHead').focus()
+                swal("", "Please select paymetn head ", "warning")
+                return false;
+            }
+            if ($('#DeptModeOfRecruitment').val() == null || $('#DeptModeOfRecruitment').val() == "" || $('#DeptModeOfRecruitment').val() == undefined) {
+                $('#DeptModeOfRecruitment').focus()
+                swal("", "Please select mode of recuritment", "warning")
+                return false;
+            }
+
+            if ($('#DeptSpecialServiceQuota').val() == null || $('#DeptSpecialServiceQuota').val() == "" || $('#DeptSpecialServiceQuota').val() == undefined) {
+                $('#DeptSpecialServiceQuota').focus()
+                swal("", "Please enter mode special service quota", "warning")
+                return false;
+            }
+            if ($('#DeptDesignation').val() == null || $('#DeptDesignation').val() == "" || $('#DeptDesignation').val() == undefined) {
+                swal("", "Please select designation", "warning")
+                return false;
+            }
+            var abc = $('.cv').val()
+            debugger;
+            if ($('.cv').val() == null || $('.cv').val() == "" || $('.cv').val() == undefined) {
+                $('.cv').focus()
+                swal("", "Please enter Contract Validity (Samvida & OutSourcing Emp.)", "warning")
+                return false;
+            }
+
+            //bank
+            if ($('#BIFSC').val() == null || $('#BIFSC').val() == "" || $('#BIFSC').val() == undefined) {
+                $('#BIFSC').focus()
+                swal("", "Please enter IFSC code", "warning")
+                return false;
+            }
+            if ($('#BBank').val() == null || $('#BBank').val() == "" || $('#BBank').val() == undefined) {
+                $('#BBank').focus()
+                swal("", "Please select bank", "warning")
+                return false;
+            }
+
+            if ($('#BAccountNumber').val() == null || $('#BAccountNumber').val() == "" || $('#BAccountNumber').val() == undefined) {
+                $('#BAccountNumber').focus()
+                swal("", "Please enter account no.", "warning")
+                return false;
+                    
+            }
+
+            if ($('#BPanNumber').val() == null || $('#BPanNumber').val() == "" || $('#BPanNumber').val() == undefined) {
+                $('#BPanNumber').focus()
+                swal("", "Please enter pan no..", "warning")
+                return false;
+            }
+            var panRegx = /([A-Za-z]){5}([0-9]){4}([A-Za-z]){1}$/;
+            if (panRegx.test($('#BPanNumber').val()) == false) {
+                $("#BPanNumber").focus();
+                $("#BPanNumber").val('');
+                swal("", "Please enter valid pan number", "warning");
+                return false;
+            }
+
+            //salary
+            if ($('#SStatus').val() == null || $('#SStatus').val() == "" || $('#SStatus').val() == undefined) {
+                $('#SStatus').focus()
+                swal("", "Please select salary status", "warning")
+                return false;
+            }
+
+            if ($('#SBasicSalary').val() == null || $('#SBasicSalary').val() == "" || $('#SBasicSalary').val() == undefined || parseInt($('#SBasicSalary').val()) <=0) {
+                $('#SBasicSalary').focus()
+                swal("", "Please enter  basic salary", "warning")
+                return false;
+            }
+
+            //other
+            //if ($('#UANNO').val() == "" || $('#UANNO').val() == null || $('#UANNO').val() == undefined) {
+            //    $('#UANNO').focus()
+            //    swal("", "Please enter  Universal A/C No.", "warning")
+
+            //    return false;
+            //}
+            //if ($('#EPFACNo').val() == "" || $('#EPFACNo').val() == null || $('#EPFACNo').val() == undefined) {
+            //    $('#EPFACNo').focus()
+            //    swal("", "Please enter E.P.F.Account No", "warning")
+            //    $('#EPFACNo').focus()
+            //    return false;
+            //}
+
+            ////if ($('#ONomineeRelation').val() == "" || $('#ONomineeRelation').val() == null || $('#ONomineeRelation').val() == undefined) {
+            ////    $('#ONomineeRelation').focus()
+            ////    swal("", "Please select  nominee relation", "warning")
+            ////    $('#ONomineeRelation').focus()
+            ////    return false;
+            ////}
+            ////if ($('#OGISAccountNumber').val() == "" || $('#OGISAccountNumber').val() == null || $('#OGISAccountNumber').val() == undefined) {
+            ////    $('#OGISAccountNumber').focus()
+            ////    swal("", "Please enter  nominee relation", "warning")
+            ////    $('#OGISAccountNumber').focus()
+            ////    return false;
+            ////}
+            //if ($('#ESICACNo').val() == "" || $('#ESICACNo').val() == null || $('#ESICACNo').val() == undefined) {
+            //    $('#ESICACNo').focus()
+            //    swal("", "Please enter ESIC Account No.", "warning")
+            //    $('#ESICACNo').focus()
+            //    return false;
+            //}
+            //if ($('#AuthorisedSignatory').val() == "" || $('#AuthorisedSignatory').val() == null || $('#AuthorisedSignatory').val() == undefined) {
+            //    $('#AuthorisedSignatory').focus()
+            //    swal("", "Please enter  Authorised Signatory", "warning")
+
+            //    return false;
+            //}
+            else {
+                $('#from').submit();
+            }
+
+
+
+        }
+        else if (empCategory == 3) {
+            
+            if ($('#DeptPFMsVendor').val() == null || $('#DeptPFMsVendor').val() == "" || $('#DeptPFMsVendor').val() == undefined) {
+                $('#DeptPFMsVendor').focus()
+                swal("", "Please enter  PFMS Vendor/Unique Code", "warning")
+                return false;
+            }
+
+
+            if ($('#DeptDepartment').val() == null || $('#DeptDepartment').val() == "" || $('#DeptDepartment').val() == undefined) {
+                $('#DeptDepartment').focus()
+                swal("", "Please select department ", "warning")
+                return false;
+            }
+            if ($('#DeptSubDepartment').val() == null || $('#DeptSubDepartment').val() == "" || $('#DeptSubDepartment').val() == undefined) {
+                $('#DeptSubDepartment').focus()
+                swal("", "Please select sub department ", "warning")
+                return false;
+            }
+
+            if ($('#DeptPaymentHead').val() == null || $('#DeptPaymentHead').val() == "" || $('#DeptPaymentHead').val() == undefined) {
+                $('#DeptPaymentHead').focus()
+                swal("", "Please select paymetn head ", "warning")
+                $('#DeptPaymentHead').focus();
+                return false;
+            }
+
+
+
+            //bank
+            if ($('#BIFSC').val() == null || $('#BIFSC').val() == "" || $('#BIFSC').val() == undefined) {
+                $('#BIFSC').focus()
+                swal("", "Please enter IFSC code", "warning")
+                return false;
+            }
+            if ($('#BBank').val() == null || $('#BBank').val() == "" || $('#BBank').val() == undefined) {
+                $('#BBank').focus()
+                swal("", "Please select bank", "warning")
+                return false;
+            }
+
+            if ($('#BAccountNumber').val() == null || $('#BAccountNumber').val() == "" || $('#BAccountNumber').val() == undefined) {
+                swal("", "Please enter account no.", "warning")
+                return false;
+            }
+
+            if ($('#BPanNumber').val() == null || $('#BPanNumber').val() == "" || $('#BPanNumber').val() == undefined) {
+                $('#BPanNumber').focus()
+                swal("", "Please enter pan no..", "warning")
+                return false;
+            }
+            var panRegx = /([A-Za-z]){5}([0-9]){4}([A-Za-z]){1}$/;
+            if (panRegx.test($('#BPanNumber').val()) == false) {
+                $("#BPanNumber").focus();
+                $("#BPanNumber").val('');
+                swal("", "Please enter valid pan number", "warning");
+                return false;
+            }
+            //salary
+            if ($('#SStatus').val() == null || $('#SStatus').val() == "" || $('#SStatus').val() == undefined) {
+                $('#SStatus').focus()
+                swal("", "Please select salary status", "warning")
+                return false;
+            }
+
+
+            
+            if ($('#SBasicSalary').val() == null || $('#SBasicSalary').val() == "" || $('#SBasicSalary').val() == undefined || parseInt($('#SBasicSalary').val()) <=0) {
+                $('#SBasicSalary').focus()
+                swal("", "Please enter  Per Day Salary ", "warning")
+                return false;
+            }
+
+            //other
+
+
+            //if ($('#AuthorisedSignatory').val() == "" || $('#AuthorisedSignatory').val() == null || $('#AuthorisedSignatory').val() == undefined) {
+            //    $('#AuthorisedSignatory').focus()
+            //    swal("", "Please enter  Authorised Signatory", "warning")
+
+            //    return false;
+            //}
+            else {
+                $('#from').submit();
+            }
+
+        }
+
+    }
+
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+    function ChangeFunctionality() {
+
+        var empCategory = $('#EmpCategory').val();
+        if (empCategory == 1) {
+
+            $('#DateOfJoining').show()
+            $('#ClassCategory').show()
+            $('#ModeOfRecuritment').show()
+            $('#SpecialServiceQuota').show()
+            $('#monthIncrement').show()
+            $('#ContractValidity').show()
+            $('#DateOfJoiningservice').show()
+            $('#monthIncrement').hide();
+            $('#ContractValidity').addClass('d-none')
+
+
+            //salary
+            $('#PayCommison').show();
+            $('#PayScale').show();
+            $('#GradePay').show();
+            $('#Level').show();
+            $('#Increment').show();
+            $('#allowedFixed').show();
+            $('#NPS').show();
+            $('#basicDA').show();
+            $('#basic').show();
+
+            $('#labelBasicSalary').text('Basic Salary');
+            //other
+
+            $('#FixedDeduction').addClass('d-none')
+            $('#Permanent').removeClass('d-none')
+            $('#contractual').addClass('d-none')
+
+        }
+        else if (empCategory == 2) {
+
+            $('#ContractValidity').removeClass('d-none')
+            $('#DateOfJoiningservice').hide()
+
+            //salary
+            $('#FixedDeduction').removeClass('d-none')
+            $('#PayCommison').hide();
+            $('#PayScale').hide();
+            $('#GradePay').hide();
+            $('#Level').hide();
+            $('#Increment').hide();
+            $('#allowedFixed').hide();
+            $('#NPS').hide();
+            $('#basicDA').hide();
+            $('#basic').hide();
+            $('#monthIncrement').hide();
+
+            //other
+            $('#Permanent').addClass('d-none')
+            $('#contractual').removeClass('d-none')
+
+            $('#labelBasicSalary').text('Basic Salary');
+
+
+        }
+        else if (empCategory == 3) {
+
+            $('#DateOfJoining').hide()
+            $('#ClassCategory').hide()
+            $('#ModeOfRecuritment').hide()
+            $('#SpecialServiceQuota').hide()
+            $('#monthIncrement').hide()
+            $('#ContractValidity').hide()
+            $('#DateOfJoiningservice').hide()
+
+            //salary
+            $('#PayCommison').hide();
+            $('#PayScale').hide();
+            $('#GradePay').hide();
+            $('#Level').hide();
+            $('#Increment').hide();
+            $('#allowedFixed').hide();
+            $('#NPS').hide();
+            $('#basicDA').hide();
+            $('#basic').hide();
+
+            $('#FixedDeduction').addClass('d-none')
+
+            $('#labelBasicSalary').text('Per day salary');
+
+            $('#Permanent').addClass('d-none')
+            $('#contractual').addClass('d-none')
+
+        }
+        else {
+
+            $('#DateOfJoining').show()
+            $('#ClassCategory').show()
+            $('#ModeOfRecuritment').show()
+            $('#SpecialServiceQuota').show()
+            $('#monthIncrement').show()
+            $('#ContractValidity').show()
+            $('#DateOfJoiningservice').show()
+            $('#ContractValidity').addClass('d-none')
+
+            //salary
+            $('#PayCommison').show();
+            $('#PayScale').show();
+            $('#GradePay').show();
+            $('#Level').show();
+            $('#Increment').show();
+            $('#allowedFixed').show();
+            $('#NPS').show();
+            $('#basicDA').show();
+            $('#basic').show();
+
+            $('#labelBasicSalary').text('Basic Salary');
+            //other
+
+            $('#FixedDeduction').addClass('d-none')
+            $('#Permanent').removeClass('d-none')
+            $('#contractual').addClass('d-none')
+        }
+
+
+
+    }
+
+    //function validateAge() {
+    //    debugger;
+    //    dob = new Date(dob);
+    //    var today = new Date();
+    //    var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
+    //    $('#age').html(age + ' years old');
+    //}
+
+    function checkAlphabet(event) {
+        debugger;
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-zA-Z\\s]*$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
+
+    function blockSpecialChar(e) {
+        debugger;
+        var k;
+        document.all ? k = e.keyCode : k = e.which;
+        return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || k==46);
+    }
+
+    function PanAndIfsc(e) {
+        debugger;
+        var k;
+        document.all ? k = e.keyCode : k = e.which;
+        return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 ||  (k >= 48 && k <= 57));
+    }
+
+    $(function () {
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        var maxDate = year + '-' + month + '-' + day;
+        $('#DeptDateOfJoiningInULB').attr('max', maxDate);
+        $('#DeptDateOfJoiningInService').attr('max', maxDate);
+    });
+
+    function AmountValidation(evt) {
+        debugger;
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46) {
+            return false;
+        }
+        return true;
+    }
+
+    function validatePer() {
+        debugger;
+
+        var a = $('#BasicDA').val();
+        if (a > 99) {
+            swal("", "Please enter Percentage less than 100.", "warning");
+            $('#BasicDA').focus();
+            $('#BasicDA').val(0);
+            return false;
+        }
+
+
+    }
+    function validatePerentage() {
+        debugger;
+
+        var a = $('#Basic').val();
+        if (a > 99) {
+            swal("", "Please enter Percentage less than 100.", "warning");
+            $('#Basic').val(0)
+            return false;
+        }
+    }
+
+
+    function Paycommision1() {
+        debugger;
+        var payId = $('#SPayCommisson').val();
+
+
+        var SPayScale = $('#SPayScale').val();
+        var SGradePay = $('#SGradePay').val();
+        var SLevel = $('#SLevel').val();
+        var SIncrement = $('#SIncrement').val();
+        var SBasicSalary = $('#SBasicSalary').val();
+
+
+        if (payId == 5) {
+            $('#SGradePay').attr("disabled", true)
+            $('#SBasicSalary').attr("disabled", true)
+
+            $('#SLevel').attr("disabled", false)
+            $('#SIncrement').attr("disabled", false)
+        }
+        else if (payId == 4 || payId == 3 || payId == 2 || payId == 1) {
+            $('#SGradePay').attr("disabled", false)
+            $('#SBasicSalary').attr("disabled", false)
+
+            $('#SLevel').attr("disabled", true)
+            $('#SIncrement').attr("disabled", true)
+        }
+        else {
+
+        }
+    }
+
+</script>
+
+
+
+

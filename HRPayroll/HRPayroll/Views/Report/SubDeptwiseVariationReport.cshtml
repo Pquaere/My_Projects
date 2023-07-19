@@ -1,0 +1,155 @@
+﻿@model HRPayroll.Models.VariationReport
+@{
+    ViewBag.Title = "SubDeptwiseVariationReport";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            @if (Model.List != null && Model.List.Count > 0)
+            {
+                <div class="row" id="EmpTable">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table">
+                                    <div class="table-responsive">
+                                        <table class="table dataTable table-striped table-bordered">
+                                            <thead id="tbl">
+                                                <tr role="row" class="bg-secondary">
+                                                    <th colspan="5" style="text-align:center">Variation</th>
+                                                    <th colspan="6" style="text-align:center">@Model.List[0].CurMonth - @Model.Year</th>
+                                                    <th colspan="6" style="text-align:center">@Model.List[0].Premonth - @Model.Year</th>
+                                                    <th colspan="6" style="text-align:center">Difference</th>
+                                                </tr>
+                                                <tr role="row" class="bg-secondary">
+                                                    <th>S No</th>
+                                                    <th class="two">Working Type</th>
+                                                    <th>
+                                                        Employement
+                                                    </th>
+                                                    <th>Department</th>
+                                                    <th>Sub-Department</th>
+                                                    <th>
+                                                        Total Employee
+                                                    </th>
+                                                    <th>
+                                                        Retired Employee
+                                                    </th>
+                                                    <th>
+                                                        Expire Employee
+                                                    </th>
+                                                    <th>
+                                                        Gross Pay
+                                                    </th>
+                                                    <th>
+                                                        Deduction
+                                                    </th>
+                                                    <th>
+                                                        Net Pay
+                                                    </th>
+                                                    <th>
+                                                        Total Employee
+                                                    </th>
+                                                    <th>
+                                                        Retired Employee
+                                                    </th>
+                                                    <th>
+                                                        Expire Employee
+                                                    </th>
+                                                    <th>
+                                                        Gross Pay
+                                                    </th>
+                                                    <th>
+                                                        Deduction
+                                                    </th>
+                                                    <th>
+                                                        Net Pay
+                                                    </th>
+                                                    <th>
+                                                        Total Employee
+                                                    </th>
+                                                    <th>
+                                                        Retired Employee
+                                                    </th>
+                                                    <th>
+                                                        Expire Employee
+                                                    </th>
+                                                    <th>
+                                                        Gross Pay
+                                                    </th>
+                                                    <th>
+                                                        Deduction
+                                                    </th>
+                                                    <th>
+                                                        Net Pay
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="text-center">
+                                                @if (Model != null && Model.List != null)
+                                                {
+                                                    if (Model.List.Count() > 0)
+                                                    {
+                                                        var Sn = 0;
+                                                        foreach (var item in Model.List)
+                                                        {
+                                                            Sn = Sn + 1;
+                                                            <tr role="row" class="odd">
+                                                                <td>  @Sn</td>
+                                                                <td class="two"> @item.WType </td>
+                                                                <td>
+                                                                    @item.Employement
+                                                                </td>
+                                                                <td>
+                                                                    @item.DepartmentHead
+                                                                </td>
+                                                                <td>
+                                                                    <a target="_blank" href="/Report/EmpWiseVariationReport?eid=@item.P1SubDeptId&fmid=@Model.CurMonth&fyid=@Model.Year&WTypeId=@item.WTypeId">
+                                                                        @item.SubDeptName
+                                                                    </a>
+                                                                </td>
+                                                                <td> @item.P1TotalEmp </td>
+                                                                <td> @item.P1Retirement </td>
+                                                                <td> @item.P1Expire </td>
+                                                                <td> @item.P1GrossPay </td>
+                                                                <td> @item.P1Deduction </td>
+                                                                <td> @item.P1NetPay </td>
+                                                                <td> @item.P2TotalEmp </td>
+                                                                <td> @item.P2Retirement </td>
+                                                                <td> @item.P2Expire </td>
+                                                                <td> @item.P2GrossPay </td>
+                                                                <td> @item.P2Deduction </td>
+                                                                <td> @item.P2NetPay </td>
+                                                                <td>  @(item.P1TotalEmp - item.P2TotalEmp) </td>
+                                                                <td> @(item.P1Retirement - item.P2Retirement) </td>
+                                                                <td> @(item.P1Expire - item.P2Expire) </td>
+                                                                <td>@(item.P1GrossPay - item.P2GrossPay) </td>
+                                                                <td> @(item.P1Deduction - item.P2Deduction) </td>
+                                                                <td> @(item.P1NetPay - item.P2NetPay) </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="23"><span>No Data Available</span></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+

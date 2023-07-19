@@ -1,0 +1,304 @@
+﻿@model HRPayroll.Models.Employee
+@{
+    ViewBag.Title = "SalaryStopAndSuspend";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<style>
+    fieldset {
+        border: 1px solid #000;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Change Salary Status of Selected Employees</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        @{
+            string Code = (string)TempData["code"];
+            string msg = (string)TempData["Msg"];
+            if (!string.IsNullOrEmpty(Code))
+            {
+                if (Code == "1")
+                {
+                    <div class="alert alert-success msgdiv">
+                        <strong>Success!</strong> @msg
+                    </div>
+                    <script type="text/javascript">
+                        window.setTimeout(function () {
+                            location.href = '/Master/SalaryStopAndSuspend';
+                        }, 2000);
+                    </script>
+                }
+                else
+                {
+                    <div class="alert alert-danger msgdiv">
+                        <strong>Error!</strong> @msg
+                    </div>
+                }
+            }
+        }
+        <div class="col-lg-12">
+            <div class="card card-outline-info">
+                <div class="card-body">
+
+
+                    <div class="form-body">
+                        <div class="row p-t-20">
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label"> Employee Category <span class="text-danger">*</span></label>
+                                    @Html.DropDownListFor(model => model.FK_EmployeeType, new SelectList(ViewBag.EmpCategory1, "Value", "Text"), "-Select Employee Category-", new { @class = "form-control", @onchange = "BindEmpType()" })
+                                    @Html.HiddenFor(model => model.ID)
+                                    @Html.HiddenFor(model => model.FK_EmployeeType)
+                                    @Html.ValidationMessageFor(m => m.FK_EmployeeType, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label class="form-label">Employee Type<span class="text-danger">*</span></label>
+                                    @Html.DropDownListFor(m => m.EmpType, new SelectList(String.Empty, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label"> Select Department </label>
+                                    @Html.DropDownListFor(model => model.Department, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control" })
+                                    @Html.HiddenFor(model => model.Department)
+                                    @Html.ValidationMessageFor(m => m.Department, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label"> Designation  </label>
+                                    @Html.DropDownListFor(model => model.Designation, new SelectList(ViewBag.Designation, "Value", "Text"), "-Select  Designation-", new { @class = "form-control" })
+                                    @Html.HiddenFor(model => model.Designation)
+                                    @Html.ValidationMessageFor(m => m.Designation, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label">PFMS Code  </label>
+                                    @Html.TextBoxFor(model => model.PFMSCode, new { @class = "form-control", @placeholder = "Enter PFMS Code.." })
+                                    @Html.HiddenFor(model => model.PFMSCode)
+                                    @Html.ValidationMessageFor(m => m.PFMSCode, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label"> Department Employee Code  </label>
+                                    @Html.TextBoxFor(model => model.DepEMPCode, new { @class = "form-control", @placeholder = "Enter Department Employee Code.." })
+                                    @Html.HiddenFor(model => model.DepEMPCode)
+                                    @Html.ValidationMessageFor(m => m.DepEMPCode, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row p-t-20">
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label"> Month <span class="text-danger">*</span></label>
+                                    @Html.DropDownListFor(model => model.monthId, new SelectList(ViewBag.monthId, "Value", "Text"), "-Select  Month-", new { @class = "form-control" })
+                                    @Html.HiddenFor(model => model.monthId)
+                                    @Html.ValidationMessageFor(m => m.monthId, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label"> Year <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="Year" name="Year">
+
+                                        <option value="">--select--</option>
+                                    </select>
+                                    @*@Html.DropDownListFor(model => model.Year, new SelectList(ViewBag.Designation, "Value", "Text"), "-Select Designation-", new { @class = "form-control" })*@
+                                    @Html.HiddenFor(model => model.Year)
+                                    @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                            <div class="col-md-4" style="margin-top: 30px;">
+                                <button type="button" class="btn btn-success hstheme-button-o text-white" onclick="return ValidateForm()">
+                                    <i class="fa fa-check"></i>
+                                    Show Employee
+                                </button>
+
+                                <a href="/Master/SalaryStopAndSuspend" class="btn btn-danger hstheme-button-o text-white">
+                                    <i class="fa fa-crosshairs"></i>
+                                    Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                            <div class="card">
+                                <div id="_Data">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript">
+
+    //$(document).ready(function () {
+    //    $("#EmpTable").css("display", "none");
+    //})
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2000; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    function ValidateForm() {
+        debugger;
+        var month = $('#monthId').val();
+        if ($("#FK_EmployeeType").val() == null || $("#FK_EmployeeType").val() == undefined || $("#FK_EmployeeType").val() == "") {
+            swal("", "Please Select Employee Category..", "warning");
+            $("#FK_EmployeeType").focus();
+            return false;
+        }
+        else if ($("#EmpType").val() == null || $("#EmpType").val() == undefined || $("#EmpType").val() == "") {
+            swal("", "Please Select Employee Type..", "warning");
+            return false;
+        }
+
+
+        else if ($("#Year").val() == null || $("#Year").val() == undefined || $("#Year").val() == "") {
+            swal("", "Please Select Year..", "warning");
+            $("#Year").focus();
+            return false;
+        }
+        else if ($("#monthId").val() == '' || $("#monthId").val() == undefined || $("#monthId").val() == "") {
+            swal("", "Please Select Month..", "warning");
+            $("#Year").focus();
+            return false;
+        }
+        else {
+            $("#_Data").html('')
+            $.ajax({
+                url: '/Master/Employeelistforsalary',
+                type: "POST",
+                processData: false,
+                data: JSON.stringify({ FK_EmployeeType: $("#FK_EmployeeType").val(), Department: $("#Department").val(), Designation: $("#Designation").val(), PFMSCode: $("#PFMSCode").val(), DepEMPCode: $("#DepEMPCode").val(), monthId: $("#monthId").val(), Year: $("#Year").val() }),
+                dataType: 'html',
+                contentType: 'application/json',
+                success: function (data) {
+                    debugger;
+                    $('#close').removeClass("d-none");
+                    $("#_Data").html(data)
+                },
+                error: function (error) {
+                    $("#_Data").html('No Record found')
+                }
+            });
+        }
+    }
+
+    function Action(status) {
+        var checked = $("#EmpTable input:checked").length > 0;
+        if (!checked) {
+            alert("Please Select at least one Employee");
+            return false;
+        }
+        var data = [];
+        var mod = {};
+        $('input[type=checkbox]').each(function () {
+            debugger;
+            var data1 = {};
+            if (this.checked) {
+                var id = $(this).attr('id');
+                var val = $("#" + id).val();
+                data1.EMPid = $("#" + id).val();
+                data.push(data1)
+            }
+        });
+        mod.EmpIDList = data;
+        mod.status = status;
+        $.ajax({
+            url: '/Master/StopAndSuspendSalary',
+            type: "POST",
+            processData: false,
+            data: JSON.stringify({ Model: mod }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (response) {
+                debugger;
+                if (response.flag == 1) {
+                    debugger;
+                    window.location.reload();
+                }
+                else {
+                    alert("Something went Wrong");
+                }
+            },
+            error: function (er) {
+            }
+        });
+    }
+
+    function BindEmpType(id) {
+        debugger;
+        var empCategory = $('#FK_EmployeeType').val();
+        if (empCategory > 0) {
+
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetEmployeeType',
+                data: { empCategory: empCategory },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpType').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#EmpType').val(id)
+                    }
+                },
+                error: function (e) {
+                    $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+</script>
+
+
+
+

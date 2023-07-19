@@ -1,0 +1,460 @@
+﻿@model HRPayroll.Models.ServiceType
+@{
+    ViewBag.Title = "ServiceType";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+@using HRPayroll.Models.Manager
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-lg-4 py-3">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Service Type Master</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-outline-info">
+
+                        <div class="card-body" style="background-color: #dfdede;">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @{
+                                        string Code = (string)TempData["code"];
+                                        string msg = (string)TempData["Msg"];
+                                        if (!string.IsNullOrEmpty(Code))
+                                        {
+                                            if (Code == "1")
+                                            {
+                                                <div class="alert alert-success msgdiv">
+                                                    <strong>Success!</strong> @msg
+                                                </div>
+                                                <script type="text/javascript">
+                                                    window.setTimeout(function () {
+                                                        location.href = '/Master/ServiceType';
+                                                    }, 2000);
+                                                </script>
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-danger msgdiv">
+                                                    <strong>Error!</strong> @msg
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <form method="post" action="/Master/ServiceType" id="form" onsubmit="return ValidateForm()">
+                                <div class="form-body">
+
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-12">
+                                                    <h4>Add Service Type</h4>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">District<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.DistrictId, new SelectList(ViewBag.DistrictList, "Value", "Text"), "-Select District-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.Id)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Office Type<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.officeTypeId, new SelectList(ViewBag.AgncyType, "Value", "Text"), "-Select Office Type-", new { @class = "form-control", @onchange = "GetOfficeName()" })
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Office Name<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.OfficeName, new SelectList(String.Empty, "Value", "Text"), "-Select Office Name-", new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--Permanent Employees-->
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-12 mb-2">
+                                                    <h4>Permanent Employees</h4>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Pension Contribution<span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.PPenCont, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @Html.ValidationMessageFor(m => m.PPenCont, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">PPF Contribution <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.PPPFCont, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @Html.ValidationMessageFor(m => m.PPPFCont, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label"> NPS Employee Contribution <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.PNPSEmployee, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @Html.ValidationMessageFor(m => m.PNPSEmployer, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label"> NPS Employer Contribution <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.PNPSEmployer, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @Html.ValidationMessageFor(m => m.PNPSEmployee, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--Contractual Employees-->
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-12 mb-2">
+                                                    <h4>Contractual Employee</h4>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label"> EPF Employee <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.SEPFEmployee, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @Html.ValidationMessageFor(m => m.SEPFEmployee, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">EPF Employer <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.SEPFEmployer, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @Html.ValidationMessageFor(m => m.SEPFEmployer, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label"> ESIC Employee<span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.SESICEmployee, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @Html.ValidationMessageFor(m => m.SESICEmployee, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            ESIC Employer <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.TextBoxFor(M => M.SESICEmployer, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @Html.ValidationMessageFor(m => m.SESICEmployer, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-4">
+
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            PPF Contribution <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.TextBoxFor(M => M.SPPFCont, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @Html.ValidationMessageFor(m => m.SPPFCont, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+
+                                                            DA Percent<span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.TextBoxFor(M => M.SDAPercent, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @Html.ValidationMessageFor(m => m.SDAPercent, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            PF Percent <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.TextBoxFor(M => M.SPFPercent, new { @class = "form-control", @onkeypress = "return isNumber(event)", @autocomplete = "off" })
+                                                        @*     @Html.ValidationMessageFor(m => m.SDAPercent, "", new { @class = "text-danger" })*@
+                                                    </div>
+                                                </div>-
+                                            </div>-
+                                        </div>
+                                    </div>
+                                    <!--End Contractual Employees-->
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-12 mb-2">
+                                                    <h4>Submit Data</h4>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            Office Name <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(M => M.SesofficeName, new SelectList(ViewBag.OfficeName, "Value", "Text"), new { @class = "form-control", @disabled = "disabled" })
+                                                        @Html.ValidationMessageFor(m => m.SesofficeName, "", new { @class = "text-danger" })
+                                                        @Html.HiddenFor(m => m.SesofficeName)
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            Select Pay Comission <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(M => M.PayComId, new SelectList(ViewBag.payCommision, "Value", "Text"), "select", new { @class = "form-control" })
+                                                        @Html.ValidationMessageFor(m => m.PayComId, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">
+                                                            Effective From Date<span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.TextBoxFor(M => M.ActiveDate, new { @class = "form-control", @type = "date" })
+                                                        @Html.ValidationMessageFor(m => m.ActiveDate, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions mt-3 text-center">
+                                        @if (Model.Id > 0)
+                                        {
+                                            <button class="btn btn-success hstheme-button-o text-white">
+                                                <i class="fa fa-check"></i>
+                                                Update
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-success hstheme-button-o text-white">
+                                                <i class="fa fa-check"></i>
+                                                Submit
+                                            </button>
+                                        }
+
+                                        <a href="/Master/ServiceTypeList" class="btn btn-danger hstheme-button-o text-white">
+                                            <i class="fa fa-crosshairs"></i>
+                                            Cancel
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        if (@Model.officeTypeId!= 0 && @Model.DistrictId != 0) {
+            debugger;
+            GetOfficeName('@Model.OfficeName');
+        }
+        if (@Model.Id> 0) {
+
+
+        }
+
+        else {
+            $('#PPenCont').val("");
+            $('#PPPFCont').val("");
+            $('#PNPSEmployee').val("");
+            $('#PNPSEmployer').val("");
+            $('#SEPFEmployee').val("");
+            $('#SEPFEmployer').val("");
+            $('#SESICEmployee').val("");
+            $('#SESICEmployer').val("");
+            $('#SPFPercent').val("");
+            $('#SDAPercent').val("");
+            $('#SPPFCont').val("");
+        }
+
+        $("#SesofficeName").val('@SessionManager.OfficeID')
+    })
+    function GetOfficeName(Id) {
+        debugger;
+        var districtId=$('#DistrictId').val();
+        var AgencyTypeId = $('#officeTypeId').val();
+
+        $.ajax({
+
+            type: 'Post',
+            url: '@Url.Action("GetOfficeName", "Master")',
+            data: { districtId: districtId, AgencyTypeId: AgencyTypeId },
+            dataType: 'json',
+            success: function (data) {
+                if (data != null) {
+                    $('#OfficeName').children().remove().end().append($("<option></option>").val("").text("-select-"));
+                    for (var i = 0; i < data.length; i++) {
+                        $('#OfficeName').append('<option Value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                    }
+                    $('#OfficeName').val(Id)
+                }
+                else {
+                    $('#OfficeName').children().remove().end().append($("<option></option>").val("").text("-select-"));
+                }
+
+            },
+            error: function (err) {
+                $('#OfficeName').children().remove().end().append($("<option></option>").val("").text("-select-"));
+            }
+        })
+
+    }
+
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    function ValidateForm() {
+        debugger;
+        if ($('#DistrictId').val() == "" || $('#DistrictId').val() == undefined || $('#DistrictId').val() == null) {
+            $('#DistrictId').focus();
+            swal("", "Please select district ", "warning");
+            return false;
+        }
+        if ($('#officeTypeId').val() == "" || $('#officeTypeId').val() == undefined || $('#officeTypeId').val() == null) {
+            $('#officeTypeId').focus();
+            swal("", "  Please select office type ", "warning");
+
+            return false;
+        }
+        if ($('#OfficeName').val() == "" || $('#OfficeName').val() == undefined || $('#OfficeName').val() == null) {
+            $('#OfficeName').focus();
+            swal("", "  Please select Office Name ", "warning");
+
+            return false;
+        }
+
+        if ($('#PPenCont').val() == "" || $('#PPenCont').val() == undefined || $('#PPenCont').val() == null) {
+            $('#PPenCont').focus();
+            swal("", "  Please enter Pension Contribution ", "warning");
+
+            return false;
+        } if ($('#PPPFCont').val() == "" || $('#PPPFCont').val() == undefined || $('#PPPFCont').val() == null) {
+            $('#PPPFCont').focus();
+            swal("", "  Please enter PPF Contribution  ", "warning");
+
+            return false;
+        } if ($('#PNPSEmployee').val() == "" || $('#PNPSEmployee').val() == undefined || $('#PNPSEmployee').val() == null) {
+            $('#PNPSEmployee').focus();
+            swal("", "  Please enter NPS Employee Contribution   ", "warning");
+
+            return false;
+        } if ($('#PNPSEmployer').val() == "" || $('#PNPSEmployer').val() == undefined || $('#PNPSEmployer').val() == null) {
+            $('#PNPSEmployer').focus();
+            swal("", "  Please enter NPS Employer Contribution ", "warning");
+
+            return false;
+        }
+
+        if ($('#SEPFEmployee').val() == "" || $('#SEPFEmployee').val() == undefined || $('#SEPFEmployee').val() == null) {
+            $('#SEPFEmployee').focus();
+            swal("", "  Please enter EPF Employee ", "warning");
+
+            return false;
+        }
+        if ($('#SEPFEmployer').val() == "" || $('#SEPFEmployer').val() == undefined || $('#SEPFEmployer').val() == null) {
+            $('#SEPFEmployer').focus();
+            swal("", "  Please enter EPF Employer ", "warning");
+
+            return false;
+        }
+
+        if ($('#SEPFEmployee').val() == "" || $('#SEPFEmployee').val() == undefined || $('#SEPFEmployee').val() == null) {
+            $('#SEPFEmployee').focus();
+            swal("", "  Please enter ESIC Employee ", "warning");
+
+            return false;
+        }
+        if ($('#SESICEmployee').val() == "" || $('#SESICEmployee').val() == undefined || $('#SESICEmployee').val() == null) {
+            $('#SESICEmployee').focus();
+            swal("", "  Please enter ESIC Employee", "warning");
+
+            return false;
+        }
+        if ($('#SESICEmployer').val() == "" || $('#SESICEmployer').val() == undefined || $('#SESICEmployer').val() == null) {
+            $('#SESICEmployer').focus();
+        swal("", "  Please enter ESIC Employer", "warning");
+
+            return false;
+        }
+        if ($('#SEPFEmployer').val() == "" || $('#SEPFEmployer').val() == undefined || $('#SEPFEmployer').val() == null) {
+            $('#SEPFEmployer').focus();
+            swal("", "  Please enter ESIC Employer ", "warning");
+
+            return false;
+        }
+        if ($('#SPPFCont').val() == "" || $('#SPPFCont').val() == undefined || $('#SPPFCont').val() == null) {
+            $('#SPPFCont').focus();
+            swal("", "  Please enter PPF Contribution ", "warning");
+
+            return false;
+        }
+        if ($('#SDAPercent').val() == "" || $('#SDAPercent').val() == undefined || $('#SDAPercent').val() == null) {
+            $('#SDAPercent').focus();
+            swal("", "  Please enter DA Percent ", "warning");
+
+            return false;
+        }
+        if ($('#SPFPercent').val() == "" || $('#SPFPercent').val() == undefined || $('#SPFPercent').val() == null || $('#SPFPercent').val() == 0) {
+            $('#SPFPercent').focus();
+            swal("", "  Please enter PF Percent ", "warning");
+
+            return false;
+        }
+
+        if ($('#PayComId').val() == "" || $('#PayComId').val() == undefined || $('#PayComId').val() == null || $('#PayComId').val() == 0) {
+            $('#PayComId').focus();
+            swal("", "  Please select Select Pay Comission  ", "warning");
+
+            return false;
+        }
+        if ($('#ActiveDate').val() == "" || $('#ActiveDate').val() == undefined || $('#ActiveDate').val() == null || $('#ActiveDate').val() == 0) {
+            $('#ActiveDate').focus();
+            swal("", "  Please select Select Effective From Date  ", "warning");
+
+            return false;
+        }
+
+        else {
+            return true;
+            $("#form").submit();
+        }
+
+    }
+</script>

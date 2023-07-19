@@ -1,0 +1,145 @@
+﻿@model HRPayroll.Models.Desigation
+@{
+    ViewBag.Title = "Desigation";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-lg-4 py-3">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Desigation Master</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-outline-info">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @{
+                                        string Code = (string)TempData["code"];
+                                        string msg = (string)TempData["Msg"];
+                                        if (!string.IsNullOrEmpty(Code))
+                                        {
+                                            if (Code == "1")
+                                            {
+                                                <div class="alert alert-success msgdiv">
+                                                    <strong>Success!</strong> @msg
+                                                </div>
+                                                <script type="text/javascript">
+                                                    window.setTimeout(function () {
+                                                        location.href = '/Master/Desigation';
+                                                    }, 2000);
+                                                </script>
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-danger msgdiv">
+                                                    <strong>Error!</strong> @msg
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <form method="post" action="/Master/SaveDesigation" onsubmit="return ValidateForm()" id="form">
+                                <div class="form-body">
+                                    <div class="row p-t-20">
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label"> Designation Name <span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.DesignationName, new { @class = "form-control", @maxlength = "50", @onkeypress = " return checkAlphabet(event)",@placeholder="Enter Designation Name" })
+                                                @Html.ValidationMessageFor(m => m.DesignationName, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.DesignationId)
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Code<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.Code, new { @class = "form-control", @placeholder = "Enter Sub Department Code" })
+                                                @Html.ValidationMessageFor(m => m.Code, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" style="margin-top: 31px;">
+                                    @if (Model.DesignationId > 0)
+                                    {
+
+                                        <button class="btn btn-success hstheme-button-o text-white">
+                                            <i class="fa fa-check"></i>
+                                            Update
+                                        </button>
+                                    }
+                                    else
+                                    {
+
+                                        <button class="btn btn-success hstheme-button-o text-white">
+                                            <i class="fa fa-check"></i>
+                                            Submit
+                                        </button>
+                                    }
+                                    <a href="/Master/DesignationList" class="btn btn-danger hstheme-button-o text-white">
+                                        <i class="fa fa-crosshairs"></i>
+                                        Cancel
+                                    </a>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ValidateForm() {
+        debugger;
+        if ($('#DesignationName').val() == "" || $('#DesignationName').val() == undefined || $('#DesignationName').val() == null) {
+            swal("", "Designation Name is required", "warning");
+            return false;
+        }
+        if ($('#Code').val() == "" || $('#Code').val() == undefined || $('#Code').val() == null) {
+            swal("", "Designation Code is required", "warning");
+         
+            return false;
+        }
+        
+        else {
+            return true;
+            $("#form").submit();
+        }
+
+    }
+
+
+    function checkAlphabet(event) {
+        debugger;
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-zA-Z\\s]*$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
+    jQuery($('#Code')).keyup(function () {
+        var raw_text = jQuery(this).val();
+        var return_text = raw_text.replace(/[^a-zA-Z0-9 _]/g, '');
+        jQuery(this).val(return_text);
+    });
+</script>

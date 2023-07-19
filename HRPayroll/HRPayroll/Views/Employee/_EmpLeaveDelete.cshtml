@@ -1,0 +1,102 @@
+﻿
+@model HRPayroll.Models.EmpLeaveDelete
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    <link href="~/assets/css/custom.css" rel="stylesheet" />
+    <link href="~/assets/css/ListPage.css" rel="stylesheet" />
+    <link href="~/assets/plugin/sweetalert/sweetalert.css" rel="stylesheet" />
+    <link href="~/assets/css/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/assets/plugin/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <link href="~/assets/css/dataTables.min.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="row" id="EmpTable">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    @*@Html.HiddenFor(model=>model.DeleteValue)*@
+                    @if (Model != null && Model.List != null)
+                    {
+                        if (Model.List.Count() > 0)
+                        {
+                             
+                            foreach (var item in Model.List)
+                            {
+                        
+                           <span>@Html.HiddenFor(model=>model.Testq)</span>
+                         
+                                break;
+                            }
+                        }
+                    }
+                                <div class="table">
+                                    <div class="table-responsive">
+                                        <table class="table dataTable table-striped">
+                                            <thead id="tbl">
+                                                <tr role="row" class="bg-secondary">
+                                                    <th>S.No</th>
+                                                    <th>Employee Name</th>
+                                                    <th>PFMS Code</th>
+                                                    <th>Gross Pay</th>
+                                                    <th>Net Pay</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model != null && Model.List != null)
+                                                {
+                                                    if (Model.List.Count() > 0)
+                                                    {
+                                                        var Sn = 0;
+                                                        foreach (var item in Model.List)
+                                                        {
+                                                            Sn = Sn + 1;
+
+                                                            <tr role="row" class="odd">
+                                                                <td>  @Sn</td>
+                                                                <td> @item.EmpName </td> 
+                                                                <td > @item.PFMSCode </td>
+                                                                <td> @item.grosspay </td>
+                                                                <td> @item.netpay </td>
+
+
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="6"><span>No Data Available</span></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+            </div>
+        </div> 
+    </div>  
+</body>
+</html>
+<script>
+    
+    $(document).ready(function () {
+        
+        $('#Testq').val('@Model.PFMSCode');
+
+        if (@Model.List.Count()== 0)
+        {
+            $('#DeleteValue').val(1);
+        }
+    })
+
+
+</script>

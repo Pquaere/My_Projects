@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32802.440
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HRPayroll", "HRPayroll\HRPayroll.csproj", "{47052648-6D38-4938-BBD1-56394FB169A0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{47052648-6D38-4938-BBD1-56394FB169A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47052648-6D38-4938-BBD1-56394FB169A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47052648-6D38-4938-BBD1-56394FB169A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47052648-6D38-4938-BBD1-56394FB169A0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {45ACB7B4-08AF-492B-8BE5-30E8F84038F2}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://dev.azure.com/quaere
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = HRPayroll\\HRPayroll.csproj
+		SccProjectName1 = HRPayroll
+		SccLocalPath1 = HRPayroll
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,397 @@
+﻿@model HRPayroll.Models.RptEmpLicdetail
+@{
+    ViewBag.Title = "RptEmpLicdetail";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Employee LIC Report (New)</h3>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="container-fluid">
+                    <div class="row mb-3">
+                        <div class="col-lg-12">
+                            <div class="card card-outline-info">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            @{
+                                                string Code = (string)TempData["code"];
+                                                string msg = (string)TempData["Msg"];
+                                                if (!string.IsNullOrEmpty(Code))
+                                                {
+                                                    if (Code == "1")
+                                                    {
+                                                        <div class="alert alert-success msgdiv">
+                                                            <strong>Success!</strong> @msg
+                                                        </div>
+                                                        <script type="text/javascript">
+                                                            window.setTimeout(function () {
+                                                                location.href = '/Reports/RptEmpLeaveDetail';
+                                                            }, 5000);
+                                                        </script>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="alert alert-danger msgdiv">
+                                                            <strong>Error!</strong> @msg
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+
+
+                                    <h5>Search</h5>
+                                    <div class="form-body">
+                                        <div class="row p-t-20">
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        Pay Year<span class="text-danger">*</span>
+                                                    </label>
+                                                    <select class="form-control" id="Year" name="Year">
+                                                        <option value="">--Select--</option>
+                                                    </select>
+                                                    @Html.HiddenFor(model => model.Year)
+                                                    @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="col-md-4">
+                                                <div>
+                                                    <div class="form-group">
+                                                        <label class="control-label">
+                                                            Pay Month<span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Employee Category<span class="text-danger">*</span></label>
+
+                                                    @Html.DropDownListFor(model => model.WTypeId, new SelectList(ViewBag.EmployeeCategory, "Value", "Text"), "-Select Category-", new { @class = "form-control", @onchange = "BindEmpType();" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Employee Type</label>
+                                                    @Html.DropDownListFor(m => m.EmpType, new SelectList(String.Empty, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label"> Salary Type</label>
+                                                    @Html.DropDownListFor(model => model.SalaryType, new List<SelectListItem>
+   {
+       new SelectListItem{ Text="Regular Salary", Value = "C" },
+       new SelectListItem{ Text="Supplementary", Value = "S" },
+    }, "-- Select Type--", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-4" style="margin-top:30px">
+                                                <div class="form-group">
+                                                    <button class="btn btn-success" onclick="filldepartment()">
+
+                                                        Fill Department
+                                                    </button>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Select Department</label>
+                                                    @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Select Sub Department</label>
+                                                    @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control", @onchange = "BindEmployee();" })
+
+                                                    @Html.HiddenFor(model => model.Fk_SubDeptId)
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Search Employee</label>
+                                                    @Html.DropDownListFor(model => model.EmpId, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control", @onchange = "BindEmpDetail();" })
+
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label"> Order By</label>
+                                                    @Html.DropDownListFor(model => model.OrderBy, new List<SelectListItem>
+   {
+       new SelectListItem{ Text="Employee Name", Value = "EmpName" },
+       new SelectListItem{ Text="Dpt. Employee Code", Value = "dptEmpCode" },
+
+
+    }, "-- Select Type--", new { @class = "form-control" })
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4" style="margin-top:30px">
+                                                <div class="form-group">
+                                                    <button class="btn btn-success" onclick="SubmitForm()">
+                                                        Submit
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <div class="row">
+                                                <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                                                    <div class="card">
+                                                        <div id="_Data">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Reports/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindEmpType(id) {
+        debugger;
+        var empCategory = $('#WTypeId').val();
+        if (empCategory > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Reports/GetEmployeeType',
+                data: { empCategory: empCategory },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpType').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+                    }
+                    else {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#EmpType').val(id)
+                    }
+                },
+                error: function (e) {
+                    $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+            })
+        }
+        else {
+            $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+    function BindEmployee(id) {
+        debugger;
+        var SubDeptId = $('#Fk_SubDeptId').val();
+        var DptEpCode = "";
+        var PFMSCODE = $('#PFMSCode').val();
+        var EmpName = $('#EmpName').val();
+        $.ajax({
+            url: '/Reports/GetEmpSalDetail',
+            type: 'post',
+            data: { SubDeptId: SubDeptId, DptEpCode: DptEpCode, PFMSCODE: PFMSCODE, EmpName: EmpName },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#EmpId').empty();
+                    $('#EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2020; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+
+    function filldepartment() {
+
+        debugger;
+        var WTypeId = $('#WTypeId').val();
+        if ($('#WTypeId').val() == "" || $('#WTypeId').val() == undefined || $('#WTypeId').val() == null) {
+            swal("", "Please Select Category Type", "warning");
+            return false;
+        }
+        if (WTypeId == 1) {
+
+            $.ajax({
+                url: '/Reports/filldepartment',
+                type: 'post',
+                data: { EmpType: $("#EmpType").val(), WTypeId: $("#WTypeId").val(), Month: $("#Month").val(), Year: $("#Year").val() },
+                dataType: 'json',
+                containtType: 'aplication/json;charset=utf-8',
+                success: function (data) {
+                    if (data != null) {
+                        $('#Fk_DepartmentId').empty();
+                        $('#Fk_DepartmentId').append('<option>---Select----</option>');
+                        for (var i = 0; i < data.length; i++) {
+                            $('#Fk_DepartmentId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                        }
+                        if (id > 0) {
+
+                        }
+                    }
+                },
+                error: function (error) {
+                }
+            });
+        }
+
+        else {
+            $.ajax({
+                url: '/Reports/filldepartment1',
+                type: 'post',
+                data: { EmpType: $("#EmpType").val(), WTypeId: $("#WTypeId").val(), Month: $("#Month").val(), Year: $("#Year").val() },
+                dataType: 'json',
+                containtType: 'aplication/json;charset=utf-8',
+                success: function (data) {
+                    if (data != null) {
+                        $('#Fk_DepartmentId').empty();
+                        $('#Fk_DepartmentId').append('<option>---Select----</option>');
+                        for (var i = 0; i < data.length; i++) {
+                            $('#Fk_DepartmentId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                        }
+                        if (id > 0) {
+
+                        }
+                    }
+                },
+                error: function (error) {
+                }
+            });
+        }
+    }
+
+
+    function SubmitForm() {
+
+        debugger;
+        var WTypeId = $('#WTypeId').val();
+        if ($('#WTypeId').val() == "" || $('#WTypeId').val() == undefined || $('#WTypeId').val() == null) {
+            swal("", "Please Select Category Type", "warning");
+            return false;
+        }
+        
+        if ($('#Year').val() == "" || $('#Year').val() == undefined || $('#Year').val() == null) {
+            swal("", "Please Select Year  ", "warning");
+            return false;
+        }
+        
+        if ($('#Month').val() == "" || $('#Month').val() == undefined || $('#Month').val() == null) {
+            swal("", "Please Select Month", "warning");
+            return false;
+        }
+         
+        $("#_Data").html('');
+        $.ajax({
+            url: "/Reports/Show_RptLicDetail",
+            type: "POST",
+            processData: false,
+            data: JSON.stringify({ EmpType: $("#EmpType").val(), WTypeId: $("#WTypeId").val(), Month: $("#Month").val(), Year: $("#Year").val(), SalaryType: $("#SalaryType").val(), OrderBy: $("#OrderBy").val(), EmpId: $("#EmpId").val(), Fk_SubDeptId: $("#Fk_SubDeptId").val(), Fk_DepartmentId: $("#Fk_DepartmentId").val()}),
+            dataType: 'html',
+            contentType: 'application/json',
+            success: function (data) {
+                debugger;
+                $('#close').removeClass("d-none");
+                $("#_Data").html(data);
+            },
+            error: function (error) {
+                
+                $("#_Data").html('No Record found')
+            }
+        });
+
+       
+    }
+
+</script>

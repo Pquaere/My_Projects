@@ -1,0 +1,276 @@
+﻿@model HRPayroll.Models.EmpLeaveDelete
+@{
+    ViewBag.Title = "EmpSalaryDelete";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Employee Delete From Salary Bill</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                        </div>
+                        <script type="text/javascript">
+                            window.setTimeout(function () {
+                                debugger
+                                location.href = '/Employee/EmpSalaryDelete';
+                            }, 3000);
+                        </script>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-body">
+
+                        <div class="form-body">
+
+                            <div class="row p-t-20">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Account No:<span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(M => M.AccountNo, new { @class = "form-control", @maxlength = "50" })
+                                        @Html.HiddenFor(model => model.PFMSCode)
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Select Type<span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(model => model.SelectType, new SelectList(ViewBag.WorkingType, "Value", "Text"), "-Select Type-", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Select Year<span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-control" id="Year" name="Year">
+                                            <option value="">--Select--</option>
+                                        </select>
+                                        @Html.HiddenFor(model => model.Year)
+                                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <!--/span-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Select Month<span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Salary Type<span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(model => model.SalaryType, new List<SelectListItem>
+            {
+                new SelectListItem{ Text="Regular Salary", Value = "C" },
+                new SelectListItem{ Text="Supplementary", Value = "S" },
+             }, "--- Select ---", new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-success" onclick="submit()">
+
+                                Search
+                            </button>
+
+                            <button class="btn btn-danger" id="Delete" onclick="Delete()">
+
+                                Delete
+                            </button>
+                        </div>
+                        <br />
+                        <br />
+                        <br />
+
+                        @*<div class="row">
+                                <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                                    <div class="card">
+                                        <div id="_Data">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="container-fluid d-none" id="d1">
+                            <div class="row mb-3">
+                                <!-- column -->
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+
+                                            <div class="table" id="ticket_list">
+                                                <div class="table-responsive">
+                                                    <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr role="row" class="bg-secondary">
+                                                                <th>S.No</th>
+                                                                <th>Employee Name</th>
+                                                                <th>PFMS Code</th>
+                                                                <th>Gross Pay</th>
+                                                                <th>Net Pay</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="table2">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script>
+    $('#Delete').prop('disabled', true);
+
+
+    $(function () {
+
+        var ddlYears = $("#Year");
+        var currentYear = (new Date()).getFullYear();
+        for (var i = 2020; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+
+    function submit() {
+        debugger;
+        if ($('#AccountNo').val() == '' || $('#AccountNo').val() == 0) {
+
+            swal("", "Please Fill Account No.   ", "warning");
+            return false;
+        }
+        if ($('#SelectType').val() == '' || $('#SelectType').val() == 0) {
+
+            swal("", "Please Select   Type  ", "warning");
+            return false;
+        }
+        if ($('#Year').val() == '' || $('#Year').val() == 0) {
+
+            swal("", "Please Select Year    ", "warning");
+            return false;
+        }
+        if ($('#Month').val() == '' || $('#Month').val() == 0) {
+
+            swal("", "Please Select Month   ", "warning");
+            return false;
+        }
+        if ($('#SalaryType').val() == '' || $('#SalaryType').val() == 0) {
+
+            swal("", "Please Select Salary Type  ", "warning");
+            return false;
+        }
+        $.ajax({
+            url: "/Employee/EmployeeSalaryDelete1",
+            type: "POST",
+            data: { SalaryType: $("#SalaryType").val(), Month: $("#Month").val(), Year: $("#Year").val(), SelectType: $("#SelectType").val(), AccountNo: $("#AccountNo").val() },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#table2').empty();
+                    if (data.List.length > 0) {
+                        $('#d1').removeClass('d-none');
+                        $('#Delete').prop('disabled', false);
+                    }
+                    else {
+                        swal("", "No Record found", "warning");
+                    }
+                    var Sno = 1;
+                    for (var i = 0; i < data.List.length; i++) {
+                        $("#table2").append('<tr><td>' + Sno++ + '</td><td>' + data.List[i].EmpName + '</td><td>' + data.List[i].PFMSCode + '</td><td>' + data.List[i].grosspay + '</td><td>' + data.List[i].netpay + '</td></tr>');
+
+                        $('#PFMSCode').val(data.List[i].PFMSCode);
+                    }
+                }
+                else {
+                    swal("", "No Record found", "warning");
+                }
+            },
+            error: function (error) {
+
+            }
+        });
+
+
+    }
+
+
+
+    function Delete() {
+        debugger;
+
+        $.ajax({
+            url: '/Employee/SalaryDelete', /*LeaveDelete*/
+            type: "POST",
+            processData: false,
+            data: JSON.stringify({ SalaryType: $("#SalaryType").val(), Month: $("#Month").val(), Year: $("#Year").val(), SelectType: $("#SelectType").val(), PFMSCode: $("#PFMSCode").val() }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.flag == 1) {
+                    swal("", data.message, "success");
+
+                    window.setTimeout(function () {
+                        debugger
+                        window.location.reload();
+                    }, 3000);
+
+                }
+
+
+            },
+            error: function (error) {
+
+            }
+        });
+
+    }
+</script>

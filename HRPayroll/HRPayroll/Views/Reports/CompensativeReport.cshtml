@@ -1,0 +1,199 @@
+﻿@model HRPayroll.Models.Compensative
+
+@{
+    ViewBag.Title = "CompensativeReport";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Employee Compensative Report</h3>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" id="form" onsubmit="return ValidateForm()">
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <h5>Search</h5>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv" id="msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    /*location.href = '';*/
+                                                                    $('#msgdiv').hide();
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                        @Html.HiddenFor(model => model.Fk_DepartmentId)
+                                                        @Html.ValidationMessageFor(m => m.Fk_DepartmentId, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                        @Html.ValidationMessageFor(m => m.Fk_SubDeptId, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <button class="btn btn-info mb-2" style="color:white;margin-top:22px;" >
+                                                        Search Employee
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <!-- column -->
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5>Employee Compensative Details</h5>
+                                        <div class="table" id="tbl">
+                                            <div class="table-responsive">
+                                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <td align="center" style="background-color: #e6700a;color:white;" colspan="4"><b>Actual Employee Name</b></td>
+                                                            <td align="center" style="background-color: #e6700a;color:white;" colspan="4"><b>Compensative Employee Name</b></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align="center" style="background-color: #e6700a;color:white;"><b>PFMS Code</b></td>
+                                                            <td align="center" style="background-color: #e6700a;color:white;"><b>Employee Name</b></td>
+                                                            <td align="center" style="background-color: #e6700a;color:white;"><b>Department</b></td>
+                                                            <td align="center" style="background-color: #e6700a;color:white;"><b>Sub Department</b></td>
+                                                            <td align="center" style="background-color: #e6700a;color:white;"><b>PFMS Code</b></td>
+                                                            <td align="center" style="background-color: #e6700a;color:white;"><b>Employee Name</b></td>
+                                                            <td align="center" style="background-color: #e6700a;color:white;"><b>Department</b></td>
+                                                            <td align="center" style="background-color: #e6700a;color:white;"><b>Sub Department</b></td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.List != null)
+                                                        {
+                                                            var sn = 1;
+                                                            foreach (var item in Model.List)
+                                                            {
+                                                                <tr role="row" class="odd">
+                                                                    <td align="center">@item.PFMSCODEP</td>
+                                                                    <td align="center">@item.EmployeeNameP</td>
+                                                                    <td align="center">@item.DepartmentHeadP</td>
+                                                                    <td align="center">@item.SubDeptNameP</td>
+                                                                    <td align="center">@item.PFMSCODEC</td>
+                                                                    <td align="center">@item.EmployeeNameC</td>
+                                                                    <td align="center">@item.DepartmentHeadC</td>
+                                                                    <td align="center">@item.SubDeptNameC</td>
+                                                                </tr>
+                                                                sn++;
+                                                            }
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Reports/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function ValidateForm() {
+        debugger;
+        if ($('#Fk_DepartmentId').val() == '' || $('#Fk_DepartmentId').val() == '0' || $('#Fk_DepartmentId').val() == null) {
+            swal("", "Please select Department..", "warning");
+            $('#Fk_DepartmentId').focus();
+            return false;
+        }
+        if ($('#Fk_SubDeptId').val() == '' || $('#Fk_SubDeptId').val() == '0' || $('#Fk_SubDeptId').val() == null) {
+            swal("", "Please select Sub Department..", "warning");
+            $('#Fk_SubDeptId').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+
+
+
+</script>

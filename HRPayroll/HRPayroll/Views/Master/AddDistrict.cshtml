@@ -1,0 +1,142 @@
+﻿@model HRPayroll.Models.District
+@{
+    ViewBag.Title = "AddDistrict";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+    <div class="container-fluid">
+        <div class="page-wrapper">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Add District</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    @{
+                        string Code = (string)TempData["code"];
+                        string msg = (string)TempData["Msg"];
+                        if (!string.IsNullOrEmpty(Code))
+                        {
+                            if (Code == "1")
+                            {
+                                <div class="alert alert-success msgdiv">
+                                    <strong>Success!</strong> @msg
+                                </div>
+                                <script type="text/javascript">
+                                    window.setTimeout(function () {
+                                        location.href = '/Master/AddDistrict';
+                                    }, 3000);
+
+/**/</script>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger msgdiv">
+                                    <strong>Error!</strong> @msg
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card card-outline-info">
+                            <div class="card-body">
+                                <form action="/Master/AddDistrict" method="post" id="FormSubmit" onsubmit="return ValidateForm();">
+                                    <div class="form-body">
+
+                                        <div class="row p-t-20">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        Select State<span class="text-danger">*</span>
+                                                    </label>
+                                                    @Html.DropDownListFor(model => model.FK_StateId, new SelectList(ViewBag.State, "Value", "Text"), "-Select State-", new { @class = "form-control" })
+                                                    @Html.HiddenFor(model => model.ID)
+                                                    @Html.HiddenFor(model => model.FK_StateId)
+
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        District Name<span class="text-danger">*</span>
+                                                    </label>
+                                                    @Html.TextBoxFor(M => M.DistrictName, new { @class = "form-control", @placeholder = "Enter District Name", @maxlength = "50", @onkeypress = "checkAlphabet(event)" })
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        @if (Model.ID > 0)
+                                        {
+                                            <button class="btn btn-success hstheme-button-o text-white">
+                                                <i class="fa fa-check"></i>
+                                                Update
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-success hstheme-button-o text-white">
+                                                <i class="fa fa-check"></i>
+                                                Submit
+                                            </button>
+                                        }
+
+                                        <a href="/Master/DistrictList" class="btn btn-danger hstheme-button-o text-white">
+                                            <i class="fa fa-crosshairs"></i>
+                                            Cancel
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+        </div>
+        <script>
+
+            function ValidateForm() {
+                debugger;
+                if ($('#FK_StateId').val() == '' || $('#FK_StateId').val() == '0') {
+                    swal("", "Please Select State..", "warning");
+                    $('#FK_StateId').focus();
+                    return false;
+
+                }
+                if ($('#DistrictName').val() == '' || $('#DistrictName').val() == '0' || $('#DistrictName').val() == null) {
+                    swal("", "Please Enter District Name..", "warning");
+                    $('#DistrictName').focus();
+                    return false;
+                }
+                else {
+                    return true;
+                    $("#FormSubmit").submit();
+                }
+            }
+
+            function checkAlphabet(event) {
+                debugger;
+                if (event.charCode != 0) {
+                    var regex = new RegExp("^[a-zA-Z\\s]*$");
+                    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                    if (!regex.test(key)) {
+                        event.preventDefault();
+                        return false;
+                    }
+                }
+            }
+
+        </script>
+

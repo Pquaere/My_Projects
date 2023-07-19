@@ -1,0 +1,117 @@
+﻿@model HRPayroll.Models.LeaveRequest
+@{
+    ViewBag.Title = "LeaveList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-2">
+            <div class="row page-titles">
+                <div class="col-md-6 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Assigned Leave List</h3>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="pbutton" style="text-align: right">
+                        <div class="right text-right">
+                            <a href="/Master/Add_LeaveRequest" id="btnAdd" class="btn btn-success btn-sm">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Add Leave Assign
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    @{
+                        string Code = (string)TempData["code"];
+                        string msg = (string)TempData["Msg"];
+                        if (!string.IsNullOrEmpty(Code))
+                        {
+                            if (Code == "1")
+                            {
+                                <div class="alert alert-success msgdiv">
+                                    <strong>Success!</strong> @msg
+                                </div>
+                                <script type="text/javascript">
+                            window.setTimeout(function () {
+                                location.href = '/Master/LeaveList';
+                            }, 2000);
+                                </script>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger msgdiv">
+                                    <strong>Error!</strong> @msg
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+
+
+            <div class="row">
+                <!-- column -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped dataTable">
+                                    <thead>
+                                        <tr role="row" class="bg-secondary">
+                                            <th> S.No</th>
+                                            <th> Employee Type</th>
+                                            <th> Designation Name</th>
+                                            <th> Leave Category</th>
+                                            <th> Total Leave</th>
+                                            <th> Financial Year</th>
+                                            <th> Date</th>
+                                            <th> Total Records</th>
+                                            <th> Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.LeaveList != null)
+                                        {
+                                            var sn = 1;
+                                            foreach (var item in Model.LeaveList)
+                                            {
+                                                <tr role="row" class="odd">
+                                                    <input type="hidden" value="@item.Fk_AssignLeaveId" class="ID" />
+                                                    <td>@sn</td>
+                                                    <td>@item.EmpCategory</td>
+                                                    <td>@item.DesignationName</td>
+                                                    <td>@item.LeaveCategoryName</td>
+                                                    <td>@item.TotalLeave</td>
+                                                    <td>@item.Fy_Full</td>
+                                                    <td>@item.Date</td>
+                                                    <td>@item.TotalRecords</td>
+                                                    <td class="">
+                                                        <a href="/Master/Add_LeaveRequest?ID=@item.Fk_AssignLeaveId" title="Edit"><i class="fa fa-pencil"></i> </a>                                                    
+                                                        <a href="/Master/deleteAssignleave?ID=@item.Fk_AssignLeaveId" title="Delete"><i class="fa fa-trash"></i> </a>
+                                                    </td>
+                                                </tr>
+                                                sn++;
+                                            }
+                                        }
+            else
+            {
+                <tr><td><span>No Data Available</span></td></tr>
+            }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

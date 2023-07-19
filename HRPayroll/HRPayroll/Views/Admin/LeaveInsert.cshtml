@@ -1,0 +1,553 @@
+﻿@model HRPayroll.Models.Leave
+@{
+    ViewBag.Title = "LeaveInsert";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    .form-group{
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-lg-4 py-3">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Employee Leave</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-outline-info">
+
+                        <div class="card-body" style="background-color: #dfdede;">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @{
+                                        string Code = (string)TempData["code"];
+                                        string msg = (string)TempData["Msg"];
+                                        if (!string.IsNullOrEmpty(Code))
+                                        {
+                                            if (Code == "1")
+                                            {
+                                                <div class="alert alert-success msgdiv">
+                                                    <strong>Success!</strong> @msg
+                                                </div>
+                                                <script type="text/javascript">
+                                                    window.setTimeout(function () {
+                                                        location.href = '/Admin/LeaveInsert';
+                                                    }, 2000);
+                                                </script>
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-danger msgdiv">
+                                                    <strong>Error!</strong> @msg
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <form method="post" action="/Master/ServiceType" id="form" onsubmit="return ValidateForm()">
+                                <div class="form-body">
+
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-12">
+                                                    <h4>Search</h4>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Year<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Year, new SelectList(String.Empty, "Value", "Text"), "-Select Year-", new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Month <span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Type  <span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.WorkingType, new SelectList(ViewBag.EmpCategory1, "Value", "Text"), "-Select -", new { @class = "form-control", @onchange = "BindEmployee()" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Employee  <span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Employee, new SelectList(String.Empty, "Value", "Text"), "-Select Employee -", new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">PFMS Code  <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(m => m.PFMSCode, new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Departmental Employee Unique Code:  <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(m => m.DeptUniqueCode, new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Search By Name: <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <input type="button" value="Search" class="btn btn-success" onclick="GetDetails()"/>
+                                        </div>
+                                    </div>
+
+
+                            
+
+
+                                </div>
+                            </form>
+
+                            <div class="card mb-2 d-none" id="empDetails">
+                                <div class="card-body">
+                                    <div class="row p-t-20">
+                                        <div class="col-md-12 mb-2">
+                                            <h4>Employee Leave Details</h4>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Name<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.EmpName, new { @class = "form-control", @readonly = true })
+                                                @Html.HiddenFor(m => m.EmpId)
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Father's Name<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.FatherName, new { @class = "form-control", @autocomplete = "off", @readonly = true })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label"> Select Action: <span class="text-danger">*</span></label>
+                                                @Html.DropDownListFor(m => m.ActionType, new List<SelectListItem>
+
+                                    {
+                                        new SelectListItem{ Text="Apply Leave", Value = "L" },
+                                        new SelectListItem{ Text="Suspended", Value = "S" },
+                                        new SelectListItem{ Text="Hourly Salary", Value = "H" },
+                                        new SelectListItem{ Text="Supplementary Days", Value = "P" },
+                                        new SelectListItem{ Text="Overtime for Saturday", Value = "A" },
+                                        new SelectListItem{ Text="Overtime for Sunday", Value = "U" },
+                                        new SelectListItem{ Text="Break Salary", Value = "V" },
+                                        new SelectListItem{ Text="Retirement ", Value = "R" },
+                                        new SelectListItem{ Text="Death ", Value = "D" },
+
+                                        }, "-select-", new { @class = "form-control", @onchange = "change()" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label"> Order NO <span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.OrderNo, new { @class = "form-control", @autocomplete = "off" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label"> Order Date <span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.OrderDate, new { @class = "form-control", @autocomplete = "off", @type = "date" })
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4 d-none" id="Weightage">
+                                            <div class="form-group">
+                                                <label class="form-label"> Select Salary Weightage: <span class="text-danger">*</span></label>
+                                                @Html.DropDownListFor(m => m.SalaryWeightage, new List<SelectListItem>
+
+                                    {
+                                        new SelectListItem{ Text="100% of Total Salary", Value = "100.00" },
+                                        new SelectListItem{ Text="75% of Total Salary", Value = "75.00" },
+                                        new SelectListItem{ Text="50% of Total Salary", Value = "50.00" },
+
+
+                                        }, "-select-", new { @class = "form-control", @onchange = "change()" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 d-none" id="days">
+                                            <div class="form-group">
+                                                <label class="form-label"> No. OF Days<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.NoOfDays, new { @class = "form-control", @autocomplete = "off" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 d-none">
+                                            <div class="form-group">
+                                                <label class="form-label"> Select Leave Type:<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.LeaveType, new { @class = "form-control", @autocomplete = "off" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 d-none" id="forhours">
+                                            <div class="form-group">
+                                                <label class="form-label">Salary for Hours:<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.salaryHours, new { @class = "form-control", @autocomplete = "off" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 d-none" id="retDate">
+                                            <div class="form-group">
+                                                <label class="form-label">Date of Retire:<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.Retierdate, new { @class = "form-control", @autocomplete = "off", @type = "date" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 d-none" id="DeathDate">
+                                            <div class="form-group">
+                                                <label class="form-label">Death Date :<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.DeathDate, new { @class = "form-control", @autocomplete = "off", @type = "date" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Remarks:<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.Remark, new { @class = "form-control", @autocomplete = "off" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="form-group text-center">
+                                                <input type="button" class="btn btn-success" value="submit" onclick="SaveEmpLeaveDetails()" disabled id="btnsub" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function GetDetails() {
+        debugger;
+        var model = {
+            Year: $('#Year').val(),
+            Month: $('#Month').val(),
+            WorkingType: $('#WorkingType').val(),
+            Name: $('#Name').val(),
+            DeptUniqueCode: $('#DeptUniqueCode').val(),
+            Name: $('#Name').val(),
+            Employee: $('#Employee').val(),
+            PFMSCode: $('#PFMSCode').val(),
+
+        }
+
+        if ($('#Year').val() == "" || $('#Year').val() == null || $('#Year').val() == undefined) {
+            swal("", "Please select Year", "warning")
+            return false;
+
+        }
+        if ($('#Month').val() == "" || $('#Month').val() == null || $('#Month').val() == undefined) {
+            swal("", "Please select month", "warning")
+            return false;
+        }
+        if ($('#WorkingType').val() == "" || $('#WorkingType').val() == null || $('#WorkingType').val() == undefined) {
+            swal("", "Please select Type", "warning")
+            return false;
+        }
+        $.ajax({
+            type: 'Post',
+            url: '@Url.Action("GetEmpLeaveDetails", "Admin")',
+            data: { model: model },
+            dataType: 'Json',
+            success: function (data) {
+                if (data != null) {
+                    $('#empDetails').removeClass('d-none')
+                    $('#EmpName').val(data.EmpName);
+                    $('#FatherName').val(data.FatherName);
+                    $('#EmpId').val(data.EmpId);
+
+                }
+                else {
+                    $('#EmpName').val('');
+                    $('#FatherName').val('');
+                }
+            }
+        })
+
+    }
+
+
+    function SaveEmpLeaveDetails() {
+
+        var model = {
+            EmpId: $('#EmpId').val(),
+            Year: $('#Year').val(),
+            Month: $('#Month').val(),
+            WorkingType: $('#WorkingType').val(),
+            Name: $('#Name').val(),
+            DeptUniqueCode: $('#DeptUniqueCode').val(),          
+            Employee: $('#Employee').val(),
+            PFMSCode: $('#PFMSCode').val(),
+            EmpName: $('#EmpName').val(),
+            FatherName: $('#FatherName').val(),
+            OrderNo: $('#OrderNo').val(),
+            OrderDate: $('#OrderDate').val(),
+            ActionType: $('#ActionType').val(),
+            SalaryWeightage: $('#SalaryWeightage').val(),
+            NoOfDays: $('#NoOfDays').val(),
+            LeaveType: $('#LeaveType').val(),
+            salaryHours: $('#salaryHours').val(),
+            Retierdate: $('#Retierdate').val(),
+            DeathDate: $('#DeathDate').val(),
+            Remark: $('#Remark').val(),
+
+        }
+        if ($('#OrderNo').val() == "" || $('#OrderNo').val() == null || $('#OrderNo').val() == undefined) {
+            swal("", "Please enter order no", "warning");
+            return false;
+        }
+        if ($('#OrderDate').val() == "" || $('#OrderDate').val() == null || $('#OrderDate').val() == undefined) {
+            swal("", "Please enter Order Date", "warning");
+            return false;
+        }
+        if ($('#ActionType').val() == "" || $('#ActionType').val() == null || $('#ActionType').val() == undefined) {
+            swal("", "Please select ActionType", "warning");
+            return false;
+        }
+        if ($('#ActionType').val() == "L" || $('#ActionType').val() == "A" || $('#ActionType').val() == "U") {
+            if ($('#NoOfDays').val() == "" || $('#NoOfDays').val() == null || $('#NoOfDays').val() == undefined) {
+                swal("", "Please enter No. of Days", "warning")
+                return false;
+            }
+        }
+        if ($('#ActionType').val() == "S") {
+            if ($('#SalaryWeightage').val() == "" || $('#SalaryWeightage').val() == null || $('#SalaryWeightage').val() == undefined) {
+                swal("", "Please select  Salary Weightage: ", "warning")
+                return false;
+            }
+            if ($('#NoOfDays').val() == "" || $('#NoOfDays').val() == null || $('#NoOfDays').val() == undefined) {
+                swal("", "Please enter No. of Days", "warning")
+                return false;
+            }
+        }
+        if ($('#ActionType').val() == "R") {
+            if ($('#Retierdate').val() == "" || $('#Retierdate').val() == null || $('#Retierdate').val() == undefined) {
+                swal("", "Please select Date of Retire ", "warning")
+                return false;
+
+            }
+        }
+            if ($('#ActionType').val() == "D") {
+                if ($('#DeathDate').val() == "" || $('#DeathDate').val() == null || $('#DeathDate').val() == undefined) {
+                    swal("", "Please select Death Date ", "warning")
+                    return false;
+
+                }
+            }
+            if ($('#ActionType').val() == "H") {
+                if ($('#salaryHours').val() == "" || $('#salaryHours').val() == null || $('#salaryHours').val() == undefined) {
+                    swal("", "Please enter Salary for Hours: ", "warning")
+                    return false;
+
+                }
+            }
+
+         $.ajax({
+            type: 'Post',
+            url: '@Url.Action("SaveEmpLeaveRecord", "Admin")',
+            data: { model: model },
+            dataType: 'Json',
+            success: function (data) {
+                if (data != null) {
+                    if (data.flag > 0) {
+                        swal("", "record saved successfully", "success")
+                        window.setTimeout(function () {
+                            location.href = '/Admin/LeaveInsert';
+                        }, 2000);
+                    }
+
+                }
+                else {
+                    swal("", "", "warning")
+                }
+            }
+        })
+    }
+
+    function BindEmployee(id) {
+        debugger;
+        var WorkingType = $('#WorkingType').val();
+        if (WorkingType > 0) {
+
+            $.ajax({
+                type: 'post',
+                url: '/Admin/GetEmployeeByCategory',
+                data: { WorkingType: WorkingType },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#Employee").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#Employee').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#Employee").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#Employee').val(id)
+                    }
+                },
+                error: function (e) {
+                    $("#Employee").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#Employee").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+
+    function change() {
+        debugger;
+        var Action = $('#ActionType').val();
+        if (Action != null) {
+            $('#btnsub').removeAttr("disabled")
+        }
+        if (Action == "L") {
+            $('#days').removeClass('d-none');
+
+            $('#Weightage').addClass('d-none');
+            $('#forhours').addClass('d-none')
+
+            $('#retDate').addClass('d-none');
+            $('#Weightage').addClass('d-none');
+
+            $('#DeathDate').addClass('d-none');
+
+        }
+        else if (Action == "S") {
+            $('#Weightage').removeClass('d-none');
+            $('#days').removeClass('d-none');
+
+            $('#retDate').addClass('d-none');
+            $('#forhours').addClass('d-none')
+            $('#DeathDate').addClass('d-none');
+        }
+        else if (Action == "H") {
+            $('#forhours').removeClass('d-none')
+
+            $('#days').addClass('d-none');
+            $('#Weightage').addClass('d-none');
+            $('#retDate').addClass('d-none');
+            $('#Weightage').addClass('d-none');
+            $('#DeathDate').addClass('d-none');
+        }
+        else if (Action == "P") {
+            $('#days').removeClass('d-none');
+
+            $('#retDate').addClass('d-none');
+            $('#Weightage').addClass('d-none');
+            $('#forhours').addClass('d-none')
+            $('#DeathDate').addClass('d-none');
+        }
+        else if (Action == "A") {
+            $('#days').removeClass('d-none');
+
+            $('#retDate').addClass('d-none');
+            $('#Weightage').addClass('d-none');
+            $('#forhours').addClass('d-none')
+            $('#DeathDate').addClass('d-none');
+        }
+        else if (Action == "U") {
+            $('#days').removeClass('d-none');
+
+            $('#retDate').addClass('d-none');
+            $('#Weightage').addClass('d-none');
+            $('#forhours').addClass('d-none')
+            $('#DeathDate').addClass('d-none');
+        }
+        else if (Action == "V") {
+            $('#days').addClass('d-none');
+
+            $('#retDate').addClass('d-none');
+            $('#Weightage').addClass('d-none');
+            $('#forhours').addClass('d-none')
+            $('#DeathDate').addClass('d-none');
+        }
+        else if (Action == "R") {
+            $('#retDate').removeClass('d-none');
+
+            $('#Weightage').addClass('d-none');
+            $('#forhours').addClass('d-none')
+            $('#DeathDate').addClass('d-none');
+        }
+        else if (Action == "D") {
+            $('#DeathDate').removeClass('d-none');
+            $('#days').addClass('d-none');
+            $('#retDate').addClass('d-none');
+            $('#Weightage').addClass('d-none');
+            $('#forhours').addClass('d-none')
+        }
+        else {
+
+        }
+
+
+
+
+    }
+
+
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2017; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+</script>

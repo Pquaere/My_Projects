@@ -1,0 +1,441 @@
+﻿@model HRPayroll.Models.Accept_RollbackEmployee
+@{
+    ViewBag.Title = "Accept_RollbackEmployee";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<style>
+    .form-control:disabled, .form-control[readonly] {
+        cursor: not-allowed;
+        background-color: #eee;
+        opacity: 1;
+    }
+</style>
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-body" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Accept/Rollback Transfered Employee Form</h3>
+                        </div>
+                    </div>
+                </div>
+                <form action="/Employee/Accept_RollbackEmployee" method="post" onsubmit=" return ValidateTransfer()" id="from">
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            @*
+                                                                <script type="text/javascript">
+                                                                    window.setTimeout(function () {
+                                                                        location.href = '/Employee/EmployeeTransfer';
+                                                                    }, 5000);
+                                                                </script>*@
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+
+                                        <h5>Search</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                            </div>
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4 ">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Employee</label>
+                                                        @Html.DropDownListFor(model => model.EmpId, new SelectList(ViewBag.Emp, "Value", "Text"), "Select Employee", new { @class = "form-control", @onchange = "BindEmpDetail(this.value);" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 offset-md-2 ">
+                                                    <div class="form-group">
+                                                        <div>
+                                                            <label class="form-label">Employee Accept/RollBack</label>
+                                                        </div>
+                                                        <input id="AcceptType"  name="Type" type="radio" value="Accept" onclick="changetransferype(this.value)">
+                                                        <label class="form-label me-4" for="AcceptType">Accept Employee</label>
+
+                                                        <input id="RollbackType" name="Type" type="radio" value="Rollback" onclick="changetransferype(this.value)">
+                                                        <label class="form-label" for="RollbackType">RollBack Employee</label>
+                                                    </div>
+                                                    @Html.HiddenFor(m=>m.Type,new {@Value= "Accept" })
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <h5>Personal Detail</h5>
+                                        <div class="row p-t-20">
+                                            <div class="col-lg-12">
+                                                <div class="row p-t-20">
+                                                    <div class="col-md-8">
+                                                        <div class="row p-t-20">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Employee Name</label>
+                                                                    @Html.TextBoxFor(M => M.EmpName, new { @class = "form-control", @maxLength = "20", @disabled = "disabled" })
+                                                                    @Html.HiddenFor(model => model.EmpId, new { @id = "empid" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Bank</label>
+                                                                    @Html.DropDownListFor(model => model.BankId, new SelectList(ViewBag.Bank, "Value", "Text"), " ", new { @class = "form-control", @disabled = "disabled" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Father's - W/O Name:</label>
+                                                                    @Html.TextBoxFor(M => M.FatherName, new { @class = "form-control", @disabled = "disabled" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Address</label>
+                                                                    @Html.TextBoxFor(M => M.PermAddress, new { @class = "form-control", @disabled = "disabled" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label>Photo</label><br>
+                                                            <img src="~/assets/images/No-Image.png" style="height:125px;width:115px;border: 1px solid #ccc;" id="empimg" />
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row p-t-20">
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Adhar Number</label>
+                                                            @Html.TextBoxFor(M => M.AdharNo, new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Account Number</label>
+                                                            @Html.TextBoxFor(M => M.AccountNo, new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Mobile Number</label>
+                                                            @Html.TextBoxFor(M => M.MobileNo, new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Date of Joining</label>
+                                                            @Html.TextBoxFor(M => M.DOJ, new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Pan Number</label>
+                                                            @Html.TextBoxFor(M => M.PANNo, new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Date of Birth</label>
+                                                            @Html.TextBoxFor(M => M.DOB, new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Date of Retirement</label>
+                                                            @Html.TextBoxFor(M => M.DOR, new { @class = "form-control", @disabled = "disabled" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                       
+                                        <div class="row p-t-20" id="accepttransfer">
+                                            <h5 class="mb-3">Employee Transfer Details</h5>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Accept Department</label>
+                                                    @Html.DropDownListFor(model => model.A_Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "Select Department", new { @class = "form-control", @onchange = "BindSubDepartment(this.value,'Fk_SubDeptId')" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Accept Sub Department</label>
+                                                    @Html.DropDownListFor(model => model.A_Fk_SubDeptId, new SelectList(String.Empty, "Value", "Text"), "Select Sub Department", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Accept Designation</label>
+                                                    @Html.DropDownListFor(model => model.A_DesignationId, new SelectList(ViewBag.Designation, "Value", "Text"), "Select Designation ", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Accept (Work Start) Date</label>
+                                                    @Html.TextBoxFor(M => M.A_startdate, new { @class = "form-control", @Type = "date" })
+                                                </div>
+                                            </div>
+                                            <div class="row justify-content-center mb-4">
+                                                <div class="col-md-4">
+                                                    <div class="text-center">
+                                                        <button id="accepttrnbtn" class="btn btn-success" disabled>Accept Employee</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row justify-content-center" id="rollbackbtn">
+                                            <div class="col-md-4">
+                                                <div class="text-center">
+                                                    <button id="rollbacktrnbtn" class="btn btn-success" disabled>Rollback Employee</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $("#EmpId").select2();
+        $("#A_Fk_DepartmentId").select2();
+        $("#A_Fk_SubDeptId").select2();
+        $("#A_DesignationId").select2();
+        $('#AcceptType').prop('checked', true);
+        if ($('#AcceptType').prop('checked', true)) {
+            changetransferype($('#AcceptType').val());
+        }
+    });
+
+    function changetransferype(value) {
+        debugger;
+        if (value == "Accept") {
+            $('#accepttransfer').show();
+            $('#rollbackbtn').hide();
+            $('#Type').val(value);
+        }
+        else if (value== "Rollback") {
+            $('#accepttransfer').hide();
+            $('#rollbackbtn').show();
+            $('#Type').val(value);
+        }
+        else {
+            $('#AcceptType').prop('checked', true);
+            swal("", "Something Went Wrong", "warning");
+            $('#Type').val("Accept");
+        }
+
+    }
+
+    function BindSubDepartment(id, idtype) {
+
+         debugger;
+        if (id > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetSubCategory',
+                data: { DepartmentId: id },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                       $('#A_Fk_SubDeptId').empty();
+                        $('#A_Fk_SubDeptId').append('<option>Select Sub Department</option>');
+                        for (var i = 0; i < data.length; i++) {
+                            $('#A_Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                        }
+                        if (id > 0) {
+                            $("#A_Fk_SubDeptId").val(@Model.Fk_DepartmentId);
+                        }
+                    }
+                    else {
+                         $('#A_Fk_SubDeptId').empty();
+                        $('#A_Fk_SubDeptId').append('<option>Select Sub Department</option>');
+                    }
+                    //if (id > 0) {
+                    //    $('#Fk_SubDeptId').val(id);
+                    //}
+                },
+                error: function (e) {
+                    $("#" + idtype + "").children().remove().end().append($("<option></option>").val("").text("Select Sub Department"));
+                }
+
+            });
+        }
+        else {
+            $("#" + idtype + "").children().remove().end().append($("<option></option>").val("").text("Select Sub Department"));
+        }
+
+    }
+
+    function BindEmpDetail(id) {
+        Reset();
+        // var EmpId = $('#EmpId').val();
+        if (id > 0) {
+            $.ajax({
+                url: '/Employee/GetEmployeeDetail',
+                type: 'post',
+                data: { EmpID: id },
+                dataType: 'json',
+                containtType: 'aplication/json;charset=utf-8',
+                success: function (data) {
+                    if (data != null) {
+
+                        $('#empid').val(data.ID);
+                        $('#EmpName').val(data.EmpName);
+                        $('#BankId').val(data.BankId);
+                        if (data.empimg != null && data.empimg != "" && data.empimg != "undefined") {
+                            $('#empimg').attr("srr", "");
+                            $('#empimg').attr("src", data.empimg);
+                        }
+                        //$('#empimg').val(data.empimg);
+                        $('#FatherName').val(data.FatherName);
+                        $('#A_DesignationId').val(data.DesignationId);
+                        $('#PermAddress').val(data.PermAddress);
+                        $('#AdharNo').val(data.AdharNo);
+                        $('#AccountNo').val(data.AccountNo);
+                        $('#MobileNo').val(data.MobileNo);
+                        $('#DOJ').val(data.DOJ);
+                        $('#PANNo').val(data.PANNo);
+                        if (data.DOB != null) {
+                            $('#DOB').val(data.DOB);
+                        }
+                        $('#DOR').val(data.DOR);
+                        $('#accepttrnbtn').attr("disabled", false);
+                        $('#rollbacktrnbtn').attr("disabled", false);
+                    }
+                    else {
+                        Reset();
+                    }
+                },
+                error: function (error) {
+                    Reset();
+                }
+            })
+        }
+        else {
+            Reset();
+        }
+
+    }
+
+    function Reset() {
+        $('#ID').val('');
+        $('#empid').val('');
+        $('#EmpName').val('');
+        $('#BankId').val('');
+        $('#empimg').attr("src", "/assets/images/No-Image.png");
+        $('#FatherName').val('');
+        $('#PermAddress').val('');
+        $('#AdharNo').val('');
+        $('#AccountNo').val('');
+        $('#MobileNo').val('');
+        $('#DOJ').val('');
+        $('#PANNo').val('');
+        $('#DOB').val('');
+        $('#DOR').val('');
+        $('#A_DesignationId').val('');
+        $('#accepttrnbtn').attr("disabled", true);
+        $('#rollbacktrnbtn').attr("disabled", true);
+    }
+
+    function ValidateTransfer() {
+        debugger;
+        var check = 0;
+        var transfertype = $('#Type').val();
+
+        if ($('#empid').val() == null || $('#empid').val().trim() == "" || $('#empid').val() == "undefined" || typeof ($('#empid').val()) == "undefined" || $('#empid').val() < "0") {
+            swal("", "Please select employee to accept in your depot", "warning");
+            return false;
+            check = 1;
+        }
+        if (transfertype == "Accept") {
+            if ($('#A_Fk_DepartmentId').val().trim() == null || $('#A_Fk_DepartmentId').val().trim() == "" || $('#A_Fk_DepartmentId').val() == "undefined" || typeof ($('#A_Fk_DepartmentId').val()) == "undefined" || $('#A_Fk_DepartmentId').val().trim().length < "0") {
+                swal("", "Please Select Accept Department", "warning");
+                return false;
+                check = 1;
+            }
+            if ($('#A_Fk_SubDeptId').val() == null || $('#A_Fk_SubDeptId').val().trim() == "" || $('#A_Fk_SubDeptId').val() == "undefined" || typeof ($('#A_Fk_SubDeptId').val()) == "undefined" || $('#A_Fk_SubDeptId').val() < "0") {
+                swal("", "Please select Accept Sub Department", "warning");
+                return false;
+                check = 1;
+            }
+            if ($('#A_DesignationId').val() == null || $('#A_DesignationId').val().trim() == "" || $('#A_DesignationId').val() == "undefined" || typeof ($('#A_DesignationId').val()) == "undefined" || $('#A_DesignationId').val() < "0") {
+                swal("", "Please select Accept Designation", "warning");
+                return false;
+                check = 1;
+            }
+            if ($('#A_startdate').val().trim() == null || $('#A_startdate').val().trim() == "" || $('#A_startdate').val() == "undefined" || typeof ($('#A_startdate').val()) == "undefined" || $('#A_startdate').val().trim().length < "0") {
+                swal("", "Please provide Accept (Work Start) Date", "warning");
+                return false;
+            }
+        }
+        if (check == 0) {
+            $(":disabled", $('#from')).removeAttr("disabled").attr("readonly", true);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+</script>
+

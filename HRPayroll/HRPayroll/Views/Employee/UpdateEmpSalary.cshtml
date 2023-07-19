@@ -1,0 +1,526 @@
+﻿@model HRPayroll.Models.EmployeePF
+
+@{
+    ViewBag.Title = "UpdateEmpSalary";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<style>
+    button.btn.btn-info.mb-2 {
+        margin-top: 24px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Update Employee Salary</h3>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" id="form" onsubmit="return ValidateForm()">
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv" id="msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    /*location.href = '';*/
+                                                                    $('#msgdiv').hide();
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                        @Html.HiddenFor(model => model.ID)
+                                                        @Html.HiddenFor(model => model.Fk_DepartmentId)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">PFMS Code:</label>
+                                                        @Html.TextBoxFor(M => M.PFMSCODE, new { @class = "form-control", @placeholder = "Employee PFMS Code" })
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Departmental Employee Unique Code:</label>
+                                                        @Html.TextBoxFor(M => M.DptEmpCode, new { @class = "form-control", @placeholder = "Employee Code"})
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Search By Name:</label>
+                                                        @Html.TextBoxFor(M => M.EmpName, new { @class = "form-control", @placeholder = "Employee Name" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <button class="btn btn-info mb-2" style="color:white;" type="button" onclick="BindEmployee()">
+                                                        Fill Employee
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Employee<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Fk_EmpId, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.Fk_EmpId)
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mt-2">
+                                                    <button class="btn btn-info mb-2" style="color:white;" type="button" onclick="BindEmpDetail()">
+                                                        Show
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid" id="div2">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="card card-outline-info">
+                                                    <div class="card-body">
+                                                        <h5>Personal Detail</h5>
+                                                        <div class="row p-t-20">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Salary Status<span class="text-danger">*</span></label>
+                                                                    @Html.DropDownListFor(m => m.SalaryStatus, new List<SelectListItem>
+                                                      {
+                                          new SelectListItem{ Text="-- Select Salary Status--", Value = "" },
+                                                      new SelectListItem{ Text="Active", Value = "A" },
+                                                      new SelectListItem{ Text="Stop", Value = "S" },
+                                                      new SelectListItem{ Text="Suspend", Value = "C" },
+                                             }, new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(m => m.SalaryStatus, "", new { @class = "text-danger" })
+                                                                    @Html.HiddenFor(model => model.ID)
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Pay Commission<span class="text-danger">*</span></label>
+                                                                    @Html.DropDownListFor(model => model.CommssionId, new SelectList(ViewBag.Paycommission, "Value", "Text"), "-Select-", new { @class = "form-control" })
+                                                                    @Html.HiddenFor(model => model.CommssionId)
+                                                                    @Html.ValidationMessageFor(m => m.CommssionId, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Pay Scale<span class="text-danger">*</span></label>
+                                                                    @Html.DropDownListFor(model => model.PayScaleID, new SelectList(ViewBag.PayScale, "Value", "Text"), "-Select Bank-", new { @class = "form-control" })
+                                                                    @Html.HiddenFor(model => model.PayScaleID)
+                                                                    @Html.ValidationMessageFor(m => m.PayScaleID, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Grade Pay<span class="text-danger">*</span></label>
+                                                                    @Html.DropDownListFor(model => model.GradePayId, new SelectList(ViewBag.GradePay, "Value", "Text"), "-Select -", new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(m => m.GradePayId, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Level<span class="text-danger">*</span></label>
+                                                                    @Html.DropDownListFor(model => model.LevelID, new SelectList(ViewBag.Level, "Value", "Text"), "-Select-", new { @class = "form-control", @onchange = "BindIncrement()" })
+                                                                    @Html.ValidationMessageFor(m => m.LevelID, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Increment<span class="text-danger">*</span></label>
+                                                                   <select class="form-control" id="IncrementId" name="IncrementId"> </select>
+                                                              
+                                                                    @Html.ValidationMessageFor(m => m.IncrementId, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Basic salary<span class="text-danger">*</span></label>
+                                                                    @Html.TextBoxFor(M => M.BasicSalary, new { @class = "form-control", @maxLength = "20", @onkeypress = "return onlyNos(event,this)" })
+                                                                    @Html.ValidationMessageFor(m => m.BasicSalary, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                           
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <p>Allowed Fixed Allowance</p>
+                                                                        @Html.CheckBoxFor(M => M.MA, new { @class = "filled-in chk-col-red", @type = "checkbox" })
+                                                                    <label class="form-label">Medical</label>
+                                                                    @Html.CheckBoxFor(M => M.WA, new { @class = "filled-in chk-col-red", @type = "checkbox" })
+                                                                    <label class="form-label">Washing</label>
+                                                                    @Html.CheckBoxFor(M => M.HRA, new { @class = "filled-in chk-col-red", @type = "checkbox" })
+                                                                    <label class="form-label">HRA</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <p>1. यदि कर्मचारी का NPS कटौती हो रही तो विकल्प चुने ✓</p>
+                                                                    @Html.CheckBoxFor(M => M.IsNPSCon, new { @class = "filled-in chk-col-red", @type = "checkbox" })
+                                                                    <label class="form-label">NPS</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">2.(A.) If Pension Contribution is (Basic + DA) then %</label>
+                                                                    @Html.TextBoxFor(M => M.IsPpf, new { @class = "form-control" , @onkeyup = "validatePer(event)", @onkeypress = "return isNumber(event)" })
+                                                                    @Html.ValidationMessageFor(m => m.IsPpf, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">2.(B.) If Pension Contribution is (Basic) then %</label>
+                                                                    @Html.TextBoxFor(M => M.IsPenCon, new { @class = "form-control", @maxLength = "20",@onkeyup= "validatePerentage(event)",@onkeypress= "return isNumber(event)" })
+                                                                    @Html.ValidationMessageFor(m => m.IsPenCon, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Date of Retirement</label>
+                                                                    @Html.TextBoxFor(M => M.DOR, new { @class = "form-control", @type = "date" })
+                                                                    @Html.ValidationMessageFor(m => m.DOR, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                          
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-center">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <button class="btn btn-success"> <i class="fa fa-check"></i>Update</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Employee/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindIncrement(id) {
+        debugger;
+        var LevelID = $('#LevelID').val();
+        $.ajax({
+            url: '/Employee/GetInrementDetail',
+            type: 'post',
+            data: { LevelID: LevelID },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#IncrementId').empty();
+                    $('#IncrementId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#IncrementId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    $('#IncrementId').val(id);
+                    
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+
+    function BindEmployee(id) {
+        debugger;
+        if ($('#Fk_DepartmentId').val() == '' || $('#Fk_DepartmentId').val() == '0' || $('#Fk_DepartmentId').val() == null) {
+            swal("", "Please select Department..", "warning");
+            $('#Fk_DepartmentId').focus();
+            return false;
+        }
+        if ($('#Fk_SubDeptId').val() == '' || $('#Fk_SubDeptId').val() == '0' || $('#Fk_SubDeptId').val() == null) {
+            swal("", "Please select Sub Department..", "warning");
+            $('#Fk_SubDeptId').focus();
+            return false;
+        }
+        var SubDeptId = $('#Fk_SubDeptId').val();
+        var DptEpCode = $('#DptEmpCode').val();
+        var PFMSCODE = $('#PFMSCODE').val();
+        var EmpName = $('#EmpName').val();
+        $.ajax({
+            url: '/Employee/GetEmpSalDetail',
+            type: 'post',
+            data: { SubDeptId: SubDeptId, DptEpCode: DptEpCode, PFMSCODE: PFMSCODE, EmpName: EmpName},
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_EmpId').empty();
+                    $('#Fk_EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindEmpDetail(id) {
+        debugger;
+        var EmpId = $('#Fk_EmpId').val();
+        $.ajax({
+            url: '/Employee/GetEmpSalDetails',
+            type: 'post',
+            data: { EmpId: EmpId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    $('#SalaryStatus').val(data.SalaryStatus);
+                    $('#CommssionId').val(data.CommssionId);
+                    $('#PayScaleID').val(data.PayScaleID);
+                    $('#GradePayId').val(data.GradePayId);
+                    $('#LevelID').val(data.LevelID);
+                    
+                    $('#BasicSalary').val(data.BasicSalary);
+                    if (data.MA == true) {
+                        $('#MA').attr('checked', true);
+                    }
+                    if (data.WA == true) {
+                        $('#WA').attr('checked', true);
+                    }
+                    if (data.HRA == true) {
+                        $('#HRA').attr('checked', true);
+                    }
+                    if (data.IsNPSCon == true) {
+                        $('#IsNPSCon').attr('checked', true);
+                    }
+                    $('#IsPpf').val(data.IsPpf);
+                    $('#IsPenCon').val(data.IsPenCon);
+                    $('#DOR').val(data.DOR);
+                    $('#ID').val(data.ID);
+                    BindIncrementpageload(data.LevelID,data.IncrementId);
+                    $('#IncrementId').val(data.IncrementId);
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindIncrementpageload(LevID,id) {
+        debugger;
+       
+        $.ajax({
+            url: '/Employee/GetInrementDetail',
+            type: 'post',
+            data: { LevelID: LevID },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#IncrementId').empty();
+                    $('#IncrementId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#IncrementId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    $('#IncrementId').val(id);
+                    
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function onlyNos(e, t) {
+        try {
+            if (window.event) {
+                var charCode = window.event.keyCode;
+            }
+            else if (e) {
+                var charCode = e.which;
+            }
+            else { return true; }
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+        catch (err) {
+            alert(err.Description);
+        }
+
+    }
+
+    function validatePer() {
+        debugger;
+      
+        var a = $('#IsPpf').val();
+        if (a > 99) {
+            swal("", "Please enter Percentage less than 100.", "warning");
+            $('#IsPpf').focus();
+            $('#IsPpf').val(0);
+            return false;
+        }
+       
+
+    }
+
+    function validatePerentage(evt) {
+        debugger;
+        
+        var a = $('#IsPenCon').val();
+        if (a > 99) {
+            swal("", "Please enter Percentage less than 100.", "warning");
+            $('#IsPenCon').val(0)
+            return false;
+        }
+    }
+
+    function ValidateForm() {
+        debugger;
+        if ($('#Fk_EmpId').val() == '' || $('#Fk_EmpId').val() == '0' || $('#Fk_EmpId').val() == null) {
+            swal("", "Please select Employee..", "warning");
+            $('#Fk_EmpId').focus();
+            return false;
+        }
+        if ($('#SalaryStatus').val() == '' || $('#SalaryStatus').val() == '0' || $('#SalaryStatus').val() == null ) {
+            swal("", "Please select Salary Status..", "warning");
+            $('#SalaryStatus').focus();
+            return false;
+        }
+        if ($('#CommssionId').val() == '' || $('#CommssionId').val() == '0' || $('#CommssionId').val() == null) {
+            swal("", "Please select Commssion field..", "warning");
+            $('#CommssionId').focus();
+            return false;
+        }
+        if ($('#PayScaleID').val() == '' || $('#PayScaleID').val() == '0' || $('#PayScaleID').val() == null) {
+            swal("", "Please select PayScale field..", "warning");
+            $('#PayScaleID').focus();
+            return false;
+        }
+        if ($('#GradePayId').val() == '' || $('#GradePayId').val() == '0' || $('#GradePayId').val() == null) {
+            swal("", "Please select GradePay field..", "warning");
+            $('#GradePayId').focus();
+            return false;
+        }
+        if ($('#LevelID').val() == '' || $('#LevelID').val() == '0' || $('#LevelID').val() == null) {
+            swal("", "Please select Level field..", "warning");
+            $('#LevelID').focus();
+            return false;
+        }
+        if ($('#IncrementId').val() == '' || $('#IncrementId').val() == '0' || $('#IncrementId').val() == null) {
+            swal("", "Please select Increment field..", "warning");
+            $('#IncrementId').focus();
+            return false;
+        }
+        if ($('#BasicSalary').val() == '' || $('#BasicSalary').val() == '0' || $('#BasicSalary').val() == null) {
+            swal("", "Please Enter Basic Salary..", "warning");
+            $('#BasicSalary').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+  
+</script>

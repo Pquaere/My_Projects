@@ -1,0 +1,292 @@
+﻿@model HRPayroll.Models.OfficePayment
+@{
+    ViewBag.Title = "OfficePayment";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+
+    <style >
+    .form-control:disabled, .form-control[readonly] {
+        cursor: not-allowed;
+        background-color: #eee;
+        opacity: 1;
+    }
+</style>
+
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-lg-4 py-3">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Office Payment</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-outline-info">
+
+                        <div class="card-body" style="background-color: #dfdede;">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @{
+                                        string Code = (string)TempData["code"];
+                                        string msg = (string)TempData["Msg"];
+                                        if (!string.IsNullOrEmpty(Code))
+                                        {
+                                            if (Code == "1")
+                                            {
+                                                <div class="alert alert-success msgdiv">
+                                                    <strong>Success!</strong> @msg
+                                                </div>
+                                                <script type="text/javascript">
+                                                    window.setTimeout(function () {
+                                                        location.href = '/Employee/OfficePayment';
+                                                    }, 2000);
+                                                </script>
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-danger msgdiv">
+                                                    <strong>Error!</strong> @msg
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <form method="post" action="/Employee/SaveOfficePayment" id="form" onsubmit="return Validation()">
+                                <div class="form-body">
+
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-12">
+                                                    <h4>Vendor Details</h4>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Vendor Name: <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(m => m.VendorName, new { @class = "form-control",@readonly="readonly" })
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Gross Payment / Bill Amount / PFMS Total Amount (In Rs.)  <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(m => m.GrossPayment, new { @class = "form-control", @readonly = "readonly" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">TDS on CGST (In Rs.)  <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(m => m.TdsCgst, new { @class = "form-control", @readonly = "readonly" })
+                                                    
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">TDS on SGST (In Rs.)  <span class="text-danger">*</span></label>
+                                                   
+                                                        @Html.TextBoxFor(m => m.TdsSgst, new { @class = "form-control", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Total Deduction Amount (In Rs.)  <span class="text-danger">*</span></label>
+                                                      
+                                                        @Html.TextBoxFor(m => m.TotalDeduction, new { @class = "form-control", @readonly = "readonly" })
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--Add Payment Details-->
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-12 mb-2">
+                                                    <h4>Add Payment Details </h4>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Financial Year: <span class="text-danger">*</span></label>
+                                                       
+                                                        @Html.DropDownListFor(m=>m.FinanicalYear,new SelectList( ViewBag.FY_Year , "Value", "Text"),"--select--",new { @class="form-control"})
+                                                       
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Cheque / RTGS / DD / ECS / NEFT:  <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.CheqNo, new { @class = "form-control",  @autocomplete = "off", @maxlength = "40" ,@onkeypress= "return PanAndIfsc(event)" })
+                                                       
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label"> Payment Date <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.TextBoxFor(M => M.PaymentDate, new { @class = "form-control", @type="date" })
+                                                      
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label"> PPA No  <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.PPANo, new { @class = "form-control", @autocomplete = "off",@maxlength="40" ,@onkeypress= "return isNumber(event)" })
+                                                        
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label"> Misc Deduction Amount  <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.MiscDeductionAmount, new { @class = "form-control", @oninput= "validateNumber(this)" })
+                                                        
+
+                                                    </div>
+                                                </div> 
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Misc Deduction Description <span class="text-danger">*</span></label>
+                                                        @Html.TextAreaFor(M => M.MiscDeductionDescription, new { @class = "form-control",  @maxlength = "50" })
+                                                        
+
+                                                    </div>
+                                                </div>  
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Paid Amount <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.PaidAmount, new { @class = "form-control", @onkeypress = "return AmountValidation(event)", @autocomplete = "off" })
+                                                        
+
+                                                    </div>
+                                                </div> 
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Favouring<span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.Favouring, new { @class = "form-control", @autocomplete = "off", @maxlength = "40" })
+                                                        
+
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                  
+                                </div>
+                                <input type="submit" value="Save"  class="btn btn-success"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function Validation() {
+        if ($('#FinanicalYear').val() == "" || $('#FinanicalYear').val() == null || $('#FinanicalYear').val() == undefined) {
+            swal("", "Please select Financial Year", "warning")
+            $('#FinanicalYear').focus();
+            return false;
+        }
+        if ($('#CheqNo').val() == "" || $('#CheqNo').val() == null || $('#CheqNo').val() == undefined) {
+            swal("", "Please enter Cheque / RTGS / DD / ECS / NEFT: *", "warning")
+            $('#CheqNo').focus();
+            return false;
+        }
+        if ($('#PaymentDate').val() == "" || $('#PaymentDate').val() == null || $('#PaymentDate').val() == undefined) {
+            swal("", "Please enter Payment Date", "warning")
+            $('#PaymentDate').focus();
+            return false;
+        }
+        if ($('#PPANo').val() == "" || $('#PPANo').val() == null || $('#PPANo').val() == undefined) {
+            swal("", "Please enter PPA No", "warning")
+            $('#PPANo').focus();
+            return false;
+        }
+        if ($('#PPANo').val() == "" || $('#PPANo').val() == null || $('#PPANo').val() == undefined) {
+            swal("", "Please enter Misc Deduction Amount ", "warning")
+            $('#PPANo').focus();
+            return false;
+        }
+        if ($('#MiscDeductionAmount').val() == "" || $('#MiscDeductionAmount').val() == null || $('#PPANo').val() == undefined) {
+            swal("", "Please enter Misc Deduction Amount ", "warning")
+            $('#MiscDeductionAmount').focus();
+            return false;
+        }
+        if ($('#MiscDeductionDescription').val() == "" || $('#MiscDeductionDescription').val() == null || $('#MiscDeductionDescription').val() == undefined) {
+            swal("", "Please enter Misc Deduction Description ", "warning")
+            $('#MiscDeductionDescription').focus();
+            return false;
+        }
+        if ($('#PaidAmount').val() == "" || $('#PaidAmount').val() == null || $('#PaidAmount').val() == undefined || $('#PaidAmount').val()<0) {
+            swal("", "Please enter Paid Amount ", "warning")
+            $('#PaidAmount').focus();
+            return false;
+        }
+        if ($('#Favouring').val() == "" || $('#Favouring').val() == null || $('#Favouring').val() == undefined) {
+            swal("", "Please enter Favouring* ", "warning")
+            $('#Favouring').focus();
+            return false;
+        }
+        else {
+            $('#form').submit();
+        }
+    }
+    
+    
+        var validNumber = new RegExp(/^\d*\.?\d*$/);
+    var lastValid = document.getElementById("MiscDeductionAmount").value;
+    function validateNumber(elem) {
+        debugger;
+            if (validNumber.test(elem.value)) {
+                lastValid = elem.value;
+            } else {
+                elem.value = lastValid;
+            }
+        }
+    function AmountValidation(evt) {
+        debugger;
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46) {
+            return false;
+        }
+        return true;
+    }
+
+    function PanAndIfsc(e) {
+        debugger;
+        var k;
+        document.all ? k = e.keyCode : k = e.which;
+        return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8  || (k >= 48 && k <= 57));
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+</script>

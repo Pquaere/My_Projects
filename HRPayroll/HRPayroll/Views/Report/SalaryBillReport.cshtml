@@ -1,0 +1,1061 @@
+﻿@model HRPayroll.Models.SalaryReport
+
+@{
+    ViewBag.Title = "SalaryBillReport";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+}
+@using HRPayroll.Models.Manager
+
+<style>
+    th, td {
+        border: 1px solid #000;
+    }
+</style>
+
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Salary Bill Report</h3>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" id="form">
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv" id="msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    /*location.href = '/Report/DeductionReport';*/
+                                                                    $('msgdiv').hide();
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5>Search</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                Bill Month:
+                                                            </label>
+                                                            @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="control-label">
+                                                            Bill Year:
+                                                        </label>
+                                                        <select class="form-control" id="Year" name="Year">
+                                                            <option value="">--Select--</option>
+                                                        </select>
+                                                        @Html.HiddenFor(model => model.Year)
+                                                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">District</label>
+                                                        @Html.DropDownListFor(model => model.District, new SelectList(ViewBag.ddlDistrict, "Value", "Text"), "-Select District-", new { @class = "form-control", @readonly = true })
+
+                                                        @Html.HiddenFor(model => model.District)
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">ULB Type</label>
+                                                        @Html.DropDownListFor(model => model.ULBType, new SelectList(ViewBag.Agency, "Value", "Text"), new { @class = "form-control", @readonly = true })
+                                                        @Html.HiddenFor(model => model.ULBType)
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">ULB Name</label>
+                                                        @Html.DropDownListFor(model => model.ULBName, new SelectList(ViewBag.Office, "Value", "Text"), "-Select Office-", new { @class = "form-control", @readonly = true })
+                                                        @Html.HiddenFor(model => model.ULBName)
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4" style="margin-top:30px">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-success" onclick="filldepartment()" type="button">
+                                                            Fill Department
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(String.Empty, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptIdList, new SelectList(String.Empty, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control js-example-basic-multiple select", @multiple = "multiple", @placeholder = "select Department", @onchange = "BindEmployee();" })
+                                                        @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Order By</label>
+                                                        @Html.DropDownListFor(m => m.OrderBy, new List<SelectListItem>
+                                                                  {
+                                                             new SelectListItem{ Text="Order by Name", Value = "1" },
+                                                                new SelectListItem{ Text="Order by PFMS Code", Value = "2" },
+                                                                new SelectListItem{ Text="Order by Department Code", Value = "3" },
+                                                                new SelectListItem{ Text="Order by PPO No", Value = "4" },
+                                                                new SelectListItem{ Text="Order by Designation", Value = "5" },
+                                                              }, "-select-", new { @class = "form-control" })
+
+                                                        
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="checkbox" name="chknps" id="chknps" value="1" />Check here if want to add NPS<br />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="checkbox" name="chkpen" id="chkpen" value="1" />Check here if want to add Pension Contribition<br />
+                                                       
+
+                                                        <input type="text" name="Subtype" id="Subtype" hidden/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="col-md-12 d-flex" style="margin-top:30px">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-success" type="button" id="btn" onclick="ValidateForm(1)">
+                                                            Show Complete Bill
+                                                        </button>
+                                                    </div>
+                                                    <div class="form-group ms-5">
+                                                        <button class="btn btn-success" type="button" id="btn2" onclick="ValidateForm(2)">
+                                                            Supplementory Bill
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                
+                                                <br />
+                                                <br />
+                                                <br />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if (Model != null)
+        {
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="card">
+                        <div class="card-body">
+
+
+                            <div class="table-responsive">
+                                @if (Model.SalaryReports != null)
+                                {
+                                    <table width="100%" cellpadding="0" cellspacing="0" style="border-color: #fff; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-bottom: 15px;">
+                                        <tbody>
+                                            <tr>
+                                            </tr>
+                                            <tr>
+                                                <td align="center" rowspan="3" style="border: 1px solid #fff;">
+                                                    <img src="../images/UPSRTC.png" width="90px" height="40" alt="#">
+                                                </td>
+                                                <td align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; border: 1px solid #fff; "><b>Uttar Pradesh Local Bodies</b></td>
+                                                <td align="center" rowspan="3" style="border: 1px solid #fff;">
+                                                    <img src="../images/UPSRTC.png" width="90px" height="40" alt="#">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; border: 1px solid #fff; "><b>@SessionManager.OfficeName</b></td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; border: 1px solid #fff; "><b>Salary Bill-Month: @Model.MonthName @Model.Year  &nbsp;&nbsp;&nbsp;Department(s) :@Model.Fk_SubDeptId </b></td>
+                                            </tr>
+
+                                        </tbody>
+
+                                    </table>
+                                }
+                                @if(Model.SalaryReports != null)
+                                {
+                                    <table border="1" cellpadding="0" cellspacing="0" style="border-color: Black; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
+                                        <thead>
+                                            <tr style="font-weight: bold; border: 1; border-color: Black; padding: 0px; background-color: #e68d31; color: #fff;">
+                                                <th align="center" rowspan="2"><b>S.No</b></th>
+
+                                                <th align="center" colspan="3"><b>Employee Name</b></th>
+                                                <th align="center" colspan="2">
+                                                    <b>
+                                                        Matrix
+                                                        <br>
+                                                        Level
+                                                    </b>
+                                                </th>
+                                                <th align="center" colspan="2"><b>Basic Pay</b></th>
+                                                <th align="center"><b>Basic Salary</b></th>
+                                                <th align="center"><b>D.A. Amt.</b></th>
+                                                <th align="center">
+                                                    <b>
+                                                        <span id="ContentPlaceHolder1_rptReport_lblMA">MA</span>
+                                                    </b>
+                                                </th>
+                                                <th align="center"><b>WA</b></th>
+                                                <th align="center"><b>CCA</b></th>
+                                                <th align="center"><b>HRA</b></th>
+                                                <th align="center">
+                                                    <b>
+                                                        <span id="ContentPlaceHolder1_rptReport_lblir">I.R.</span>
+                                                    </b>
+                                                </th>
+                                                <th align="center">
+                                                    <b>
+                                                        <span id="ContentPlaceHolder1_rptReport_lblpp">Per. Pay</span>
+                                                    </b>
+                                                </th>
+                                                <th align="center"><b>Broom Allow</b></th>
+                                                <th align="center">
+                                                    <b>
+                                                        <span id="ContentPlaceHolder1_rptReport_lblcht">Chatva Allow</span>
+                                                    </b>
+                                                </th>
+                                                <th align="center">
+                                                    <b>
+                                                        <span id="ContentPlaceHolder1_rptReport_lblCA">Cleaning Allowance</span>
+                                                    </b>
+                                                </th>
+                                                <th align="center" colspan="2"><b>Spec. Pay</b></th>
+                                                <th align="center"><b>Deputation Allowance</b></th>
+                                                <th align="center" colspan="2"><b>Dis. Allow</b></th>
+                                                <th align="center"><b>Vehicle Allow.</b></th>
+                                                <th align="center"><b>Other Allow.</b></th>
+                                                <th align="center"><b>Pension Contribution</b></th>
+                                                <th align="center"><b>Bilingual Allow</b></th>
+                                                <th align="center"><b>NPS (Employer Share)(14%)</b></th>
+                                                <th align="center"><b>Total Misc. Allow.</b></th>
+                                                <th align="center" colspan="2"><b>Gross Salary</b></th>
+                                                <th align="center" colspan="2"><b>Net Payable</b></th>
+                                            </tr>
+                                            <tr style="font-weight: bold; border: 1; border-color: Black; padding: 0px; background-color: #fa952a; color: #ffffff; ">
+                                                <th align="center"><b>Present</b></th>
+                                                <th align="center"><b>Designation</b></th>
+                                                <th align="center"><b>PAN No. &amp; GIS No.</b></th>
+                                                <th align="center"><b>GPF</b></th>
+                                                <th align="center"><b>PPF</b></th>
+                                                <th align="center"><b>GIS</b></th>
+                                                <th align="center"><b>LIC</b></th>
+                                                <th align="center"><b>Vehicle User Charges</b></th>
+                                                <th align="center"><b>Income Tax</b></th>
+                                                <th align="center"><b>Court Reco.</b></th>
+                                                <th align="center"><b>Quarter Rent</b></th>
+                                                <th align="center"><b>Society</b></th>
+                                                <th align="center"><b>Pay Reco.</b></th>
+                                                <th align="center"><b>Misc. Reco.</b></th>
+                                                <th colspan="2" align="center"><b>Other Reco.</b></th>
+
+                                                <th align="center"><b>Co-Operative</b></th>
+                                                <th align="center"><b>Penalty</b></th>
+                                                <th align="center"><b>Total Misc. Ded.</b></th>
+                                                <th align="center"><b>PPF Adv</b></th>
+                                                <th align="center">
+                                                    <b>
+                                                        Housing Buinlding<br>
+                                                        Advance
+                                                    </b>
+                                                </th>
+                                                <th align="center"><b>GPF Adv</b></th>
+                                                <th align="center"><b>Vehicle Loan</b></th>
+                                                <th align="center"><b>Bank Loan Adv.</b></th>
+                                                <th align="center"><b>Emerg. Loan</b></th>
+                                                <th align="center"><b>Pension Contribution</b></th>
+                                                <th align="center"><b>Advanced Reco</b></th>
+                                                <th align="center"><b>NPS (Employer Share)(14%)</b></th>
+                                                <th align="center"><b>NPS (Employee Share)(10%)</b></th>
+                                                <th align="center"><b>RD</b></th>
+                                                <th align="center"><b>Total Deduction</b></th>
+                                                <th align="center" colspan="2">
+                                                    <b>
+                                                        Bank Name
+                                                        <br>
+                                                        &amp; Acc. No.
+                                                    </b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                            @{ 
+                                                var srNo = 0;
+                                            }
+                          
+                                            @foreach (var item in Model.SalaryReports)
+                                            {
+                                                srNo = srNo + 1;
+
+                                                <tr style="border: 1; border-color: Black; padding: 0px; background-color: antiquewhite; page-break-inside: avoid;">
+                                                    <td align="center" rowspan="2">  @srNo</td>
+
+                                                    <td align="center" colspan="3"> @item.EmpName @item.EmpCode</td>
+                                                    <td align="center" colspan="2">@item.LevelId          &amp; @item.IncrementId</td>
+                                                    <td align="center" colspan="2">@item.BasicSal</td>
+                                                    <td align="center">@item.MonBasic</td>
+                                                    <td align="center">@item.DA</td>
+                                                    <td align="center">@item.MA</td>
+                                                    <td align="center">@item.WA</td>
+                                                    <td align="center">@item.CCA</td>
+
+                                                    <td align="center">@item.HRA</td>
+                                                    <td align="center">@item.IR</td>
+                                                    <td align="center">@item.PerPay</td>
+                                                    <td align="center">@item.BroomAllow</td>
+
+                                                    <td align="center">@item.ChatvaAllow</td>
+                                                    <td align="center">@item.CleaningAllow</td>
+                                                    <td align="center" colspan="2">@item.SpecPay</td>
+                                                    <td align="center" colspan="2">@item.DepAllow</td>
+                                                    <td align="center">@item.DisAllow</td>
+                                                    <td align="center">@item.VehicleAllow</td>
+                                                    <td align="center">@item.OtherAllow</td>
+                                                    <td align="center">@item.PenContribution</td>
+                                                    <td align="center">@item.BilangAllow</td>
+                                                    <td align="center">@item.NPSEmployer</td>
+                                                    <td align="center">@(item.MiscAllowAmt1 + item.MiscAllowAmt2 + item.MiscAllowAmt3 + item.MiscAllowAmt4)</td>
+                                                    <td align="center" colspan="2">@item.GrossPay</td>
+                                                    <td align="center" colspan="3">@item.NetPay</td>
+
+                                                </tr>
+                                                <tr style="border: 1; border-color: Black; padding: 0px; background-color: White; page-break-inside: avoid;">
+                                                    <td align="center">@item.WorkDays</td>
+                                                    <td align="center">@item.Designation</td>
+                                                    <td align="center">@item.PANNo @item.GISCode</td>
+                                                    <td align="center">@item.GPF</td>
+                                                    <td align="center">@item.PPF</td>
+                                                    <td align="center">@item.GIS</td>
+                                                    <td align="center">@item.LIC</td>
+                                                    <td align="center">@item.VehicleCharges</td>
+                                                    <td align="center">@item.IncomeTax</td>
+                                                    <td align="center">@item.CourtReco</td>
+                                                    <td align="center">@item.QtrRent</td>
+                                                    <td align="center">@item.Society</td>
+                                                    <td align="center">@item.PayReco</td>
+                                                    <td align="center">@item.MiscReco</td>
+
+
+                                                    <td colspan="2" align="center">OtherReco</td>
+
+                                                    <td align="center">@item.CoOperative</td>
+                                                    <td align="center">@item.Penalty</td>
+                                                    <td align="center">@(item.MiscDedAmt1 + item.MiscDedAmt2 + item.MiscDedAmt3 + item.MiscDedAmt4)</td>
+                                                    <td align="center">@item.PPFAdv</td>
+                                                    <td align="center">@item.HBA</td>
+                                                    <td align="center">@item.GPFAdv</td>
+                                                    <td align="center">@item.VehicleLoan</td>
+                                                    <td align="center">@item.BankLoan</td>
+                                                    <td align="center">@item.EmergLoan</td>
+                                                    <td align="center">@item.PenContribution</td>
+                                                    <td align="center">@item.StaffAdv</td>
+                                                    <td align="center">@item.NPSEmployer</td>
+                                                    <td align="center">@item.NPSEmployee</td>
+                                                    <td align="center">@item.RD</td>
+                                                    <td align="center">@(Convert.ToInt32(item.GrossPay) - Convert.ToInt32(item.NetPay))</td>
+
+                                                    <td align="center" class="num" colspan="5">@item.BankName &amp; @item.AccountNo</td>
+                                                </tr>
+                                            }
+                                         
+
+
+
+                                        </tbody>
+
+
+                                    </table>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                @if (Model.TreasuryBillSummary != null)
+                {
+                    <div class="col-md-12 mt-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table border="1" cellpadding="0" cellspacing="0" style="border-color: Black; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                        <thead>
+                                            <tr style="font-weight: bold; border: 1; border-color: Black; padding: 0px; background-color: #e68d31; color: #fff;">
+
+                                                <td align="center" colspan="2"><b>Basic Pay</b></td>
+                                                <td align="center" colspan="2"><b>D.A. Amt.</b></td>
+                                                <td align="center"><b>MA</b></td>
+                                                <td align="center"><b>WA</b></td>
+                                                <td align="center"><b>CCA</b></td>
+                                                <td align="center"><b>HRA</b></td>
+                                                <td align="center"><b>I.R.</b></td>
+                                                <td align="center"><b>Per. Pay</b></td>
+                                                <td align="center"><b>Broom Allow</b></td>
+                                                <td align="center"><b>Chatva Allow</b></td>
+                                                <td align="center"><b>Cleaning Allowance</b></td>
+                                                <td align="center" colspan="2"><b>Spec. Pay</b></td>
+                                                <td align="center"><b>Deputation Allowance</b></td>
+                                                <td align="center" colspan="2"><b>Dis. Allow</b></td>
+                                                <td align="center"><b>Vehicle Allow.</b></td>
+                                                <td align="center"><b>Other Allow.</b></td>
+                                                <td align="center"><b>Total Misc. Allow.</b></td>
+                                                <td align="center"><b>Pension Contribution</b></td>
+                                                <td align="center"><b>Bilingual Allow</b></td>
+                                                <td align="center"><b>NPS (Employer Share)(14%)</b></td>
+                                                <td align="center" colspan="2"><b>Gross Salary</b></td>
+                                                <td align="center" colspan="2"><b>Net Payable</b></td>
+
+
+                                            </tr>
+                                            <tr style="font-weight: bold; border: 1; border-color: Black; padding: 0px; background-color: #fa952a; color: #ffffff; ">
+
+                                                <td align="center"><b>GPF</b></td>
+                                                <td align="center"><b>PPF</b></td>
+                                                <td align="center"><b>GIS</b></td>
+                                                <td align="center"><b>LIC</b></td>
+                                                <td align="center"><b>Vehicle User Charges</b></td>
+                                                <td align="center"><b>Income Tax</b></td>
+                                                <td align="center"><b>Court Reco.</b></td>
+                                                <td align="center"><b>Quarter Rent</b></td>
+                                                <td align="center"><b>Society</b></td>
+                                                <td align="center"><b>Pay Reco.</b></td>
+                                                <td align="center"><b>Misc. Reco.</b></td>
+                                                <td colspan="2" align="center"><b>Other Reco.</b></td>
+
+                                                <td align="center"><b>Co-Operative</b></td>
+                                                <td align="center"><b>Penalty</b></td>
+                                                <td align="center"><b>Total Misc. Ded.</b></td>
+                                                <td align="center"><b>PPF Adv</b></td>
+                                                <td align="center">
+                                                    <b>
+                                                        Housing Buinlding<br>
+                                                        Advance
+                                                    </b>
+                                                </td>
+                                                <td align="center"><b>GPF Adv</b></td>
+                                                <td align="center"><b>Vehicle Loan</b></td>
+                                                <td align="center"><b>Bank Loan Adv.</b></td>
+                                                <td align="center"><b>Emerg. Loan</b></td>
+
+                                                <td align="center"><b>Pension Contribution</b></td>
+                                                <td align="center"><b>Advance Reco</b></td>
+                                                <td align="center"><b>NPS (Employer Share)(14%)</b></td>
+                                                <td align="center"><b>NPS (Employee Share)(10%)</b></td>
+                                                <td align="center"><b>RD</b></td>
+                                                <td align="center"><b>Total Deduction</b></td>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+
+                                            @foreach (var item1 in Model.TreasuryBillSummary)
+                                            {
+                                                <tr style="border: 1; border-color: Black; padding: 0px; background-color: antiquewhite;">
+
+
+                                                    <td align="center" colspan="2">@item1.BasicSal</td>
+                                                    <td align="center" colspan="2">@item1.DA</td>
+                                                    <td align="center">@item1.MA</td>
+                                                    <td align="center">@item1.WA</td>
+                                                    <td align="center">@item1.CCA</td>
+                                                    <td align="center">@item1.HRA</td>
+                                                    <td align="center">@item1.IR</td>
+                                                    <td align="center">@item1.PerPay</td>
+                                                    <td align="center">@item1.BroomAllow</td>
+                                                    <td align="center">@item1.ChatvaAllow</td>
+                                                    <td align="center">@item1.CleaningAllow</td>
+
+                                                    <td align="center" colspan="2">@item1.SpecPay</td>
+                                                    <td align="center">@item1.DepAllow</td>
+                                                    <td align="center" colspan="2">@item1.DisAllow</td>
+                                                    <td align="center">@item1.VehicleAllow</td>
+                                                    <td align="center">@item1.OtherAllow</td>
+                                                    <td align="center">@(item1.MiscAllowAmt1 + item1.MiscAllowAmt2 + item1.MiscAllowAmt3 + item1.MiscAllowAmt1)</td>
+
+                                                    <td align="center">@item1.PenContribution</td>
+                                                    <td align="center">@item1.BilangAllow</td>
+                                                    <td align="center">@item1.NPSEmployer</td>
+                                                    <td align="center" colspan="2">@item1.GrossPay</td>
+                                                    <td align="center" colspan="3">@item1.NetPay</td>
+
+                                                </tr>
+                                                <tr style="border: 1; border-color: Black; padding: 0px; background-color: antiquewhite;">
+                                                    <td align="center">@item1.GPF</td>
+                                                    <td align="center">@item1.PPF</td>
+                                                    <td align="center">@item1.GIS</td>
+                                                    <td align="center">@item1.LIC</td>
+                                                    <td align="center">@item1.VehicleCharges</td>
+                                                    <td align="center">@item1.IncomeTax</td>
+                                                    <td align="center">@item1.CourtReco</td>
+                                                    <td align="center">@item1.QtrRent</td>
+                                                    <td align="center">@item1.Society</td>
+                                                    <td align="center">@item1.PayReco</td>
+                                                    <td align="center">@item1.MiscReco</td>
+
+                                                    <td colspan="2" align="center">@item1.OtherReco</td>
+
+                                                    <td align="center">@item1.CoOperative</td>
+                                                    <td align="center">@item1.Penalty</td>
+                                                    <td align="center">@(item1.MiscDedAmt1 + item1.MiscDedAmt2 + item1.MiscDedAmt3 + item1.MiscDedAmt4)</td>
+                                                    <td align="center">@item1.PPFAdv</td>
+                                                    <td align="center">@item1.HBA</td>
+                                                    <td align="center">@item1.GPFAdv</td>
+                                                    <td align="center">@item1.VehicleLoan</td>
+                                                    <td align="center">@item1.BankLoan</td>
+                                                    <td align="center">@item1.EmergLoan</td>
+                                                    <td align="center">@item1.PenContribution</td>
+                                                    <td align="center">@item1.StaffAdv</td>
+                                                    <td align="center">@item1.NPSEmployer</td>
+                                                    <td align="center">@item1.NPSEmployee</td>
+                                                    <td align="center">@item1.Rd</td>
+                                                    <td align="center">@(Convert.ToInt32(item1.GrossPay) - Convert.ToInt32(item1.NetPay))</td>
+                                                    <td align="center">@item1.CoOperative</td>
+
+                                                </tr>
+                                            }
+                                          
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                                @*<p class="mt-2">
+                                    <strong>
+                                        Total
+                                    </strong>:	0
+                                </p>*@
+                            </div>
+                        </div>
+                    </div>
+                }
+            <table border="1" cellpadding="0" cellspacing="0" style="border-color: Black; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                @if (Model.TreasuryBillBankWiseSummary != null)
+                {
+                    decimal banksum = 0;
+                    foreach (var item2 in Model.TreasuryBillBankWiseSummary)
+                    {
+                        <tr>
+
+                            <td>@item2.BankName</td>
+                            @if (SessionManager.DepId == 158 || SessionManager.DepId == 165)
+                            {
+                                <td>@item2.NetPay</td>
+                            }
+                            else
+                            {
+                                <td>@item2.NetPay</td>
+                            }
+                            <td>Total:</td>
+                            <td lign="right" style="padding-left: 10px;">@Model.TreasuryBillBankWiseSummary.Sum(x => x.NetPay)</td>
+
+                        </tr>
+                    }
+                    if (Model.HQGPFSummary != null)
+                    {
+                        foreach (var item3 in Model.HQGPFSummary)
+                        {
+                        <tr style="border: 1; border-color: Black; padding: 0px; background-color: White;">
+                            <td align="left" style="padding-left: 10px; padding-right: 10px;">@item3.GPFType</td>
+                            <td align="left" style="padding-left: 10px; padding-right: 10px;">@item3.Amount</td>
+                        </tr>
+
+                        <tr style="font-weight: bold; border: 1; border-color: Black; padding: 0px; background-color: #F7F4E2; color: Black;">
+                            <td colspan="4" align="right" style="padding-left: 10px;"><b>Total: </b>@Model.HQGPFSummary.Sum(x => x.Amount)</td>
+                        </tr>
+                        }
+                    }
+
+                }
+            </table>
+
+
+
+
+                @*@if (Model.SalaryReports != null)
+                    {
+                        <div class="col-md-12 mt-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <table class="table table-stripped">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Brought forward........................
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                        (1) That I have satisfied myself that all the salaries included in the bill drawn in the month of ........20  (the last  proceeding month) with exceptions of those detailed below of which the total has been refunded by deduction from the bill have been distributed to the proper persons and there receipts has been taken in acquittance rolls filed in my office with receipt stamp duly cancelled for every payment in excees of Rs 20/- and that all leaves and promotions etc. have been entered  in the service book of the official concern.
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Deduct undisbursed pay refund as Detailed below:
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                        (2)	That all persons for whom pay has been shown in the bill, have actually been entertained during this month.
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Provident fund contribution
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                        (3)	That all the persons for home house - rent allowance has been shown in this bill actually occupied a rented house for which they paid rent as shown in the bill and are intitled to the allowance under the standing instructions.
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Income Tax
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                        (4)	That the all persons in receipt for whom conveyance allowance has been drawn in the bill have satisfied me that they have actually maintained the prescrived conveyance in  a workable condition and have been using them.
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Fines and other recoveries
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                        (5)	That the bill has been checked with the sanctioned scale recorded in the scale register.
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Total Deductions
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Net sum required for
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Payment in words(in the handwriting of the drawing officer)
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Nagar Ayukt
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                        Signature of Drawing Officer
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Pay Rupees:-
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                        Date:-
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Office:-
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                        Up Nagar Ayukt / Executive Officer:-
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Date:-
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                        Executive Officer  :-
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <p>
+                                                        Examined and entered :-
+                                                    </p>
+                                                </td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    <p>
+                                                        Secretary:-
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="12">
+                                                    <p>
+                                                        --------------------------------------------------------------------------------------------------------------------------------
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="12">
+                                                    Detailled of pay absentees refunded
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    Amount
+                                                </td>
+                                                <td colspan="3">
+                                                    Establishment
+                                                </td>
+                                                <td colspan="3">
+                                                    |          Name
+                                                </td>
+                                                <td colspan="3">
+                                                    |      Period         |
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3"></td>
+                                                <td colspan="3"></td>
+                                                <td colspan="3"></td>
+                                                <td colspan="3"></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3"></td>
+                                                <td colspan="3">
+                                                    <p>
+
+                                                    </p>
+                                                </td>
+                                                <td colspan="6">
+                                                    ..to be stated in words
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <h5 style="color: orangered;">विभाग के द्वारा दिए गए विवरण के अनुसार पोर्टल की सहायता से जानकारी एवं गणनाएं प्रदर्शित किया जा रहा है, संबंधित अधिकारी के जांच के उपरांत मान्य होगा I</h5>
+                                </div>
+                            </div>
+                        </div>
+                    }*@
+            </div>
+
+
+
+        }
+    </div>
+
+</div>
+
+
+<script>
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2000; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    $(document).ready(function () {
+
+        if (@Model.Year> 0) {
+            $('#Year').val('@Model.Year');``
+        }
+        if (@Model.Month> 0) {
+            $('#Month').val('@Model.Month')
+        }
+        if (@Model.Month> 0 && @Model.Year> 0) {
+            debugger;
+            filldepartment('@Model.Fk_DepartmentId')
+        }
+        if (@Model.Fk_DepartmentId> 0) {
+            BindSubDepartment('@Model.Fk_SubDeptId')
+        }
+    })
+
+    function filldepartment(id) {
+        debugger
+        var Year = $('#Year').val();
+        var Month = $('#Month').val();
+        if (Month == "" || Month == null || Month == undefined) {
+            swal("", "Please select month", "warning");
+            return false;
+
+        }
+        if (Year == "" || Year == null || Year == undefined) {
+            swal("", "Please select Year", "warning")
+            return false;
+        }
+        $.ajax({
+            type: 'post',
+            url: '/Report/BindDepartmentByMonthAndYear',
+            data: { Year: Year, Month: Month, proc: 1 },
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $("#Fk_DepartmentId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_DepartmentId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                    }
+
+                }
+                else {
+                    $("#Fk_DepartmentId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+                if (id > 0) {
+                    $('#Fk_DepartmentId').val(id);
+
+                }
+                if ($("#Fk_DepartmentId").val() > 0) {
+                    BindSubDepartment('@Model.Fk_SubDeptId')
+                }
+
+            },
+            error: function (e) {
+                $("#Fk_DepartmentId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+            }
+
+        })
+    }
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        if (DepartmentId > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetSubCategory',
+                data: { DepartmentId: DepartmentId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#Fk_SubDeptIdList").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#Fk_SubDeptIdList').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#Fk_SubDeptIdList").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#Fk_SubDeptIdList').val(id);
+
+                    }
+
+                },
+                error: function (e) {
+                    $("#Fk_SubDeptIdList").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+    }
+
+    function ValidateForm(Type) {
+
+
+        debugger;
+        if ($('#Fk_DepartmentId').val() == "" || $('#Fk_DepartmentId').val() == null || $('#Fk_DepartmentId').val() == undefined) {
+            swal("", "Please select department", "warning");
+            return false;
+        }
+        if ($('#Fk_SubDeptIdList').val() == "" || $('#Fk_SubDeptIdList').val() == null || $('#Fk_SubDeptIdList').val() == undefined) {
+            swal("", "Please select subdepartment", "warning");
+            return false;
+
+        }
+        else {
+       
+            $('#Subtype').val(Type)
+
+            $('#form').submit();
+        }
+    }
+
+
+
+</script>
+

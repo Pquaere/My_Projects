@@ -1,0 +1,182 @@
+﻿@model HRPayroll.Models.ExcelForBonus
+@{
+    ViewBag.Title = "GenExcelForBonus";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Genrate Excel File For Bonus</h3>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="container-fluid">
+                    <div class="row mb-3">
+                        <div class="col-lg-12">
+                            <div class="card card-outline-info">
+                                <form action="/Employee/GenerateExcelforBonus" method="post" onsubmit="return validateForm()">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    location.href = '/Employee/GenExcelForBonus';
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+
+                                        <h5>Search</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Employee Category<span class="text-danger">*</span></label>
+
+                                                        @Html.DropDownListFor(model => model.WTypeId, new SelectList(ViewBag.EmployeeCategory, "Value", "Text"), "-Select Category-", new { @class = "form-control", @onchange = "BindEmpType();" })
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="control-label">
+                                                            Select Fin Year<span class="text-danger">*</span>
+                                                        </label>
+                                                        <select class="form-control" id="Year" name="Year"><option value="">-- Select --</option></select>
+                                                        @Html.HiddenFor(model => model.Year)
+                                                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <!--/span-->
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                    </div>
+                                                </div>
+
+                                                
+                                                <div class="col-md-4 mt-2" >
+                                                    <button class="btn btn-info " style="margin-top:20px">
+
+                                                        Generate Excel
+                                                    </button>
+                                                    </div> 
+
+                                                </div>
+                                            </div>
+                                    </div>
+                                    </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2020; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Employee/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    } 
+
+      
+    function validateForm() {
+        if ($('#WTypeId').val() == '' || $('#WTypeId').val() == 0) {
+
+            swal("", "Please Select Employee Category   ", "warning");
+            return false;
+        }
+        if ($('#Year').val() == '' || $('#Year').val() == 0) {
+
+            swal("", "Please Select Year ", "warning");
+            return false;
+        }
+        if ($('#Fk_DepartmentId').val() == '' || $('#Fk_DepartmentId').val() == 0) {
+
+            swal("", "Please Select Department Type  ", "warning");
+            return false;
+        }
+        if ($('#Fk_SubDeptId').val() == '---Select----' || $('#Fk_SubDeptId').val() == 0) {
+
+            swal("", "Please Select SubDept  Type  ", "warning");
+            return false;
+        }
+    }
+</script>

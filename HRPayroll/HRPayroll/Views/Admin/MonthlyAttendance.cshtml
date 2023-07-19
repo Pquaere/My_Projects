@@ -1,0 +1,308 @@
+﻿@model HRPayroll.Models.MonthlyAtteReq
+
+@{
+    ViewBag.Title = "MonthlyAttendance";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-2">
+            <div class="row page-titles">
+                <div class="col-md-6 align-self-center">
+                    <h5 class="text-themecolor font-20 clearfix">Attendance Details<span id="showDate"></span></h5>
+                </div>
+
+                <div class="form-body">
+                    <div class="row p-t-20">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">Select Month</label>
+                                @Html.DropDownListFor(model => model.monthId, new SelectList(ViewBag.Month, "Value", "Text"), "-Select-", new { @class = "form-control" })
+                                @Html.HiddenFor(model => model.ID)
+                                @Html.HiddenFor(model => model.monthId)
+                                @Html.ValidationMessageFor(m => m.monthId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">Select Year:</label>
+                                <select class="form-control" id="Year" name="Year">
+                                    <option value="">--Select--</option>
+
+                                </select>
+                                @Html.HiddenFor(model => model.Year)
+                                @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mt-2">
+                            <button class="btn btn-primary" style="color:white; margin-top:23px;" type="button" id="btnattendance">
+                                Show
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table">
+                                <div class="table-responsive">
+                                    <table class="table table-striped" id="attendDetails">
+                                        <thead id="tbl">
+                                            <tr role="row" class="bg-secondary">
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td></td>
+                                            </tr>
+                                             @*@if (Model != null && Model.listAttendance != null)
+                                                {
+                                                    if (Model.listAttendance.Count() > 0)
+                                                    {
+                                                        var Sn = 0;
+                                                        foreach (var item in Model.listAttendance)
+                                                        {
+                                                            <tr role="row" class="odd">
+                                                               <td>@item.EmpCode</td>
+                                                               <td>@item.EmpName</td>
+                                                             
+                                                            </tr>
+                                                        }
+                                                    }
+                                                }*@
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2000; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    (function (window) {
+            window.htmlentities = {
+                //Converts a string to its html characters completely.
+                //param {String} str String with unescaped HTML characters
+                encode: function (str) {
+                    var buf = [];
+
+                    for (var i = str.length - 1; i >= 0; i--) {
+                        buf.unshift(['&#', str[i].charCodeAt(), ';'].join(''));
+                    }
+                    return buf.join('');
+                },
+                //Converts an html characterSet into its original character.
+                //param {String} str htmlSet entities
+                decode: function (str) {
+                    return str.replace(/&#(\d+);/g, function (match, dec) {
+                        return String.fromCharCode(dec);
+                    });
+                }
+            };
+        })(window);
+
+    $("#btnattendance").click(function () {
+        var txtmonth = $("#monthId").val();
+        var txtYear = $("#Year").val();
+        if (txtmonth == "0") {
+            swal('', 'Please select month', 'warning');
+            return false;
+        }
+        if ($("#Year").val() == '') {
+            swal('', 'Please Enter year', 'warning');
+            return false;
+        }
+        if ($("#Year").val().length != 4) {
+            swal('', 'Please enter 4 digit only', 'warning');
+            return false;
+        }
+        $("#showDate").html(' of Month ' + $("#monthId option:selected").text() + ' ' + txtYear);
+        $.ajax({
+            url: '/Admin/MonthlyAttendance1',
+            type: "POST",
+            dataType: "json",
+            data: { month: txtmonth, year: txtYear },
+            success: function (data) {
+                var CurrentDate = new Date();
+                if (data.listAttendance.length > 0) {
+                    $("#attendDetails").css("display", "");
+                    $(".tbody").empty();
+                    var lstAtt = JSON.stringify(data.listAttendance);
+                    var lstweekoff = JSON.stringify(data.WeakenedList);
+                    var lstholiday = JSON.stringify(data.HolidayList);
+                    var leavestatus = JSON.stringify(data.LeaveList);
+                    var decodedJson = JSON.parse(htmlentities.decode(lstAtt).replace(/#/gm, " <br style='mso-data-placement:same-cell;'/>"));
+                    lstweekoff = JSON.parse(htmlentities.decode(lstweekoff).replace(/#/gm, " <br  style='mso-data-placement:same-cell;'/>"));
+                    lstholiday = JSON.parse(htmlentities.decode(lstholiday).replace(/#/gm, " <br style='mso-data-placement:same-cell;'/>"));
+                    leavestatus = JSON.parse(htmlentities.decode(leavestatus).replace(/#/gm, " <br style='mso-data-placement:same-cell;'/>"))
+                    /* start making header */
+                    var tableHeaderJson = decodedJson[0];
+                    var th = '';
+                    for (var key in tableHeaderJson) {
+                        if (key == "EmpName" || key == "EmpCode") {
+
+                            th += '<th>' + key + '</th>'
+                        }
+                        else {
+                            var date = new Date(key);
+                            key = date.getDate();
+                            th += '<th>' + key + '</th>'
+                        }
+                    }
+                    /* stop making header */
+                    $(".thead").empty();
+                    $(".tbody").empty();
+                    $(".thead").append('<tr>' + th + '</tr>');
+                    for (var d = 0; d < decodedJson.length; d++) {
+                        var td = '';
+                        for (var key in decodedJson[d]) {
+                            var getnewdate = new Date(key)
+                            try {
+                                var flg = 0;
+                                for (var i = 0; i < lstweekoff.length; i++) {
+
+                                    if (key == lstweekoff[i].wwkeneddate && decodedJson[d][key] === null) {
+                                        flg = 1;
+                                        td += '<td style=color:green>WO</td>';
+
+
+                                    }
+                                }
+                                if (flg == 0)
+                                    for (var i = 0; i < lstholiday.length; i++) {
+                                        debugger;
+                                        if (key == lstholiday[i].HolidayDate && decodedJson[d][key] === null) {
+                                            flg = 1;
+                                            td += '<td style=color:orange>H</td>';
+                                        }
+                                    }
+                                if (flg == 0) {
+                                    if (decodedJson[d][key] === null && getnewdate <= CurrentDate) {
+                                        for (var z = 0; z < leavestatus.length; z++) {
+                                            if (decodedJson[d]["EmpCode"] == leavestatus[z].EmpCode && key == leavestatus[z].datee) {
+                                                flg = 1;
+                                                //td += '<td style=color:red>A('+leavestatus[z].status+')</td>';
+                                                td += '<td style=color:red>' + leavestatus[z].status + '</td>';
+                                            }
+
+                                        }
+                                        if (flg == 0) {
+                                            flg = 1;
+                                            td += '<td style=color:red>A</td>';
+                                        }
+                                    }
+                                    else if (decodedJson[d][key] === null && getnewdate > CurrentDate) {
+                                        td += '<td>&nbsp;</td>';
+                                    }
+                                    else {
+                                        //  td += '<td style=color:#000>' + decodedJson[d][key] + '</td>';
+
+
+                                        for (var z = 0; z < leavestatus.length; z++) {
+                                            if (decodedJson[d]["EmpCode"] == leavestatus[z].EmpCode && key == leavestatus[z].datee) {
+                                                flg = 1;
+                                                td += '<td style=color:green>' + decodedJson[d][key] + '&nbsp; Leave</td>';
+                                            }
+
+                                        }
+                                        if (flg == 0) {
+                                            flg = 1;
+                                            td += '<td style=color:#000>' + decodedJson[d][key] + '</td>';
+                                        }
+                                    }
+                                }
+                            }
+                            catch {
+                                td += '<td>' + decodedJson[d][key] + '</td>';
+                            }
+                        }
+                        $(".tbody").append('<tr>' + td + '</tr>');
+                    }
+                    // paging
+                    $('#Divpagingmain').html('');
+                    var showingrecords;
+                    var Firstpaging, PrevPage, Lastpage, divValue, flag = 0;
+                    if (data.Pages != null) {
+                        showingrecords = "<div style='float:left'>Showing" + " " + data.Pages.TotalItem + " of " + " " + data.Pages.TotalRecords + " " + " Records </div>"
+                        $('#Divpagingmain').append(showingrecords);
+                        $('#Divpagingmain').append("<div  style='float:right' id='Divpaging'></div>");
+                        if (data.Pages.CurrentPage > 1) {
+                            Firstpaging = "<a href=/Admin/EmployeeLeaveList?page=1 class='btn btn-default'>First</a>"
+                            PrevPage = "<a href=/Admin/EmployeeLeaveList?page=" + (data.Pages.CurrentPage - 1) + " class='btn btn-default'>Previous </a>"
+                            $('#Divpaging').append(Firstpaging + PrevPage);
+                        }
+                        divValue = $(document.createElement('div'));
+                        if (data.Pages.EndPage > 1) {
+                            for (var j = data.Pages.StartPage; j <= data.Pages.EndPage; j++) {
+                                if (j == data.Pages.CurrentPage) {
+                                    $(divValue).append("<a href=/Admin/EmployeeLeaveList?page=" + j + " class='btn btn-primary'>" + j + " </a>");
+                                    flag = 1;
+                                }
+                                else {
+                                    $(divValue).append("<a href=/Admin/EmployeeLeaveList?page=" + j + " class='btn btn-default'>" + j + " </a>");
+                                    flag = 1;
+                                }
+                            }
+                            if (flag == 1) {
+                                $('#Divpaging').append(divValue);
+                            }
+                            if (data.Pages.Pages > 0) {
+                                Lastpage = "<a href=/Admin/AssignLeave?page=" + (data.Pages.Pages) + " class='btn btn-default'>Last</a>"
+                                $('#Divpaging').append(Lastpage);
+                            }
+                        }
+                    }
+                    //End paging
+                }
+                else {
+                    $(".attendence thead").empty();
+                    $(".attendence tbody").empty();
+                    $(".attendence tbody").append('<tr><td>No record found</td></tr>');
+                }
+            },
+            error: function (jqxhr, status, exception) {
+            }
+        });
+    });
+    var SearchBy;
+    $('.lisearch').click(function () {
+        SearchBy = $(this).text();
+    });
+    $('#btnsearch').click(function () {
+        GetListBySearch();
+    });
+    $('#ddlSortBy').change(function () {
+        GetListBySearch();
+    });
+
+</script>
+

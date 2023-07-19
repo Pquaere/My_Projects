@@ -1,0 +1,250 @@
+﻿
+
+@model HRPayroll.Models.EmpLogin
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>HRPay Roll</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="HRMS">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <style>
+
+        .chart-color1 {
+            background-color: #5a817e !important;
+        }
+
+        .heading {
+            padding: 12px;
+            margin-bottom: 25px;
+            background: #2359a8;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            width: 250px;
+            height: 250px;
+            perspective: 1000px;
+            border-radius: 20px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            border-radius: 20px;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .flip-card-front {
+            background-color: #fff;
+            color: #005495;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 20px;
+        }
+
+        .flip-card-back {
+            background-color: #2980b9;
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 20px;
+        }
+
+            .flip-card-back h1 {
+                font-size: 20px;
+            }
+
+        .flip-card-front .fa-tachometer {
+            font-size: 24px;
+        }
+
+        .col {
+            flex: 0 1 14%;
+        }
+
+        .text-log {
+            font-size: 20px;
+        }
+
+        .btn.btn-primary {
+            background-color: #005495;
+            border-color: #005495;
+        }
+    </style>
+</head>
+
+
+
+<body>
+
+    <div id="layout" class="theme-orange">
+        <!-- WRAPPER -->
+        <div id="wrapper">
+            <section class="heading">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="~/assets/images/quaere-software-company-logo1.svg" width="250" class="mb-3" alt="quaerelogo" />
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center mt-3">
+                            <h1 class="text-white"><u>HR Payroll</u></h1>
+                        </div>
+                    </div>
+                </div>
+
+
+                @*<div class="text-center">
+                   
+                    
+                </div>*@
+            </section>
+            <div class="login-windows" style="margin-top: 50px;">
+                <div class="container-fluid">
+                    <div class="row gy-3 justify-content-center">
+                        <div class="col">
+                            <div class="flip-card">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front pt-3">
+                                        <img src="assets/images/Admin.png" width="56" alt="">
+                                        <h4 class="mt-2 text-log">Admin Login</h4>
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <div>
+                                            <h1>Admin Login</h1>
+                                            <a href="/Account/AdminLogin"
+                                               class="btn btn-primary">Login</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="flip-card">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <img src="assets/images/user1.png" width="56" alt="">
+                                        <h4 class="mt-2 text-log">User Login</h4>
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <h1>User Login</h1>
+                                        <a href="/Account/Login"
+                                           class="btn btn-primary">Login</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="flip-card">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <img src="assets/images/Emp.png" width="56" alt="">
+                                        <h4 class="mt-2 text-log">Permanent Employee</h4>
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <h1>Permanent Employee</h1>
+                                        <a href="/Account/EmployeeLogin"
+                                           class="btn btn-primary">Login</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="flip-card">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <img src="assets/images/Daily_Wages_Employee_Login.png" width="56" alt="">
+                                        <h4 class="mt-2 text-log">Contractual Employee</h4>
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <h1>Contractual Employee</h1>
+                                        <a href="/Account/EmployeeLogin"
+                                           class="btn btn-primary">Login</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="flip-card">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <img src="assets/images/Contract1.png" width="56" alt="">
+                                        <h4 class="mt-2 text-log">Daily Wages Employee Login</h4>
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <h1>Daily Wages Employee Login</h1>
+                                        <a href="/Account/EmployeeLogin"
+                                           class="btn btn-primary">Login</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    const togglePassword =
+        document.querySelector('#togglePassword');
+
+    const password = document.querySelector('#Password');
+
+    togglePassword.addEventListener('click', function (e) {
+
+        // Toggle the type attribute
+        const type = password.getAttribute(
+            'type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+
+        // Toggle the eye slash icon
+        if (togglePassword.src.match(
+            "https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash.png")) {
+            togglePassword.src =
+                "https://media.geeksforgeeks.org/wp-content/uploads/20210917145551/eye.png";
+        } else {
+            togglePassword.src =
+                "https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash.png";
+        }
+    });
+</script>
+
+
+

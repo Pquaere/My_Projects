@@ -1,0 +1,677 @@
+﻿@model HRPayroll.Models.InternalTransfer
+@{
+    ViewBag.Title = "InternalTransfer";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<style>
+    .form-control:disabled, .form-control[readonly] {
+        cursor: not-allowed;
+        background-color: #eee;
+        opacity: 1;
+    }
+</style>
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-body" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Transfer / Promotion Employee Form</h3>
+                        </div>
+                    </div>
+                </div>
+                    <form action="/Employee/InternalTransferSave" method="post" onsubmit=" return ValidateTransfer()" id="from">
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+                                <div class="col-lg-12">
+                                    <div class="card card-outline-info">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    @{
+                                                        string Code = (string)TempData["code"];
+                                                        string msg = (string)TempData["Msg"];
+                                                        if (!string.IsNullOrEmpty(Code))
+                                                        {
+                                                            if (Code == "1")
+                                                            {
+                                                                <div class="alert alert-success msgdiv">
+                                                                    <strong>Success!</strong> @msg
+                                                                </div>
+                                                                @*<script type="text/javascript">
+                                                                    window.setTimeout(function () {
+                                                                        location.href = '/Employee/InternalTransfer';
+                                                                    }, 5000);
+                                                                </script>*@
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="alert alert-danger msgdiv">
+                                                                    <strong>Error!</strong> @msg
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+
+
+                                            <h5>Search</h5>
+                                            <div class="form-body">
+                                                <div class="row p-t-20">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Select Department</label>
+                                                            @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "Select Department", new { @class = "form-control", @onchange = "BindSubDepartment(this.value,'Fk_SubDeptId')" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Select Sub Department</label>
+                                                            @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(String.Empty, "Value", "Text"), "Select Sub Department", new { @class = "form-control", @onchange = "BindEmployee(this.value);" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">PFMS Code</label>
+                                                            @Html.TextBoxFor(M => M.PFMSCode, new { @class = "form-control", @maxlength = "50" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Departmental Employee Unique Code</label>
+                                                            @Html.TextBoxFor(M => M.DeptEmpCode, new { @class = "form-control", @maxlength = "50" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Search By Name</label>
+                                                            @Html.TextBoxFor(M => M.SearchEmpName, new { @class = "form-control", @maxlength = "50" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4" style="margin-top: 31px;">
+                                                        <button class="btn btn-info mb-2" style="color:white;" type="button" onclick="searchEmpolyee()">
+                                                            Search Employee By Name or Code
+                                                        </button>
+
+                                                    </div>
+                                                </div>
+                                                <div class="row p-t-20">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Select Employee</label>
+                                                            @Html.DropDownListFor(model => model.EmpId, new SelectList(String.Empty, "Value", "Text"), "Select Employee", new { @class = "form-control", @onchange = "BindEmpDetail(this.value);" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+                                <div class="col-lg-12">
+                                    <div class="card card-outline-info">
+                                        <div class="card-body">
+                                            <h5>Personal Detail</h5>
+                                            <div class="row p-t-20">
+                                                <div class="col-lg-12">
+                                                    <div class="row p-t-20">
+                                                        <div class="col-md-8">
+                                                            <div class="row p-t-20">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Employee Name</label>
+                                                                        @Html.TextBoxFor(M => M.EmpName, new { @class = "form-control", @maxLength = "20", @disabled = "disabled" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Select Department</label>
+                                                                        @Html.DropDownListFor(model => model.preFk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), " ", new { @class = "form-control", @disabled = "disabled" })
+                                                                        @Html.HiddenFor(model => model.EmpId, new { @id = "empid" })
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Select Sub Department</label>
+                                                                        @Html.DropDownListFor(model => model.preFk_SubDeptId, new SelectList(ViewBag.SubDept, "Value", "Text"), " ", new { @class = "form-control", @disabled = "disabled" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Bank</label>
+                                                                        @Html.DropDownListFor(model => model.BankId, new SelectList(ViewBag.Bank, "Value", "Text"), " ", new { @class = "form-control", @disabled = "disabled" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Photo</label><br>
+                                                                <img src="~/assets/images/No-Image.png" style="height:125px;width:115px;border: 1px solid #ccc;" id="empimg" />
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row p-t-20">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Father's Name</label>
+                                                                @Html.TextBoxFor(M => M.FatherName, new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Designation</label>
+                                                                @Html.DropDownListFor(model => model.preDesignationId, new SelectList(ViewBag.Designation, "Value", "Text"), " ", new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Employee Category</label>
+                                                                @Html.DropDownListFor(model => model.preWTypeId, new SelectList(ViewBag.Type, "Value", "Text"), " ", new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Address</label>
+                                                                @Html.TextBoxFor(M => M.PermAddress, new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Adhar Number</label>
+                                                                @Html.TextBoxFor(M => M.AdharNo, new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Employee Type</label>
+                                                                @Html.DropDownListFor(model => model.preEmployementId, new SelectList(ViewBag.Emptype, "Value", "Text"), " ", new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Account Number</label>
+                                                                @Html.TextBoxFor(M => M.AccountNo, new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Mobile Number</label>
+                                                                @Html.TextBoxFor(M => M.MobileNo, new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Date of Joining</label>
+                                                                @Html.TextBoxFor(M => M.DOJ, new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Pan Number</label>
+                                                                @Html.TextBoxFor(M => M.PANNo, new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Date of Birth</label>
+                                                                @Html.TextBoxFor(M => M.DOB, new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Date of Retirement</label>
+                                                                @Html.TextBoxFor(M => M.DOR, new { @class = "form-control", @disabled = "disabled" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+                                <div class="col-lg-12">
+                                    <div class="card card-outline-info">
+                                        <div class="card-body">
+                                            <h5>Transfer / Promotion Details</h5>
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Employee Category</label>
+                                                        @Html.DropDownListFor(model => model.TWTypeId, new SelectList(ViewBag.Type, "Value", "Text"), "Select Empolyment Category", new { @class = "form-control", @onchange = "BindEmpType(this.value)" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Employee Type</label>
+                                                        @Html.DropDownListFor(model => model.TEmployementId, new SelectList(String.Empty, "Value", "Text"), "Select Empolyment Type", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department</label>
+                                                        @Html.DropDownListFor(model => model.TFk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "Select Department", new { @class = "form-control", @onchange = "BindSubDepartment(this.value,'TFk_SubDeptId')" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department</label>
+                                                        @Html.DropDownListFor(model => model.TFk_SubDeptId, new SelectList(String.Empty, "Value", "Text"), "Select Sub Department", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Designation</label>
+                                                        @Html.DropDownListFor(model => model.TDesignationId, new SelectList(ViewBag.Designation, "Value", "Text"), "Select Designation", new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Order No</label>
+                                                        @Html.TextBoxFor(M => M.OrderNO, new { @class = "form-control", @placeholder = "Order NO." })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Order Date</label>
+                                                        @Html.TextBoxFor(M => M.Orderdate, new { @class = "form-control", @Type = "date" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Date of Joining</label>
+                                                        @Html.TextBoxFor(M => M.TDOJ, new { @class = "form-control", @Type = "date" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Remarks</label>
+                                                        @Html.TextAreaFor(M => M.remarks, new { @class = "form-control", @maxlength = "50", @placeholder = "Remark" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="row justify-content-center">
+                                                    <div class="col-md-4">
+                                                        <div class="text-center">
+                                                            <button id="trnbtn" class="btn btn-success" disabled>Transfer Employee Data</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+</div>
+        </div>
+    </div>
+</div>
+
+<script> 
+    $(document).ready(function () {
+        $("#Fk_DepartmentId").select2();
+        $("#Fk_SubDeptId").select2();
+        $("#EmpId").select2();
+        $("#TWTypeId").select2();
+        $("#TEmployementId").select2();
+        $("#TFk_DepartmentId").select2();
+        $("#TFk_SubDeptId").select2();
+        $("#TDesignationId").select2();
+    });
+
+   function BindSubDepartment(id,idtype) {
+        
+         if (id > 0) {
+       $.ajax({
+                 type: 'post',
+                 url: '/Employee/GetSubCategory',
+                 data: { DepartmentId: id },
+                 dataType: 'json',
+                 success: function (data) {
+                     if (data.length > 0) {
+                         $("#" + idtype+"").children().remove().end().append($("<option></option>").val("").text("Select Sub Department"));
+                         for (var i = 0; i < data.length; i++) {
+                             $("#" + idtype + "").append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+
+                         }
+
+                     }
+                     else {
+                         $("#" + idtype + "").children().remove().end().append($("<option></option>").val("").text("Select Sub Department"));
+                     }
+                     //if (id > 0) {
+                     //    $('#Fk_SubDeptId').val(id);
+                     //}
+                 },
+                 error: function (e) {
+                     $("#" + idtype + "").children().remove().end().append($("<option></option>").val("").text("Select Sub Department"));
+                 }
+
+             });
+        }
+        else {
+             $("#" + idtype + "").children().remove().end().append($("<option></option>").val("").text("Select Sub Department"));
+       }
+       if (idtype == "Fk_SubDeptId") {
+           Reset();
+       }
+         
+    }
+
+    function BindEmployee(id) {
+        
+        if (id > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetEmpCode',
+                data: { SubDeptId: id },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpId").children().remove().end().append($("<option></option>").val("").text("Select Employee"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#EmpId").children().remove().end().append($("<option></option>").val("").text("Select Employee"));
+                    }
+                    //if (id > 0) {
+                    //    $('#Fk_SubDeptId').val(id);
+                    //}
+                },
+                error: function (e) {
+                    $("#EmpId").children().remove().end().append($("<option></option>").val("").text("Select Employee"));
+                }
+
+            })
+        }
+        else {
+            $("#EmpId").children().remove().end().append($("<option></option>").val("").text("Select Employee"));
+        }
+        Reset();
+    }
+
+    function BindEmpType(id) {
+        
+        if (id > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetEmployeeType',
+                data: { empCategory: id },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#TEmployementId").children().remove().end().append($("<option></option>").val("").text("Select Empolyment Type"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#TEmployementId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#TEmployementId").children().remove().end().append($("<option></option>").val("").text("Select Empolyment Type"));
+                    }
+                    //if (id > 0) {
+                    //    $('#preEmployementId').val(id)
+                    //}
+                },
+                error: function (e) {
+                    $("#TEmployementId").children().remove().end().append($("<option></option>").val("").text("Select Empolyment Type"));
+                }
+
+            })
+        }
+        else {
+            $("#TEmployementId").children().remove().end().append($("<option></option>").val("").text("Select Empolyment Type"));
+        }
+    }
+
+    function searchEmpolyee() {
+        
+        id = $('#Fk_SubDeptId').val();
+        if (($('#Fk_SubDeptId').val() == "0" || $('#Fk_SubDeptId').val() < 0 || $('#Fk_SubDeptId').val() == "" || $('#Fk_SubDeptId').val() == null || $('#Fk_SubDeptId').val() == "undefined")) {
+                swal("", "Select Department and  Sub-Department First.", "warning");
+            return;
+        }
+        else {
+            if (id > 0) {
+                if (($('#PFMSCode').val().trim() == "" || $('#PFMSCode').val() == null || $('#PFMSCode').val() == "undefined") && ($('#DeptEmpCode').val().trim() == "" || $('#DeptEmpCode').val() == null || $('#DeptEmpCode').val() == "undefined") && ($('#SearchEmpName').val().trim() == "" || $('#SearchEmpName').val() == null || $('#SearchEmpName').val() == "undefined")) {
+
+                    swal("", "Enter Atleast One Criteria for Filter.", "warning");
+                    return;
+                }
+                else {
+                    var model = {
+                        Fk_SubDeptId: id,
+                        DeptEmpCode: $('#DeptEmpCode').val(),
+                        PFMSCode: $('#PFMSCode').val(),
+                        SearchEmpName: $('#SearchEmpName').val(),
+                    }
+                    $.ajax({
+                         type: "Post",
+                         url: "@Url.Action("SearchEmpByNameorCode", "Employee")",
+                         data: JSON.stringify({ model }),
+                         contentType: "application/json; charset=utf-8",
+                         dataType: "json",
+                        success: function (data) {
+                            if (data.length > 0) {
+                                $("#EmpId").children().remove().end().append($("<option></option>").val("").text("Select Employee"));
+                                for (var i = 0; i < data.length; i++) {
+                                    $('#EmpId').append('<option value=' + data[i].ValueField + '>' + data[i].TextField + '</option>')
+                                }
+
+                            }
+                            else {
+                                $("#EmpId").children().remove().end().append($("<option></option>").val("").text("Select Employee"));
+                            }
+                            //if (id > 0) {
+                            //    $('#Fk_SubDeptId').val(id);
+                            //}
+                            Reset();
+                        },
+                        error: function (e) {
+                            $("#EmpId").children().remove().end().append($("<option></option>").val("").text("Select Employee"));
+                            Reset();
+                        }
+
+                    })
+                }
+            }
+            else {
+                $("#EmpId").children().remove().end().append($("<option></option>").val("").text("Select Employee"));
+                Reset();
+            }
+        }
+
+    }
+
+    function BindEmpDetail(id) {
+        
+        Reset();
+       // var EmpId = $('#EmpId').val();
+        if (id > 0) {
+            $.ajax({
+                url: '/Employee/GetEmployeeDetail',
+                type: 'post',
+                data: { EmpID: id },
+                dataType: 'json',
+                containtType: 'aplication/json;charset=utf-8',
+                success: function (data) {
+                    if (data != null) {
+                        
+                        $('#empid').val(data.ID);
+                        $('#EmpName').val(data.EmpName);
+                        $('#preFk_DepartmentId').val(data.Fk_DepartmentId);
+                        $('#BankId').val(data.BankId);
+                        if (data.empimg != null && data.empimg != "" && data.empimg != "undefined") {
+                            $('#empimg').attr("srr", "");
+                            $('#empimg').attr("src", data.empimg);
+                        }
+                        //$('#empimg').val(data.empimg);
+                        $('#FatherName').val(data.FatherName);
+                        $('#preDesignationId').val(data.DesignationId);
+                        $('#preWTypeId').val(data.WTypeId);
+                        $('#PermAddress').val(data.PermAddress);
+                        $('#AdharNo').val(data.AdharNo);
+                        $('#preEmployementId').val(data.EmployementId);
+                        $('#AccountNo').val(data.AccountNo);
+                        $('#MobileNo').val(data.MobileNo);
+                        $('#DOJ').val(data.DOJ);
+                        $('#PANNo').val(data.PANNo);
+                        if (data.DOB != null) {
+                            $('#DOB').val(data.DOB);
+                        }
+                        $('#DOR').val(data.DOR);
+                        if ($('#preFk_DepartmentId').val() > 0) {
+
+                            $('#preFk_SubDeptId').val(data.Fk_SubDeptId);
+                            //BindSubDepartment($('#preFk_DepartmentId').val());
+
+                            //$('#preFk_SubDeptId').val(data.Fk_SubDeptId);
+                        }
+                        $('#trnbtn').attr("disabled", false);
+                    }
+                },
+                error: function (error) {
+                    Reset();
+                }
+            })
+        }
+        else {
+            Reset();
+        }
+
+    }
+
+    function Reset() {
+        $('#ID').val('');
+        $('#empid').val('');
+        $('#EmpName').val('');
+        $('#preFk_DepartmentId').val('');
+        $('#preFk_SubDeptId').val('');
+        $('#BankId').val('');
+        $('#empimg').attr("src", "/assets/images/No-Image.png");
+        $('#FatherName').val('');
+        $('#preDesignationId').val('');
+        $('#preWTypeId').val('');
+        $('#PermAddress').val('');
+        $('#AdharNo').val('');
+        $('#preEmployementId').val('');
+        $('#AccountNo').val('');
+        $('#MobileNo').val('');
+        $('#DOJ').val('');
+        $('#PANNo').val('');
+        $('#DOB').val('');
+        $('#DOR').val('');
+        $('#trnbtn').attr("disabled", true);
+    }
+
+    function ValidateTransfer() {
+       
+        var check = 0;
+        if ($('#empid').val() == null || $('#empid').val().trim() == "" || $('#empid').val() == "undefined" || typeof ($('#empid').val()) == "undefined" || $('#empid').val() < "0") {
+            swal("", "Please Select Empolyee", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#preFk_DepartmentId').val() == null || $('#preFk_DepartmentId').val().trim() == "" || $('#preFk_DepartmentId').val() == "undefined" || typeof ($('#preFk_DepartmentId').val()) == "undefined" || $('#preFk_DepartmentId').val() < "0") {
+            swal("", "Please Select Previous Department", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#preFk_SubDeptId').val() == null || $('#preFk_SubDeptId').val().trim() == "" || $('#preFk_SubDeptId').val() == "undefined" || typeof ($('#preFk_SubDeptId').val()) == "undefined" || $('#preFk_SubDeptId').val() < "0") {
+            swal("", "Please Select Previous Sub Department", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#preWTypeId').val() == null || $('#preWTypeId').val().trim() == "" || $('#preWTypeId').val() == "undefined" || typeof ($('#preWTypeId').val()) == "undefined" || $('#preWTypeId').val() < "0") {
+            swal("", "Please Select Previous Empolyee Category", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#preEmployementId').val() == null || $('#preEmployementId').val().trim() == "" || $('#preEmployementId').val() == "undefined" || typeof ($('#preEmployementId').val()) == "undefined" || $('#preEmployementId').val() < "0") {
+            swal("", "Please Select Previous Empolyee Type", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#TWTypeId').val() == null || $('#TWTypeId').val().trim() == "" || $('#TWTypeId').val() == "undefined" || typeof ($('#TWTypeId').val()) == "undefined" || $('#TWTypeId').val() < "0") {
+            swal("", "Please Select Transfer Empolyment Category", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#TEmployementId').val() == null || $('#TEmployementId').val().trim() == "" || $('#TEmployementId').val() == "undefined" || typeof ($('#TEmployementId').val()) == "undefined" || $('#TEmployementId').val() < "0") {
+            swal("", "Please Select Transfer Empolyment Type", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#TFk_DepartmentId').val() == null || $('#TFk_DepartmentId').val().trim() == "" || $('#TFk_DepartmentId').val() == "undefined" || typeof ($('#TFk_DepartmentId').val()) == "undefined" || $('#TFk_DepartmentId').val() < "0") {
+            swal("", "TPlease Select Transfer Depaertment", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#TFk_SubDeptId').val() == null || $('#TFk_SubDeptId').val().trim() == "" || $('#TFk_SubDeptId').val() == "undefined" || typeof ($('#TFk_SubDeptId').val()) == "undefined" || $('#TFk_SubDeptId').val() < "0") {
+            swal("", "Please Select Transfer Sub Department", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#TDesignationId').val() == null || $('#TDesignationId').val().trim() == "" || $('#TDesignationId').val() == "undefined" || typeof ($('#TDesignationId').val()) == "undefined" || $('#TDesignationId').val() < "0") {
+            swal("", "Please Select Transfer Designation", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#OrderNO').val().trim() == null || $('#OrderNO').val().trim() == "" || $('#OrderNO').val() == "undefined" || typeof ($('#OrderNO').val()) == "undefined" || $('#OrderNO').val().trim().length < "0") {
+            swal("", "Please Provide Order NO", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#Orderdate').val().trim() == null || $('#Orderdate').val().trim() == "" || $('#Orderdate').val() == "undefined" || typeof ($('#Orderdate').val()) == "undefined" || $('#Orderdate').val().trim().length < "0") {
+            swal("", "Please Provide Order Date", "warning");
+            return false;
+        }
+        if ($('#TDOJ').val().trim() == null || $('#TDOJ').val().trim() == "" || $('#TDOJ').val() == "undefined" || typeof ($('#TDOJ').val()) == "undefined" || $('#TDOJ').val().trim().length < "0") {
+            swal("", "Please Provide Transfer Date Of Joining", "warning");
+            return false;
+            check = 1;
+        }
+        if ($('#remarks').val().trim() == null || $('#remarks').val().trim() == "" || $('#remarks').val() == "undefined" || typeof ($('#remarks').val()) == "undefined" || $('#remarks').val().trim().length < "0") {
+            swal("", "Please Provide Remark", "warning");
+            return false;
+            check = 1;
+        }
+        if (check == 0) {
+            $(":disabled", $('#from')).removeAttr("disabled").attr("readonly", true);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+</script>
+

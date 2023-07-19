@@ -1,0 +1,129 @@
+﻿@model HRPayroll.Models.SalarySummary
+@{
+    ViewBag.Title = "SalarySummary";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Salary Summary</h3>
+        </div>
+    </div>
+    <div class="row">
+ 
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-body">
+                        <form action="/Employee/SalarySummarySlips" method="post" id="FormSubmit" onsubmit="return ValidateForm();">
+                            <div class="form-body">
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                From Year<span class="text-danger">*</span>
+                                            </label>
+                                            <select class="form-control" id="FromYear" name="FromYear"></select>
+                                            @Html.HiddenFor(model => model.FromYear)
+                                            @Html.ValidationMessageFor(m => m.FromYear, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+
+                                                From Month <span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(model => model.FromMonth, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                To Year<span class="text-danger">*</span>
+                                            </label>
+                                            <select class="form-control" id="ToYear" name="ToYear"></select>
+                                            @Html.HiddenFor(model => model.ToYear)
+                                            @Html.ValidationMessageFor(m => m.ToYear, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+
+                                                To Month <span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(model => model.ToMonth, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-success hstheme-button-o text-white">
+                                    <i class="fa fa-check"></i>
+                                    Show Report
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+        //Reference the DropDownList 
+        var ddlYears = $("#FromYear");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2020; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    $(function () {
+        //Reference the DropDownList 
+        var ddlYears = $("#ToYear");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2020; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+
+</script>

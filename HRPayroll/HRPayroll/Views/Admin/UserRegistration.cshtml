@@ -1,0 +1,533 @@
+﻿@model HRPayroll.Models.User
+@{
+    ViewBag.Title = "UserRegistration";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-body" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">User Registration</h3>
+                        </div>
+                    </div>
+                </div>
+                <form action="/Admin/UserRegistration" method="post" onsubmit=" return validateForm()" id="from">
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    location.href = '/Admin/UserRegistration';
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5>Add User</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">User Name<span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.UserName, new { @class = "form-control", @maxlength = "50" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Password<span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.Password, new { @class = "form-control", @maxlength = "50", @type = "password" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">User Type</label>
+                                                        @Html.DropDownListFor(model => model.UTypeId, new SelectList(ViewBag.UserType, "Value", "Text"), "-Select-", new { @class = "form-control js-example-basic-multiple" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Working Type<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.WTypeId, new SelectList(ViewBag.Type, "Value", "Text"), "-Select-", new { @class = "form-control js-example-basic-multiple" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Circle <span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.CircleId, new SelectList(ViewBag.Circle, "Value", "Text"), "-Select-", new { @class = "form-control js-example-basic-multiple" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 showhide">
+                                                    <div class="form-group">
+                                                        <label class="form-label">District<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.DistrictId, new SelectList(ViewBag.DistrictList, "Value", "Text"), "-Select District-", new { @class = "form-control js-example-basic-multiple", @onchange = "GetOfficeType1(this.value)" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 showhide">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Office Type<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.officeTypeId, new SelectList(String.Empty, "Value", "Text"), "-Select Office Type-", new { @class = "form-control js-example-basic-multiple", @onchange = "GetOfficeName()" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 showhide">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Office Name<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.OfficeId, new SelectList(String.Empty, "Value", "Text"), "-Select Office Name-", new { @class = "form-control js-example-basic-multiple", @onchange = "BindCheckBox()" })
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Designation Of Officer <span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.DesignationId, new SelectList(ViewBag.DesignationOfficer, "Value", "Text"), "-Select-", new { @class = "form-control js-example-basic-multiple" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Officer Name <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.EOName, new { @class = "form-control", @maxlength = "50", @onkeypress = "checkAlphabet(event)" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Officer Number <span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.EOMobileNo, new { @class = "form-control", @maxlength = "10",@onkeypress= " return isNumber(event)" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Designation Of Staff<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.DesignationId, new SelectList(ViewBag.DesignationStaff, "Value", "Text"), "-Select-", new { @class = "form-control js-example-basic-multiple" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Accountant Name<span class="text-danger">*</span></label>
+                                                        @Html.TextBoxFor(M => M.PayclerkName, new { @class = "form-control", @maxlength = "50" , @onkeypress = "checkAlphabet(event)"})
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Accountant Number<span class="text-danger">*</span> </label>
+                                                        @Html.TextBoxFor(M => M.PayclerkMobileNo, new { @class = "form-control", @maxlength = "10",@onkeypress= " return isNumber(event)" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Email Id</label>
+                                                        @Html.TextBoxFor(M => M.EmailId, new { @class = "form-control", @type = "email" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 d-none" id="ddd">
+                                                    <div class="form-group" id="checkboxdiv">
+                                                        <label class="form-label">Map to Department(s)</label><br />
+                                                        <div class="row">
+                                                            <div id="chkdep" class="d-flex">
+                                                                @Html.DropDownListFor(m => m.DepartmentsLst, new SelectList(String.Empty, "Value", "Text"), "-select-",new { @class = "form-control js-example-basic-multiple select" ,@multiple="multiple", @placeholder = "select Department"})
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row justify-content-center">
+                                                    <div class="col-md-4">
+                                                        <div class="text-center">
+                                                            <button id="trnbtn" class="btn btn-success">Submit</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var dept = [];
+
+ function BindSubDepartment(id,idtype) {
+
+         if (id > 0) {
+       $.ajax({
+                 type: 'post',
+                 url: '/Employee/GetSubCategory',
+                 data: { DepartmentId: id },
+                 dataType: 'json',
+                 success: function (data) {
+                     if (data.length > 0) {
+                         $("#" + idtype+"").children().remove().end().append($("<option></option>").val("").text("Select Sub Department"));
+                         for (var i = 0; i < data.length; i++) {
+                             $("#" + idtype + "").append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+
+                         }
+
+                     }
+                     else {
+                         $("#" + idtype + "").children().remove().end().append($("<option></option>").val("").text("Select Sub Department"));
+                     }
+                     //if (id > 0) {
+                     //    $('#Fk_SubDeptId').val(id);
+                     //}
+                 },
+                 error: function (e) {
+                     $("#" + idtype + "").children().remove().end().append($("<option></option>").val("").text("Select Sub Department"));
+                 }
+
+             });
+        }
+        else {
+             $("#" + idtype + "").children().remove().end().append($("<option></option>").val("").text("Select Sub Department"));
+       }
+       if (idtype == "Fk_SubDeptId") {
+           Reset();
+       }
+
+    }
+
+function GetOfficeName() {
+        debugger;
+        var districtId=$('#DistrictId').val();
+        var AgencyTypeId = $('#officeTypeId').val();
+        $.ajax({
+
+            type: 'Post',
+            url: '@Url.Action("GetOfficeName", "Master")',
+            data: { districtId: districtId, AgencyTypeId: AgencyTypeId },
+            dataType: 'json',
+            success: function (data) {
+                if (data != null) {
+                    $('#OfficeId').children().remove().end().append($("<option></option>").val("").text("-select-"));
+                    for (var i = 0; i < data.length; i++) {
+                        $('#OfficeId').append('<option Value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                    }
+                   /* $('#OfficeName').val(Id)*/
+                }
+                else {
+                    $('#OfficeId').children().remove().end().append($("<option></option>").val("").text("-select-"));
+                }
+
+            },
+            error: function (err) {
+                $('#OfficeId').children().remove().end().append($("<option></option>").val("").text("-select-"));
+            }
+        })
+
+    }
+
+function BindEmpType(id) {
+
+        if (id > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetEmployeeType',
+                data: { empCategory: id },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#TEmployementId").children().remove().end().append($("<option></option>").val("").text("Select Empolyment Type"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#TEmployementId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#TEmployementId").children().remove().end().append($("<option></option>").val("").text("Select Empolyment Type"));
+                    }
+                    //if (id > 0) {
+                    //    $('#preEmployementId').val(id)
+                    //}
+                },
+                error: function (e) {
+                    $("#TEmployementId").children().remove().end().append($("<option></option>").val("").text("Select Empolyment Type"));
+                }
+
+            })
+        }
+        else {
+            $("#TEmployementId").children().remove().end().append($("<option></option>").val("").text("Select Empolyment Type"));
+        }
+    }
+
+function BindCheckBox() {
+        debugger;
+        var OfficeId = $('#OfficeId').val();
+        if (parseInt(OfficeId) > 0) {
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("GetDepartmentforcheckbox", "Admin")',
+                data: { OfficeId: OfficeId},
+                dataType: 'json',
+                success: function (data) {
+                    if (data != null) {
+                        if (data.length > 0) {
+                            $('#DepartmentsLst').empty();
+                            $('#DepartmentsLst').append('<option "">select</option>')
+                            $('#ddd').removeClass('d-none')
+                            for (var i = 0; i < data.length; i++) {
+                                $('#DepartmentsLst').append('<option Value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                            }
+                            /* $('#OfficeName').val(Id)*/
+                        }
+                    }
+                    else {
+                        $('#DepartmentsLst').empty()
+                        $('#DepartmentsLst').append('<option "">select</option>')
+                    }
+
+                },
+                error: function (err) {
+                    $('#chkdep').empty()
+                }
+            })
+        }
+    }
+
+    function validateForm() {
+        debugger;
+        var mobregex = /^(0|91)?[6-9][0-9]{9}$/;
+        var pattern = "^(?=.*[0-9])"
+                       + "(?=.*[a-z])(?=.*[A-Z])"
+                       + "(?=.*[@@#$%^&+=])"
+                       + "(?=\\S+$).{8,20}$";
+        $('#Departments').val(dept.join(", "));
+        if ($('#UserName').val() == '' || $('#UserName').val() == null || $('#UserName').val() == "undefined" ) {
+            swal("", "Please Enter User Name..", "warning");
+            $('#UserName').focus();
+            return false;
+
+        }
+        if ($('#Password').val() == '' || $('#Password').val() == '0' || $('#Password').val() == undefined) {
+            swal("", "Please Enter Password..", "warning");
+            $('#Password').focus();
+            return false;
+
+        }
+       
+        if (!$('#Password').val().match(pattern)) {
+            $('#Password').focus();
+            swal("", "Must include at least one upper case letter, one lower case letter, one special character(@@#$%&), one numeric digit and min. 8 characters.Not valid", "warning");
+            return false;
+        }
+
+
+        if ($('#UTypeId').val() == '' || $('#UTypeId').val() == '0' || $('#UTypeId').val() == null || $('#UTypeId').val() ==undefined) {
+            swal("", "Please select User Type..", "warning");
+            $('#UTypeId').focus();
+            return false;
+
+        }
+        if ($('#WTypeId').val() == '' || $('#WTypeId').val() == '0' || $('#WTypeId').val() == null || $('#WTypeId').val() == undefined) {
+            $('#WTypeId').focus();
+            swal("", "Please select working type" , "warning");
+            return false;
+        }
+        if ($('#CircleId').val() == '' || $('#CircleId').val() == '0' || $('#CircleId').val() == null || $('#CircleId').val() == undefined) {
+            $('#CircleId').focus();
+            swal("", "Please select Circle", "warning");
+            return false;
+        }
+        if ($('#DistrictId').val() == '' || $('#DistrictId').val() == '0' || $('#DistrictId').val() == null || $('#DistrictId').val() == undefined) {
+            $('#DistrictId').focus();
+            swal("", "Please select District", "warning");
+            return false;
+        }
+        if ($('#officeTypeId').val() == '' || $('#officeTypeId').val() == '0' || $('#officeTypeId').val() == null || $('#officeTypeId').val() == undefined) {
+            $('#officeTypeId').focus();
+            swal("", "Please select Office Type", "warning");
+            return false;
+        }
+        if ($('#OfficeId').val() == '' || $('#OfficeId').val() == '0' || $('#OfficeId').val() == null || $('#OfficeId').val() == undefined) {
+            $('#OfficeId').focus();
+            swal("", "Please select Office Name", "warning");
+            return false;
+        }
+        if ($('#DesignationId').val() == '' || $('#DesignationId').val() == '0' || $('#DesignationId').val() == null || $('#DesignationId').val() == undefined) {
+            $('#DesignationId').focus();
+            swal("", "Please select Designation Of Officer", "warning");
+            return false;
+        }
+        if ($('#EOName').val() == '' || $('#EOName').val() == '0') {
+            swal("", "Please Enter Officer Name..", "warning");
+            $('#EOName').focus();
+            return false;
+
+        }
+
+
+    if ($('#EOMobileNo').val() == null || $('#EOMobileNo').val() == "" || $('#EOMobileNo').val() == undefined) {
+        $('#EOMobileNo').focus();
+        swal("", "Please Enter Officer Number..", "warning");
+        return false;
+    }
+    if (!$('#EOMobileNo').val().match(mobregex)) {
+        $('#EOMobileNo').focus();
+        swal("", "Please Enter Valid Officer Number..", "warning");
+        return false;
+        }
+
+        if ($('#DesignationId').val() == null || $('#DesignationId').val() == "" || $('#DesignationId').val() == undefined) {
+            $('#DesignationId').focus();
+            swal("", "Please select Designation Of Staff..", "warning");
+            return false;
+        }
+        if ($('#PayclerkName').val() == '' || $('#PayclerkName').val() == '0') {
+            swal("", "Please Enter Accountant Name..", "warning");
+            $('#PayclerkName').focus();
+            return false;
+
+        }
+        if ($('#PayclerkMobileNo').val() == '' || $('#PayclerkMobileNo').val() == '0') {
+            swal("", "Please Enter Accountant Number..", "warning");
+            $('#PayclerkMobileNo').focus();
+            return false;
+
+    }
+    if (!$('#PayclerkMobileNo').val().match(mobregex)) {
+        $('#PayclerkMobileNo').focus();
+        swal("", "Please Enter Valid Accountant Number..", "warning");
+        return false;
+    }
+        //if (dept == '' || dept == null || dept == "undefined") {
+        //    swal("", "Please Select Department", "warning");
+        //    return false;
+        //}
+    }
+
+function changedept(value) {
+        debugger;
+
+        if ($('#' + value + '').prop('checked'), true) {
+            if (!dept.includes(value)) {
+                dept.push(value);
+
+
+
+            }
+            else {
+                $('#' + value + '').prop('checked', false);
+                const index = dept.indexOf(value);
+                if (index > -1) {
+                    dept.splice(index, 1);
+                }
+
+            }
+        var dept1=   JSON.stringify(dept.join(", "));
+            $('#Departments').val(dept1)
+            console.log(dept);
+        }
+        else {
+            const index = dept.indexOf(value);
+            if (index > -1) {
+                dept.splice(index, 1);
+                console.log(dept);
+            }
+        }
+
+
+
+
+
+
+
+    }
+
+function GetOfficeType1(id) {
+
+        debugger;
+         $.ajax({
+            type: 'Post',
+            url: '@Url.Action("GetOfficeType", "Master")',
+            data: { districtId: id },
+            dataType: 'json',
+            success: function (data) {
+                if (data != null) {
+                    $('#officeTypeId').children().remove().end().append($("<option></option>").val("").text("select Office Type"));
+                    for (var i = 0; i < data.length; i++) {
+                        $('#officeTypeId').append('<option Value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                    }
+                    /* $('#OfficeName').val(Id)*/
+                }
+                else {
+                    $('#officeTypeId').children().remove().end().append($("<option></option>").val("").text("select Office Type"));
+                }
+
+            },
+            error: function (err) {
+                $('#officeTypeId').children().remove().end().append($("<option></option>").val("").text("select Office Type"));
+            }
+        })
+
+    }
+
+ function checkAlphabet(event) {
+        debugger;
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-zA-Z\\s]*$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
+
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+</script>

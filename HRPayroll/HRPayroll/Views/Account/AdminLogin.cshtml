@@ -1,0 +1,148 @@
+﻿@model HRPayroll.Models.EmpLogin
+@{
+    Layout = null;
+}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>HRPay Roll</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Lucid HR & Project Admin Dashboard Template with Bootstrap 5x">
+    <meta name="author" content="HRMS">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    <link href="~/assets/plugin/sweetalert/sweetalert.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <style>
+        .btn.btn-primary {
+            background-color: #005495 !important;
+            border-color: #2359a8 !important;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="layout" class="theme-orange">
+        <!-- WRAPPER -->
+        <div id="wrapper">
+            <div class="d-flex h100vh align-items-center auth-main w-100">
+                <div class="auth-box">
+
+                    @*<div class="top mb-4">
+                        <div class="logo text-center">
+                            <a href="#">
+                                <img src="~/assets/images/quaere-software-company-logo.svg" width="229px" />
+                            </a>
+                        </div>
+                    </div>*@
+                    <div>
+                    </div>
+                    <div class="card shadow p-lg-4">
+                        <div class="text-center">
+                            <a href="#">
+                                <img src="~/assets/images/quaere-software-company-logo.svg" width="229px" />
+                            </a>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @{
+                                    string Code = (string)TempData["code"];
+                                    string msg = (string)TempData["Msg"];
+                                    if (!string.IsNullOrEmpty(Code))
+                                    {
+                                        if (Code == "1")
+                                        {
+                                            <div class="alert alert-success msgdiv" id="msgdiv">
+                                                <strong>Success!</strong> @msg
+                                            </div>
+                                            <script type="text/javascript">
+                                                window.setTimeout(function () {
+                                                    $('#msgdiv').hide();
+                                                }, 5000);
+                                            </script>
+                                        }
+                                        else
+                                        {
+                                            <div class="alert alert-danger msgdiv">
+                                                <strong>Error!</strong> @msg
+                                            </div>
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card-header">
+                            <p class="fs-5 mb-0">ADMIN LOGIN</p>
+                        </div>
+                        <div class="card-body">
+                            <form class="form-horizontal form-material" action="/Account/AdminLogin" method="post">
+                                <div class="col-xs-12">
+                                    <div class="form-group mb-2">
+                                        @Html.TextBoxFor(M => M.UserName, new { @class = "form-control", @placeholder = "Enter User Name" })
+                                        @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-floating">
+                                    <div class="d-flex" style="position: relative;">
+                                        @Html.TextBoxFor(M => M.Password, new { @class = "form-control", @placeholder = "Enter Password", @type = "password" })
+                                        <img src="https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash-300x240.png" width="15px" height="15x" style="position: absolute; z-index: 9; top: 10px; right: 20px;" id="togglePassword">
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-check my-3">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 px-3 py-2">LOGIN</button>
+                            </form>
+                            <div class="mt-3 pt-3 border-top">
+                                <p class="mb-1"><a href="/Home/Index"><i class="fa fa-reply me-2"></i>Back To Dashboard</a></p>
+
+                            </div>
+                            <div class="mt-3 pt-3 border-top">
+                                @*<p class="mb-1"><a href="#"><i class="fa fa-lock me-2"></i>Forgot password?</a></p>
+                <span>Don't have an account? <a href="#">Register</a></span>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END WRAPPER -->
+    </div>
+</body>
+
+</html>
+
+<script>
+    const togglePassword =
+        document.querySelector('#togglePassword');
+
+    const password = document.querySelector('#Password');
+
+    togglePassword.addEventListener('click', function (e) {
+
+        // Toggle the type attribute
+        const type = password.getAttribute(
+            'type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+
+        // Toggle the eye slash icon
+        if (togglePassword.src.match(
+            "https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash.png")) {
+            togglePassword.src =
+                "https://media.geeksforgeeks.org/wp-content/uploads/20210917145551/eye.png";
+        } else {
+            togglePassword.src =
+                "https://media.geeksforgeeks.org/wp-content/uploads/20210917150049/eyeslash.png";
+        }
+    });
+</script>

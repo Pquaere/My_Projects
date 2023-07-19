@@ -1,0 +1,80 @@
+﻿@model HRPayroll.Models.Rptemppayment
+
+<div class="row" id="EmpTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div style="text-align: center;margin-bottom: 5px;"><button type="button" style="background-color:blue; color:white; padding:5px 10px; font-size: 16px;" class="printMe btn btn-danger">Print</button></div>
+                <div class="table">
+                    <div class="table-responsive">
+                        <table class="table dataTable table-striped" id="outprint">
+                            <thead id="tbl">
+                                <tr role="row" class="bg-secondary">
+                                    <th>S.No</th>
+                                    <th>Employee Name</th>
+                                    <th>Father Name</th>
+                                    <th>Designation</th>
+                                    <th>Mobile No.</th>
+                                    <th>Account No.</th>
+                                    <th>Bank Name</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.RptemppaymentList != null)
+                                {
+                                    if (Model.RptemppaymentList.Count() > 0)
+                                    {
+                                        var Sn = 0;
+                                        foreach (var item in Model.RptemppaymentList)
+                                        {
+                                            Sn = Sn + 1;
+                                            <tr role="row" class="odd">
+                                                <td>@Sn</td>
+                                                <td>@item.EmpName</td>
+                                                <td>@item.FatherName</td>
+                                                <td>@item.Designation</td>
+                                                <td>@item.MobileNo</td>
+                                                <td>@item.AccountNo</td>
+                                                <td>@item.BankName</td>
+                                                
+
+
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="7"><span>No Data Available</span></td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div> 
+<script>
+    $(".printMe").click(function () {
+        var divToPrint = document.getElementById("outprint");
+        newWin = window.open("");
+        newWin.document.write(divToPrint.outerHTML);
+        newWin.print();
+        newWin.close();
+    });
+
+
+    $(document).ready(function () {
+        $('#outprint').dataTable({
+            responsive: true,
+        });
+    });
+</script>
+
+

@@ -1,0 +1,617 @@
+﻿@model HRPayroll.Models.EmployeeLoan
+@{
+    ViewBag.Title = "EmployeeLoan";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Employee Loan/Schedule Detail Form</h3>
+                        </div>
+                    </div>
+                </div>
+                 
+                    <form action="/Employee/SaveEmpLoanDetails" method="post" id="form" onsubmit="return ValidateForm()">
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+                                <div class="col-lg-12">
+                                    <div class="card card-outline-info">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    @{
+                                                        string Code = (string)TempData["code"];
+                                                        string msg = (string)TempData["Msg"];
+                                                        if (!string.IsNullOrEmpty(Code))
+                                                        {
+                                                            if (Code == "1")
+                                                            {
+                                                                <div class="alert alert-success msgdiv">
+                                                                    <strong>Success!</strong> @msg
+                                                                </div>
+                                                                <script type="text/javascript">
+                                                                    window.setTimeout(function () {
+                                                                        location.href = '/Employee/EmployeeLoan';
+                                                                    }, 5000);
+                                                                </script>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="alert alert-danger msgdiv">
+                                                                    <strong>Error!</strong> @msg
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+
+
+                                            <h5>Search</h5>
+                                            <div class="form-body">
+                                                <div class="row p-t-20">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Select Type</label>
+                                                            @Html.DropDownListFor(model => model.WTypeId, new SelectList(ViewBag.Type, "Value", "Text"), "-Select Type-", new { @class = "form-control" })
+                                                            @Html.HiddenFor(model => model.ID)
+                                                            @Html.HiddenFor(model => model.WTypeId)
+                                                            @Html.ValidationMessageFor(m => m.WTypeId, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Select Department</label>
+                                                            @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                            @Html.HiddenFor(model => model.ID)
+                                                            @Html.HiddenFor(model => model.Fk_DepartmentId)
+                                                            @Html.ValidationMessageFor(m => m.Fk_DepartmentId, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Select Sub Department</label>
+                                                            @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control" })
+                                                            @Html.HiddenFor(model => model.ID)
+                                                            @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                            @Html.ValidationMessageFor(m => m.Fk_SubDeptId, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>  <div class="col-md-4 mt-2">
+                                                        <button class="btn btn-info mb-2" style="color:white;" type="button" onclick="BindEmployee()">
+                                                            Fill Employee
+                                                        </button>
+
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-12" style="text-align:center"><label>OR <span style="color:red"> (Search Employee By Departmental Employee Code)</span></label></div>
+
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Departmental Employee Code</label>
+                                                            @Html.TextBoxFor(M => M.DeptEmpCode, new { @class = "form-control", @maxlength = "50" })
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <button class="btn btn-info mb-2" style="color:white;" type="button" onclick="BindEmployee1()">
+                                                            Search
+                                                        </button>
+
+                                                    </div>
+                                                </div>
+                                                <div class="row p-t-20">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Search Employee</label>
+                                                            @Html.DropDownListFor(model => model.EmpId, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control", @onchange = "BindEmpDetail();" })
+                                                            @Html.HiddenFor(model => model.ID)
+                                                            @*@Html.HiddenFor(model => model.EmpId)
+                                                @Html.ValidationMessageFor(m => m.EmpId, "", new { @class = "text-danger" })*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+                                <div class="col-lg-12">
+                                    <div class="card card-outline-info">
+
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="card card-outline-info">
+                                                        <div class="card-body">
+                                                            <h5>Personal Detail</h5>
+                                                            <div class="row p-t-20">
+                                                                <div class="col-lg-12">
+                                                                    <div class="row p-t-20">
+                                                                        <div class="col-md-8">
+                                                                            <div class="row p-t-20">
+
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label class="form-label">Employee Name</label>
+                                                                                        @Html.TextBoxFor(M => M.EmpName, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                        @Html.ValidationMessageFor(m => m.EmpName, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label class="form-label">Designation</label>
+                                                                                        @Html.DropDownListFor(model => model.DesignationId, new SelectList(ViewBag.Designation, "Value", "Text"), "-Select-", new { @class = "form-control" })
+                                                                                        @Html.HiddenFor(model => model.ID)
+                                                                                        @Html.HiddenFor(model => model.DesignationId)
+                                                                                        @Html.ValidationMessageFor(m => m.DesignationId, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label class="form-label">Father's - W/O Name</label>
+                                                                                        @Html.TextBoxFor(M => M.FatherName, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                        @Html.ValidationMessageFor(m => m.FatherName, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label class="form-label">Perm. Address</label>
+                                                                                        @Html.TextBoxFor(M => M.PermAddress, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                        @Html.ValidationMessageFor(m => m.PermAddress, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label>Photo</label><br>
+                                                                                <img src="~/assets/images/No-Image.png" style="height:125px;width:115px;border: 1px solid #ccc;" id="img" />
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="row p-t-20">
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label">Bank</label>
+                                                                                @Html.DropDownListFor(model => model.BankId, new SelectList(ViewBag.Bank, "Value", "Text"), "-Select-", new { @class = "form-control" })
+                                                                                @Html.HiddenFor(model => model.ID)
+                                                                                @Html.HiddenFor(model => model.BankId)
+                                                                                @Html.ValidationMessageFor(m => m.BankId, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label">Adhar Number</label>
+                                                                                @Html.TextBoxFor(M => M.AdharNo, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                @Html.ValidationMessageFor(m => m.AdharNo, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label">Account Number</label>
+                                                                                @Html.TextBoxFor(M => M.AccountNo, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                @Html.ValidationMessageFor(m => m.AccountNo, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label">Pan Number</label>
+                                                                                @Html.TextBoxFor(M => M.PANNo, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                @Html.ValidationMessageFor(m => m.PANNo, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label">Mobile Number</label>
+                                                                                @Html.TextBoxFor(M => M.MobileNo, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                @Html.ValidationMessageFor(m => m.MobileNo, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label">Date of Birth</label>
+                                                                                @Html.TextBoxFor(M => M.DOB, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                @Html.ValidationMessageFor(m => m.DOB, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label">Date of Joining</label>
+                                                                                @Html.TextBoxFor(M => M.DOJ, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                @Html.ValidationMessageFor(m => m.DOJ, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label">Date of Retirement</label>
+                                                                                @Html.TextBoxFor(M => M.DOR, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                @Html.ValidationMessageFor(m => m.DOR, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+                                <div class="col-lg-12">
+                                    <div class="card card-outline-info">
+
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="card card-outline-info">
+                                                        <div class="card-body">
+                                                            <h5>Loan/Schedule Detail</h5>
+                                                            <div class="row p-t-20">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Select Advance Type</label>
+                                                                        @Html.DropDownListFor(model => model.LoneType, new SelectList(ViewBag.Loan, "Value", "Text"), "--Select Type--", new { @class = "form-control" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Order Number</label>
+                                                                        @Html.TextBoxFor(M => M.OrderNo, new { @class = "form-control", @maxlength = "50" })
+                                                                        @Html.ValidationMessageFor(m => m.LicAmount, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label">
+                                                                            Select Month
+                                                                        </label>
+                                                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label">
+                                                                            Select Year
+                                                                        </label>
+                                                                        <select class="form-control" id="Year" name="Year">
+                                                                            <option value="">--select--</option>
+                                                                        </select>
+                                                                        @Html.HiddenFor(model => model.Year)
+                                                                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                  </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Monthly Deduction</label>
+                                                                        @Html.TextBoxFor(M => M.MonthlyDeduction, new { @class = "form-control", @maxlength = "50", @onkeypress = "return onlyNos(event)" })
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Advance Amount</label>
+                                                                        @Html.TextBoxFor(M => M.AdvanceAmount, new { @class = "form-control", @maxlength = "50", @onkeypress = "return onlyNos(event)" })
+                                                                        @Html.ValidationMessageFor(m => m.LicAmount, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Total Deduction till previous month</label>
+                                                                        @Html.TextBoxFor(M => M.TotalDeductionPre, new { @class = "form-control", @maxlength = "50", @onkeypress = "return onlyNos(event)" })
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Total No Of Instalment</label>
+                                                                        @Html.TextBoxFor(M => M.TotalNoOfInstalment, new { @class = "form-control", @maxlength = "50", @onkeypress = "return onlyNos(event)" })
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Current No Of Instalment</label>
+                                                                        @Html.TextBoxFor(M => M.CurrentNoOfInstalment, new { @class = "form-control", @maxlength = "50", @onkeypress = "return onlyNos(event)" })
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Status</label>
+                                                                        @Html.DropDownListFor(model => model.Status, new List<SelectListItem>
+               {
+                   new SelectListItem{ Text="Active", Value = "A" },
+                   new SelectListItem{ Text="Stop", Value = "S" },
+                   new SelectListItem{ Text="Close", Value = "C" }
+
+                },"--select--", new { @class = "form-control" })
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row justify-content-center">
+                                                                    <div class="col-md-4">
+                                                                        <div class="text-center">
+                                                                            <button class="btn btn-success"> <i class="fa fa-check"></i> Submit</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+</div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Employee/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#Fk_SubDeptId").val(@Model.Fk_DepartmentId);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+     function BindEmployee(id) {
+        debugger;
+    
+        var WTypeId = parseInt($('#WTypeId').val());
+        var Fk_SubDeptId = parseInt($('#Fk_SubDeptId').val());
+        var DepartmentId = parseInt($('#Fk_DepartmentId').val());
+
+        if (DepartmentId > 0 && WTypeId > 0 && Fk_SubDeptId>0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetEmployeeDropdown',
+                data: { WTypeId: WTypeId, DepartmentId: DepartmentId, Fk_SubDeptId: Fk_SubDeptId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#EmpId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#EmpId').val(id);
+                    }
+                },
+                error: function (e) {
+                    $("#EmpId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#EmpId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+    @*function BindEmployee(id) {
+        debugger;
+        var SubDeptId = $('#Fk_SubDeptId').val();
+        $.ajax({
+            url: '/Employee/GetEmpCode',
+            type: 'post',
+            data: { SubDeptId: SubDeptId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#EmpId').empty();
+                    $('#EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#EmpId").val(@Model.Fk_SubDeptId);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }*@
+
+    function onlyNos(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+
+    }
+
+    function BindEmpDetail(id) {
+        debugger;
+        var EmpId = $('#EmpId').val();
+        $.ajax({
+            url: '/Employee/GetEmployeeDetail',
+            type: 'post',
+            data: { EmpID: EmpId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    debugger;
+                    $('#ID').val(data.ID);
+                    $('#EmpName').val(data.EmpName);
+                    $('#BankId').val(data.BankId);
+                    $('#FatherName').val(data.FatherName);
+                    $('#PermAddress').val(data.PermAddress);
+                    $('#DesignationId').val(data.DesignationId);
+                    $('#AccountNo').val(data.AccountNo);
+                    $('#AdharNo').val(data.AdharNo);
+                    $('#PANNo').val(data.PANNo);
+                    $('#MobileNo').val(data.MobileNo);
+                    $('#DOB').val(data.DOB);
+                    $('#DOJ').val(data.DOJ);
+                    $('#DOR').val(data.DOR);
+                    $('#LicNo').val(data.LicNo);
+                    $('#LicAmount').val(data.LicAmount);
+                    $('#Status').val(data.Status);
+                    $('#EndDate').val(data.EndDate);
+                    $('#remarks').val(data.remarks);
+                    if (data.Photo != null) {
+                        $('#img').attr("src", '');
+                        $('#img').attr("src", data.Photo.replace("~",""));
+                    }
+                    else {
+
+                    }
+                    
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+
+    function ValidateForm() {
+        debugger;
+        if ($('#LoneType').val() == '' || $('#LoneType').val() == '0' || $('#LoneType').val() == null) {
+            swal("", "Please Select Loan Type...", "warning");
+            $('#LoneType').focus();
+            return false;
+        }
+        if ($('#MonthlyDeduction').val() == '' || $('#MonthlyDeduction').val() == '0' || $('#MonthlyDeduction').val() == null) {
+            swal("", "Please Enter Monthly Deduction...", "warning");
+            $('#MonthlyDeduction').focus();
+            return false;
+        }
+        if ($('#AdvanceAmount').val() == '' || $('#AdvanceAmount').val() == '0' || $('#AdvanceAmount').val() == null) {
+            swal("", "Please Enter Advance Amount...", "warning");
+            $('#AdvanceAmount').focus();
+            return false;
+        }
+        if ($('#TotalDeductionPre').val() == '' || $('#TotalDeductionPre').val() == '0' || $('#TotalDeductionPre').val() == null) {
+            swal("", "Please Enter Total Deduction...", "warning");
+            $('#TotalDeductionPre').focus();
+            return false;
+        }
+        if ($('#TotalNoOfInstalment').val() == '' || $('#TotalNoOfInstalment').val() == '0' || $('#TotalNoOfInstalment').val() == null) {
+            swal("", "Please Enter Total Installment...", "warning");
+            $('#TotalNoOfInstalment').focus();
+            return false;
+        }
+        if ($('#CurrentNoOfInstalment').val() == '' || $('#CurrentNoOfInstalment').val() == undefined || $('#CurrentNoOfInstalment').val() == null) {
+            swal("", "Please Enter Current Installment...", "warning");
+            $('#CurrentNoOfInstalment').focus();
+            return false;
+        }
+        if ($('#Status').val() == '' || $('#Status').val() == '0' || $('#Status').val() == null) {
+            swal("", "Please Enter Status...", "warning");
+            $('#Status').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+
+
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2020; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+
+    function BindEmployee1(id) {
+        debugger;
+
+        var DptEpCode = $('#DeptEmpCode').val();
+
+        $.ajax({
+            url: '/Employee/GetEmpbyDptEpCode',
+            type: 'post',
+            data: { DptEpCode: DptEpCode },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#EmpId').empty();
+                    $('#EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+</script>
+
+
+

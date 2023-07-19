@@ -1,0 +1,287 @@
+﻿@model HRPayroll.Models.SalarySummery
+@using HRPayroll.Models.Manager;
+@{
+    ViewBag.Title = "SalarySummery";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<style>
+    .table tr td {
+        padding: 0.4rem 0.3rem;
+        font-size: 14px;
+        border-color: #0c0b0b;
+    }
+</style>
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Salary Bill Summary Sub-Department Wise - Custom</h3>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="container-fluid">
+                    <div class="row mb-3">
+                        <div class="col-lg-12">
+                            <div class="card card-outline-info">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            @{
+                                                string Code = (string)TempData["code"];
+                                                string msg = (string)TempData["Msg"];
+                                                if (!string.IsNullOrEmpty(Code))
+                                                {
+                                                    if (Code == "1")
+                                                    {
+                                                        <div class="alert alert-success msgdiv">
+                                                            <strong>Success!</strong> @msg
+                                                        </div>
+                                                        <script type="text/javascript">
+                                                            window.setTimeout(function () {
+                                                                location.href = '/Report/SalarySummery';
+                                                            }, 5000);
+                                                        </script>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="alert alert-danger msgdiv">
+                                                            <strong>Error!</strong> @msg
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+
+
+                                    <h5>Search</h5>
+                                    <div class="form-body">
+                                        <div class="row p-t-20">
+                                            <div class="col-md-4">
+                                                <div>
+                                                    <div class="form-group">
+                                                        <label class="control-label">
+                                                            Select Department<span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        Bill Year<span class="text-danger">*</span>
+                                                    </label>
+                                                    <select class="form-control" id="Year" name="Year"></select>
+                                                    @Html.HiddenFor(model => model.Year)
+                                                    @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="col-md-4">
+                                                <div>
+                                                    <div class="form-group">
+                                                        <label class="control-label">
+                                                            Bill  Month<span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4" style="margin-top:30px">
+                                                <div class="form-group">
+                                                    <button class="btn btn-success" onclick="Show()">
+
+                                                        Show Salary Summary
+                                                    </button>
+
+                                                </div>
+                                            </div>
+
+
+                                            <div class="container-fluid" id="crpd" style="display:none;">
+                                                <div class="row mb-3">
+                                                    <!-- column -->
+                                                    <div class="col-12">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <div style="margin-bottom: 5px;">
+                                                                    <button type="button" style="background-color:blue; color:white; padding:5px 10px; font-size: 16px;" class="printMe btn btn-danger">Print</button>
+                                                                    <a href="@Url.Action("SalarySummeryExcel", "Reports")" class="excel" title="Export to Excel"><i class="fa fa-file-excel-o" style="font-size:24px;"></i></a>
+                                                                </div>
+
+                                                                <div class="table" id="outprint">
+                                                                    <div class="table-responsive">
+                                                                        <table width="100%">
+                                                                            <tr>
+                                                                                <td align="center" rowspan="2">
+                                                                                    <img src="../images/up_logo.png" width="90px" height="40" alt="#" />
+                                                                                </td>
+                                                                                <td align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;"><b>Urban Local Bodies - Salary Management System</b></td>
+                                                                                <td align="center" rowspan="2">
+                                                                                    <img src="../images/up_logo.png" width="90px" height="40" alt="#" />
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td align="center" style="font-size:18px"><b> @SessionManager.OfficeName </b></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td colspan="3" align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;"><b>Report for Generated Salary Bill-Month:  </b></td>
+                                                                            </tr>
+                                                                        </table>
+                                                                        <table id="testTable" width="100%" class="table-bordered" border="1" cellpadding="0" cellspacing="0" style="border-color: Black; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
+
+
+                                                                            <thead>
+                                                                                <tr style="background-color: lightgray;font-size:20px">
+                                                                                    <td colspan="8" align="center"><b>ULB Name :@SessionManager.OfficeName </b></td>
+                                                                                </tr>
+                                                                                <tr style="border: 1; border-color: Black; padding: 0px; background-color: lightcyan;font-size:16px">
+                                                                                    <td align="center"><b>S No</b></td>
+                                                                                    <td align="center"><b>Department Name</b></td>
+                                                                                    <td align="center"><b>No oF Employee</b></td>
+                                                                                    <td align="center"><b>Basic Pay</b></td>
+                                                                                    <td align="center"><b>Total Allowance</b></td>
+                                                                                    <td align="center"><b>Gross Pay</b></td>
+                                                                                    <td align="center"><b>Total Deduction</b></td>
+                                                                                    <td align="center"><b>Net Payment</b></td>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody id="table2">
+                                                                            </tbody>
+                                                                            <tfoot>
+                                                                                <tr style="background-color: white;font-size:14px;font-weight:bold">
+                                                                                    <td align="center" colspan="3" style="padding-left: 5px">Total:</td>
+                                                                                    <td align="center" style="padding-left: 5px" id="BasicPay1"> </td>
+                                                                                    <td align="center" style="padding-left: 5px" id="TotalAllow1"> </td>
+                                                                                    <td align="center" style="padding-left: 5px" id="GrossPay1"> </td>
+                                                                                    <td align="center" style="padding-left: 5px" id="TotalDed1"> </td>
+                                                                                    <td align="center" style="padding-left: 5px" id="NetPay1"> </td>
+                                                                                </tr>
+                                                                            </tfoot>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2020; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    function Show() {
+
+        debugger;
+        var WTypeId = $('#WTypeId').val();
+        if ($('#Fk_DepartmentId').val() == "" || $('#Fk_DepartmentId').val() == undefined || $('#Fk_DepartmentId').val() == null) {
+            swal("", "Please Select Department Type", "warning");
+            return false;
+        }
+
+        if ($('#Year').val() == "" || $('#Year').val() == undefined || $('#Year').val() == null) {
+            swal("", "Please Select Year  ", "warning");
+            return false;
+        }
+
+        if ($('#Month').val() == "" || $('#Month').val() == undefined || $('#Month').val() == null) {
+            swal("", "Please Select Month", "warning");
+            return false;
+        }
+
+
+        $.ajax({
+            url: "/Report/Show_SalarySummery",
+            type: "POST",
+            processData: false,
+            data: JSON.stringify({ Month: $("#Month").val(), Year: $("#Year").val(), Fk_DepartmentId: $("#Fk_DepartmentId").val() }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    var Sno = 1;
+                    var BasicSal = 0
+                    var TotalAllow = 0;
+                    var TotalDed = 0;
+                    var GrossPay = 0;
+                    var NetPay = 0;
+                    if (data.List.length > 0) {
+                        $('#crpd').show();
+                    }
+                    for (var i = 0; i < data.List.length; i++) {
+                        $('#table2').append('<tr><td align="center" style="padding-left: 5px">' + Sno + '</td><td align="center" style="padding-left: 5px">' + data.List[i].DepartmentHead + '</td><td align="center" style="padding-left: 5px">' + data.List[i].EmpId + '</td><td align="center" style="padding-left: 5px" class="BasicSal2">' + data.List[i].BasicSal + '</td> <td align="center" style="padding-left: 5px">' + data.List[i].TotalAllow + '</td> <td align="center" style="padding-left: 5px">' + data.List[i].GrossPay + '</td><td align="center" style="padding-left: 5px">' + data.List[i].TotalDed + '</td><td align="center" style="padding-left: 5px">' + data.List[i].NetPay + '</td> </tr>');
+
+                        Sno++;
+
+                        BasicSal += data.List[i].BasicSal;
+                        TotalAllow += data.List[i].TotalAllow;
+                        TotalDed += data.List[i].TotalDed;
+                        NetPay += data.List[i].NetPay;
+                        GrossPay += data.List[i].GrossPay;
+
+                        $('#BasicPay1').html(BasicSal);
+                        $('#TotalAllow1').html(TotalAllow);
+                        $('#GrossPay1').html(GrossPay);
+                        $('#TotalDed1').html(TotalDed);
+                        $('#NetPay1').html(NetPay);
+                    }
+
+
+                }
+            },
+            error: function (error) {
+            }
+        });
+
+
+    }
+
+    $(".printMe").click(function () {
+        var divToPrint = document.getElementById("outprint");
+        newWin = window.open("");
+        newWin.document.write(divToPrint.outerHTML);
+        newWin.print();
+        newWin.close();
+    });
+</script>

@@ -1,0 +1,528 @@
+﻿@model HRPayroll.Models.SalaryReport
+@{
+    ViewBag.Title = "RptPensionBill";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+@using HRPayroll.Models.Manager
+
+<style>
+    th, td {
+        border: 1px solid #000;
+    }
+</style>
+
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">
+                                Pensioner's salary Bill Report
+
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" id="form">
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv" id="msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    /*location.href = '/Report/DeductionReport';*/
+                                                                    $('msgdiv').hide();
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5>Search</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                Bill Month:
+                                                            </label>
+                                                            @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="control-label">
+                                                            Bill Year:
+                                                        </label>
+                                                        <select class="form-control" id="Year" name="Year">
+                                                            <option value="">--Select--</option>
+                                                        </select>
+                                                        @Html.HiddenFor(model => model.Year)
+                                                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4" style="margin-top:30px">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-success" onclick="filldepartment()" type="button">
+                                                            Fill Department
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                               
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">District</label>
+                                                        @Html.DropDownListFor(model => model.District, new SelectList(ViewBag.ddlDistrict, "Value", "Text"), "-Select District-", new { @class = "form-control", @disabled = true })
+                                                        @Html.HiddenFor(m=>m.District)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Office Type</label>
+                                                        @Html.DropDownListFor(model => model.ULBType, new SelectList(ViewBag.Agency, "Value", "Text"), new { @class = "form-control", @disabled = true })
+                                                        @Html.HiddenFor(model => model.ULBType)
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Office Name</label>
+                                                        @Html.DropDownListFor(model => model.ULBName, new SelectList(ViewBag.Office, "Value", "Text"), "-Select Office-", new { @class = "form-control", @disabled = true })
+                                                        @Html.HiddenFor(model => model.ULBName)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(String.Empty, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptIdList, new SelectList(String.Empty, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control js-example-basic-multiple select", @multiple = "multiple", @placeholder = "select Department", @onchange = "BindEmployee();" })
+                                                        @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4" style="margin-top:30px">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-success" type="button" onclick="ValidateForm()">
+                                                            Show Pensioner's Bill
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <br />
+                                                <br />
+                                                <br />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if (Model != null)
+        {
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="card">
+                        <div class="card-body">
+
+
+                            <div class="table-responsive">
+                                @if (Model.PensionerBill != null)
+                                {
+                                    <table width="100%" cellpadding="0" cellspacing="0" style="border-color: #fff; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-bottom: 15px;">
+                                        <tbody>
+                                            <tr>
+                                            </tr>
+                                            <tr>
+                                                <td align="center" rowspan="3" style="border: 1px solid #fff;">
+                                                    <img src="../images/UPSRTC.png" width="90px" height="40" alt="#">
+                                                </td>
+                                                <td align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; border: 1px solid #fff; "><b>Uttar Pradesh Local Bodies</b></td>
+                                                <td align="center" rowspan="3" style="border: 1px solid #fff;">
+                                                    <img src="../images/UPSRTC.png" width="90px" height="40" alt="#">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; border: 1px solid #fff; "><b>@SessionManager.OfficeName</b></td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; border: 1px solid #fff; "><b>Salary Bill-Month: @Model.MonthName @Model.Year  &nbsp;&nbsp;&nbsp;Department(s) :@Model.Fk_SubDeptId </b></td>
+                                            </tr>
+
+                                        </tbody>
+
+                                    </table>
+                                }
+                                @if (Model.PensionerBill != null)
+                                {
+                                    <table border="1" cellpadding="0" cellspacing="0" style="border-color: Black; font-family: Arial, Helvetica, sans-serif; font-size: 10px;" class="datatable">
+                                        <thead>
+                                            <tr style="font-weight: bold; border: 1; border-color: Black; padding: 0px; background-color: #e68d31; color: #fff;">
+                                                <th align="center"><b>S.No</b></th>
+
+                                                <th align="center"><b>Pensioner's Name</b></th>
+                                                <th align="center"><b>Father Name</b></th>
+                                                <th align="center"><b>Date of Retirement</b></th>
+                                                <th align="center"><b>P.P.O. No.</b></th>
+                                                <th align="center"><b>Basic Pension</b> <br /> 1 </th>
+                                                <th align="center"><b>D.A. Amount</b> <br /> 2</th>
+                                                <th align="center"><b>Old Age Pension</b> <br /> 3 </th>
+                                                <th align="center"><b>Gratuity</b> <br /> 4 </th>
+                                                <th align="center"><b>Other Allow</b><br /> 5</th>
+                                                <th align="center"><b>Misc. Allow</b><br /> 6 </th>
+                                                <th align="center"><b>Gross Pension</b><br /> 7<br />1+2+3+4+5+6+7</th>
+                                                <th align="center"><b>Income Tax</b><br /> 8</th>
+                                                <th align="center"><b>Computation of Pension</b><br /> 9</th>
+                                                <th align="center"><b>Misc Ded</b><br /> 10</th>
+                                                <th align="center"><b>Total Ded</b><br /> 11</th>
+                                                <th align="center"><b>Net Pension</b> <br /> 11 <br /> (7-11)</th>
+                                                <th align="center"><b>Photo</b></th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @{
+                                                var srNo = 0;
+                                            }
+
+
+
+                                            @foreach (var item in Model.PensionerBill)
+                                            {
+                                                srNo = srNo + 1;
+                                                <tr style="border: 1; border-color: Black; padding: 0px; background-color: antiquewhite; page-break-inside: avoid;">
+                                                    <td align="center">  @srNo</td>
+
+                                                    <td align="center"> @item.EmpName @item.EmpCode</td>
+                                                    <td align="center">@item.EmpCode </td>
+                                                    <td align="center">@item.FatherName</td>
+                                                    <td align="center">@item.DOR</td>
+                                                    <td align="center">@item.NPSNo</td>
+                                                    <td align="center">@item.BasicSal</td>
+                                                    <td align="center">@item.DA</td>
+                                                    <td align="center">@item.ChatvaAllow</td>
+
+                                                    <td align="center">@item.PPFContribution</td>
+
+                                                    <td align="center">@item.OtherAllow</td>
+                                                    <td align="center">@item.BilangAllow</td>
+
+                                                    <td align="center">@item.GrossPay/td>
+
+                                                    <td align="center">@item.IncomeTax</td>
+                                                    <td align="center">@item.QtrRent</td>
+                                                    <td align="center">@item.StaffAdv</td>
+                                                    <td align="center">@(item.IncomeTax+item.QtrRent+item.StaffAdv)</td>
+                                                    <td align="center">@item.NetPay</td>
+                                                    @if (!string.IsNullOrEmpty(item.Photo))
+                                                    {
+                                                        <td align="center"><img src="@item.Photo.Replace("~", "") " height="100px" width="10px" /></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td align="center"><img src="" height="100px" width="10px" /></td>
+                                                    }
+
+
+                                                </tr>
+                                            }
+
+
+
+
+                                        </tbody>
+
+
+                                    </table>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                @if (Model.PensionerSummry != null)
+                {
+                    <div class="col-md-12 mt-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table border="1" cellpadding="0" cellspacing="0" style="border-color: Black; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                        <thead>
+                                            <tr style="font-weight: bold; border: 1; border-color: Black; padding: 0px; background-color: #e68d31; color: #fff;">
+
+                                                <td align="center"><b>Basic Pension</b> <br /> 1 </td>
+                                                <td align="center"><b>D.A. Amount</b> <br /> 2</td>
+                                                <td align="center"><b>Old Age Pension</b> <br /> 3 </td>
+                                                <td align="center"><b>Gratuity</b> <br /> 4 </td>
+                                                <td align="center"><b>Other Allow</b><br /> 5</td>
+                                                <td align="center"><b>Misc. Allow</b><br /> 6 </td>
+                                                <td align="center"><b>Gross Pension</b><br /> 7<br />1+2+3+4+5+6+7</td>
+                                                <td align="center"><b>Income Tax</b><br /> 8</td>
+                                                <td align="center"><b>Computation of Pension</b><br /> 9</td>
+                                                <td align="center"><b>Misc Ded</b><br /> 10</td>
+                                                <td align="center"><b>Total Ded</b><br /> 11</td>
+                                                <td align="center"><b>Net Pension</b> <br /> 11 <br /> (7-11)</td>
+
+                                            </tr>
+
+                                        </thead>
+                                        <tbody>
+
+
+
+                                            @foreach (var item1 in Model.PensionerSummry)
+                                            {
+                                            <tr style="border: 1; border-color: Black; padding: 0px; background-color: antiquewhite;">
+
+
+                                                <td align="center" >@item1.BasicSal</td>
+                                                <td align="center" >@item1.DA</td>
+                                                <td align="center">@item1.ChatvaAllow</td>
+                                                <td align="center">@item1.PPFContribution</td>
+                                                <td align="center">@item1.OtherAllow</td>
+                                                <td align="center">@item1.BilangAllow</td>
+                                                <td align="center">@item1.GrossPay</td>
+                                          
+                                                <td align="center">@item1.IncomeTax</td>
+                                                <td align="center">@item1.QtrRent</td>
+                                               
+                                                <td align="center">@item1.StaffAdv</td>
+
+                                                <td align="center">@(item1.IncomeTax+item1.QtrRent+item1.StaffAdv)</td>
+                    
+                                                <td align="center" >@item1.NetPay</td>
+                                              
+
+                                            </tr>
+
+                                            }
+
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                                @*<p class="mt-2">
+                                        <strong>
+                                            Total
+                                        </strong>:	0
+                                    </p>*@
+                            </div>
+                        </div>
+                    </div>
+                }
+                <table border="1" cellpadding="0" cellspacing="0" style="border-color: Black; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                        @if (Model.TreasuryBillBankWiseSummary != null)
+                        {
+                            decimal banksum = 0;
+                            foreach (var item2 in Model.TreasuryBillBankWiseSummary)
+                            {
+                                <tr>
+
+                                    <td>@item2.BankName</td>
+                                   
+                                        <td>@item2.NetPay</td>
+                                    
+                                    
+                                    <td>Total:</td>
+                                    <td lign="right" style="padding-left: 10px;">@Model.TreasuryBillBankWiseSummary.Sum(x => x.NetPay)</td>
+
+                                </tr>
+                                <tr>
+                                    <td align="left" style="padding-left: 10px; padding-right: 10px;">@item2.BankName</td>
+                                    <td align="left" style="padding-left: 10px; padding-right: 10px;">@item2.NetPay</td>
+                                </tr>
+                                <tr>
+                                    <td align="right"><b>Total:</b></td>
+                                    <td align="right" style="padding-left: 10px;">@Model.TreasuryBillBankWiseSummary.Sum(x=>x.NetPay) </td>
+                                </tr>
+                            }
+                       
+
+                        }
+                    </table>
+
+
+
+
+
+            </div>
+
+
+
+        }
+    </div>
+
+</div>
+
+<script>
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2000; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    $(document).ready(function () {
+
+        if (@Model.Year> 0) {
+            $('#Year').val('@Model.Year');``
+        }
+        if (@Model.Month> 0) {
+            $('#Month').val('@Model.Month')
+        }
+        if (@Model.Month> 0 && @Model.Year> 0) {
+            debugger;
+            filldepartment('@Model.Fk_DepartmentId')
+        }
+        if (@Model.Fk_DepartmentId> 0) {
+            BindSubDepartment('@Model.Fk_SubDeptId')
+        }
+    })
+
+    function filldepartment(id) {
+        debugger
+        var Year = $('#Year').val();
+        var Month = $('#Month').val();
+        if (Month == "" || Month == null || Month == undefined) {
+            swal("", "Please select month", "warning");
+            return false;
+
+        }
+        if (Year == "" || Year == null || Year == undefined) {
+            swal("", "Please select Year", "warning")
+            return false;
+        }
+        $.ajax({
+            type: 'post',
+            url: '/Report/BindDepartmentByMonthAndYear',
+            data: { Year: Year, Month: Month, proc:3 },
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $("#Fk_DepartmentId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_DepartmentId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                    }
+
+                }
+                else {
+                    $("#Fk_DepartmentId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+                if (id > 0) {
+                    $('#Fk_DepartmentId').val(id);
+
+                }
+                if ($("#Fk_DepartmentId").val() > 0) {
+                    BindSubDepartment('@Model.Fk_SubDeptId')
+                }
+
+            },
+            error: function (e) {
+                $("#Fk_DepartmentId").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+            }
+
+        })
+    }
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        if (DepartmentId > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetSubCategory',
+                data: { DepartmentId: DepartmentId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#Fk_SubDeptIdList").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#Fk_SubDeptIdList').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#Fk_SubDeptIdList").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#Fk_SubDeptIdList').val(id);
+
+                    }
+
+                },
+                error: function (e) {
+                    $("#Fk_SubDeptIdList").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+    }
+
+    function ValidateForm() {
+
+        debugger;
+        //if ($('#Fk_DepartmentId').val() == "" || $('#Fk_DepartmentId').val() == null || $('#Fk_DepartmentId').val() == undefined) {
+        //    swal("", "Please select department", "warning");
+        //    return false;
+        //}
+        //if ($('#Fk_SubDeptIdList').val() == "" || $('#Fk_SubDeptIdList').val() == null || $('#Fk_SubDeptIdList').val() == undefined) {
+        //    swal("", "Please select subdepartment", "warning");
+        //    return false;
+
+        //}
+        //else {
+
+
+
+            $('#form').submit();
+        /*}*/
+    }
+
+
+
+</script>

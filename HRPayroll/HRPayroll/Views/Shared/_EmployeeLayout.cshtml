@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>@ViewBag.Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="HR & Project Admin Dashboard Template with Bootstrap 5x">
+    <meta name="author" content="WrapTheme, design by: ThemeMakker.com">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    <link href="~/assets/css/custom.css" rel="stylesheet" />
+    <link href="~/assets/css/ListPage.css" rel="stylesheet" />
+    <link href="~/assets/plugin/sweetalert/sweetalert.css" rel="stylesheet" />
+    <link href="~/assets/css/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/assets/plugin/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <link href="~/assets/css/dataTables.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+</head>
+@using HRPayroll.Models.Manager
+
+<body>
+    @if ( SessionManager.UTypeId != 0)
+    {
+        Response.Redirect("/Home/Index");
+    }
+    else
+    {
+        <div id="layout" class="theme-orange">
+            <!-- Page Loader -->
+            <div class="page-loader-wrapper text-center">
+                <div class="loader">
+
+                    <h4>HR PAYROLL</h4>
+                    <div class="h5 fw-light mt-3">Please wait...</div>
+                </div>
+            </div>
+            <!-- Overlay For Sidebars -->
+
+            <div id="wrapper">
+
+                <!-- top navbar -->
+                <nav class="navbar navbar-fixed-top">
+                    <div class="container-fluid">
+                        <div class="navbar-btn">
+                            <button type="button" class="btn-toggle-offcanvas"><i class="fa fa-bars"></i></button>
+                        </div>
+
+                        <div class="navbar-brand ps-2">
+                            <a href="#">
+                                <h4> HR PAYROLL</h4>
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Sidbar menu -->
+                <!-- Sidbar menu -->
+                <div id="left-sidebar" class="sidebar">
+                    <div class="user-account ">
+                        <div class="d-flex mb-3 pb-3 border-bottom align-items-center">
+                            <img src="~/assets/images/user.png" class="avatar lg rounded me-3" alt="User Profile Picture">
+                            <div class="dropdown flex-grow-1">
+                                <span class="d-block">Welcome,</span>
+                                <a href="#" class="dropdown-toggle user-name" data-bs-toggle="dropdown"><strong>@SessionManager.Name</strong></a>
+                                <ul class="dropdown-menu p-2 shadow-sm">
+                                    @*<li><a href="#"><i class="fa fa-cog me-2"></i>Change Password</a></li>*@
+                                    <li><a href="/Account/EmpLogout"><i class="fa fa-power-off me-2"></i>Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- nav tab: content -->
+                    <div class="tab-content px-0">
+                        <div class="tab-pane fade show active" id="hr_menu" role="tabpanel">
+                            <nav class="sidebar-nav">
+                                <ul class="metismenu list-unstyled">
+                                    <li class="">
+                                        <a href="/Employee/EmployeeDashboard">
+                                            <i class="fa fa-user"></i><span>Dashboard</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Leave</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/LeaveRequest">Apply Leave</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <li>
+                                        <a href="#Payroll" class="has-arrow"><i class="fa fa-credit-card"></i><span>Payroll</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Employee/PaySlip">Payslip</a></li>
+                                            <li><a href="#">Employee Salary</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div id="main-content">
+                @RenderBody()
+
+                @*<footer>
+                        <p>&copy; @DateTime.Now.Year - HRMS</p>
+                    </footer>*@
+            </div>
+        </div>
+        <!-- page js file -->
+        <script src="~/assets/bundles/mainscripts.bundle.js"></script>
+
+        <!-- core js file -->
+        <script src="~/assets/bundles/libscripts.bundle.js"></script>
+        <!-- page js file -->
+        <script src="~/assets/bundles/mainscripts.bundle.js"></script>
+        @*<script src="~/assets/bundles/dataTables.bundle.js"></script>*@
+        <script src="../js/pages/index.js"></script>
+
+
+
+        <!-- Sweet-Alert  -->
+        <script src="~/assets/plugin/sweetalert/sweetalert.min.js"></script>
+        <script src="~/assets/js/jquery-confirm.min.js"></script>
+        <script src="~/assets/plugin/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+        <script src="~/assets/plugin/datatables/jquery.dataTables.min.js"></script>
+        <script src="~/assets/plugin/sweetalert/jquery.sweet-alert.custom.js"></script>
+        <script src="~/assets/plugin/styleswitcher/jQuery.style.switcher.js"></script>
+        <script>
+            jQuery(document).ready(function () {
+                $('.datatable').DataTable();
+                $('.datepicker').datepicker({
+                    format: 'dd-mm-yyyy',
+                    autoclose: true
+                });
+            });
+
+        </script>
+
+        @RenderSection("scripts", required: false)
+    }
+</body>
+</html>

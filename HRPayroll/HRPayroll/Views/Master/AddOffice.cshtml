@@ -1,0 +1,171 @@
+﻿@model HRPayroll.Models.Office
+@{
+    ViewBag.Title = "AddOffice";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Add Office</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                        </div>
+                        <script type="text/javascript">
+                            window.setTimeout(function () {
+                                location.href = '/Master/AddOffice';
+                            }, 3000);
+
+/**/</script>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-body">
+                        <form action="/Master/AddOffice" method="post" id="FormSubmit" onsubmit="return ValidateForm();">
+                            <div class="form-body">
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                District<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(model => model.FK_DistrictId, new SelectList(ViewBag.District, "Value", "Text"), "-Select District-", new { @class = "form-control" })
+                                            @Html.HiddenFor(model => model.ID)
+
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Office Type<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.DropDownListFor(model => model.FK_AgencyTypeID, new SelectList(ViewBag.AgencyType, "Value", "Text"), "-Select Ofice Type-", new { @class = "form-control" })
+
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Office Name<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.OfficeName, new { @class = "form-control", @placeholder = "Enter Office Name", @maxlength = "50", @onkeypress = " return checkAlphabet(event)" })
+
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Agency Code
+                                            </label>
+                                            @Html.TextBoxFor(M => M.AgencyCode, new { @class = "form-control", @placeholder = "Enter Agency Code", @maxlength = "20", @onkeypress = "return blockSpecialChar(event)" })
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                @if (Model.ID > 0)
+                                {
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Update
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Submit
+                                    </button>
+                                }
+
+                                <a href="/Master/OfficeList" class="btn btn-danger hstheme-button-o text-white">
+                                    <i class="fa fa-crosshairs"></i>
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#FK_DistrictId").select2();
+    });
+    function ValidateForm() {
+        debugger;
+        if ($('#FK_DistrictId').val() == '' || $('#FK_DistrictId').val() == '0') {
+            swal("", "Please Select District..", "warning");
+            $('#FK_DistrictId').focus();
+            return false;
+
+        }
+        if ($('#FK_AgencyTypeID').val() == '' || $('#FK_AgencyTypeID').val() == '0') {
+            swal("", "Please Select Office Type..", "warning");
+            $('#FK_AgencyTypeID').focus();
+            return false;
+
+        }
+        if ($('#OfficeName').val() == '' || $('#OfficeName').val() == '0' || $('#OfficeName').val() == null) {
+            swal("", "Please Enter Office Name..", "warning");
+            $('#OfficeName').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#FormSubmit").submit();
+        }
+    }
+    function checkAlphabet(event) {
+        debugger;
+        if (event.charCode != 0) {
+            var regex = new RegExp("^[a-zA-Z\\s]*$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
+    jQuery($('#AgencyCode')).keyup(function () {
+        var raw_text = jQuery(this).val();
+        var return_text = raw_text.replace(/[^a-zA-Z0-9 _]/g, '');
+        jQuery(this).val(return_text);
+    });
+
+</script>
+
+

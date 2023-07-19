@@ -1,0 +1,341 @@
+﻿@model HRPayroll.Models.LeaveRequest
+@{
+    ViewBag.Title = "Add_LeaveRequest";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+    <div class="container-fluid">
+        <div class="page-wrapper">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Leave Master</h3>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    @{
+                        string Code = (string)TempData["code"];
+                        string msg = (string)TempData["Msg"];
+                        if (!string.IsNullOrEmpty(Code))
+                        {
+                            if (Code == "1")
+                            {
+                                <div class="alert alert-success msgdiv">
+                                    <strong>Success!</strong> @msg
+                                </div>
+                                <script type="text/javascript">
+                                    window.setTimeout(function () {
+                                        location.href = '/Master/Add_LeaveRequest';
+                                    }, 2000);
+
+/**/</script>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger msgdiv">
+                                    <strong>Error!</strong> @msg
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card card-outline-info">
+                        <div class="card-body">
+                            @*<form method="post" action="/Master/Add_LeaveRequest" onsubmit="return ValidateForm()" id="form">*@
+                            <div class="form-body">
+                                <div class="row p-t-20">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label"> Employee Type <span class="text-danger">*</span></label>
+                                            @Html.DropDownListFor(Model => Model.FK_EmployeeType, new SelectList(ViewBag.EmployeeType, "Value", "Text"), "-Select EmployeeType-", new { @class = "form-control" })
+                                            @Html.HiddenFor(model => model.ID)
+                                            @Html.HiddenFor(model => model.Fk_AssignLeaveId)
+                                            @*@Html.HiddenFor(model => model.FK_EmployeeType)*@
+                                            @Html.ValidationMessageFor(m => m.FK_EmployeeType, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label"> Designation <span class="text-danger">*</span></label>
+                                            @Html.DropDownListFor(Model => Model.Designation, new SelectList(ViewBag.ddlDesignation, "Value", "Text"), "-Select Designation-", new { @class = "form-control" })
+                                            @*@Html.HiddenFor(model => model.Designation)*@
+                                            @Html.ValidationMessageFor(m => m.Designation, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label"> Financial Year <span class="text-danger">*</span></label>
+                                            @Html.DropDownListFor(model => model.Year, new SelectList(ViewBag.ddlYear, "Value", "Text"), "-Select Year-", new { @class = "form-control" })
+                                            @*@Html.HiddenFor(model => model.Year)*@
+                                            @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label"> Leave Category <span class="text-danger">*</span></label>
+                                            @Html.DropDownListFor(model => model.LeaveCategory, new SelectList(ViewBag.ddlLeaveCategory, "Value", "Text"), "-Select Leave Category-", new { @class = "form-control" })
+                                            @*@Html.HiddenFor(model => model.LeaveCategory)*@
+                                            @Html.ValidationMessageFor(m => m.LeaveCategory, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-label"> Leave Type <span class="text-danger">*</span></label>
+                                            @if (Model.LeaveTypes != null)
+                                            {
+                                                var j = 0;
+                                                foreach (var i in Model.LeaveTypes)
+                                                {
+
+                                                    if (i.show == 1)
+                                                    {
+                                                        <div class="form-check">
+                                                            <div class="row" onchange="checkval();">
+                                                                <div class="col-md-3 d-inline form-check">
+
+                                                                    <input class="form-check-input" type="checkbox" checked="checked" value="@i.ID" id="flexCheckDefault_@j" name="leaves">
+                                                                    <label class="form-check-label" for="flexCheckDefault_@j" name="leaves">
+                                                                        @i.LeaveType
+                                                                    </label>
+                                                                </div>
+                                                                <div class="col-md-3 d-inline form-check" id="">
+                                                                    @if (i.carryforward)
+                                                                    {
+                                                                        <input class="form-check-input" type="checkbox" checked="checked" value="" id="1flexCheckDefault_@j"
+                                                                               name="carryforward">
+                                                                        <label class="form-check-label" for="1flexCheckDefault_@j" id="textflexCheckDefault_@j" name="carryforward">
+                                                                            Carry Forward
+                                                                        </label>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input class="form-check-input" type="checkbox" value="" id="1flexCheckDefault_@j"
+                                                                               name="carryforward">
+                                                                        <label class="form-check-label" for="1flexCheckDefault_@j" id="textflexCheckDefault_@j" name="carryforward">
+                                                                            Carry Forward
+                                                                        </label>
+                                                                    }
+
+                                                                </div>
+                                                                <div class="col-md-6 d-inline" id="">
+                                                                    <div class="form-group">
+                                                                        <input class="form-control" type="text" placeholder="Enter No. of Leaves" id="2flexCheckDefault_@j" name="noofdays" value="@i.noofdays">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-check">
+                                                            <div class="row" onchange="checkval();">
+                                                                <div class="col-md-3 d-inline form-check">
+
+                                                                    <input class="form-check-input" type="checkbox" value="@i.ID" id="flexCheckDefault_@j" name="leaves">
+                                                                    <label class="form-check-label" for="flexCheckDefault_@j" name="leaves">
+                                                                        @i.LeaveType
+                                                                    </label>
+                                                                </div>
+                                                                <div class="col-md-3 d-inline form-check" id="">
+                                                                    <input class="form-check-input" type="checkbox" id="1flexCheckDefault_@j"
+                                                                           style="display:none" name="carryforward">
+                                                                    <label class="form-check-label" for="1flexCheckDefault_@j" style="display:none" id="textflexCheckDefault_@j" name="carryforward">
+                                                                        Carry Forward
+                                                                    </label>
+                                                                </div>
+                                                                <div class="col-md-6 d-inline" id="">
+                                                                    <div class="form-group">
+                                                                        <input class="form-control" type="text" placeholder="Enter No. of Leaves" id="2flexCheckDefault_@j" style="display:none" name="noofdays">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    j++;
+                                                }
+                                            }
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" style="margin-top: 31px;">
+                                @if (Model.ID > 0)
+                                {
+
+                                    <button type="button" class="btn btn-success hstheme-button-o text-white" onclick="return ValidateForm()">
+                                        <i class="fa fa-check"></i>
+                                        Update
+                                    </button>
+                                }
+                                else
+                                {
+
+                                    <button type="button" class="btn btn-success hstheme-button-o text-white" onclick="return ValidateForm()">
+                                        <i class="fa fa-check"></i>
+                                        Submit
+                                    </button>
+                                }
+                                <a href="/Master/LeaveList" class="btn btn-danger hstheme-button-o text-white">
+                                    <i class="fa fa-crosshairs"></i>
+                                    Cancel
+                                </a>
+                            </div>
+
+                            @*</form>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    function ValidateForm() {
+        debugger;
+
+        if ($('#FK_EmployeeType').val() == "" || $('#FK_EmployeeType').val() == undefined || $('#FK_EmployeeType').val() == null) {
+            swal("", "Please Select Employee Type", "warning");
+            $("#FK_EmployeeType").focus();
+            return false;
+        }
+        else if ($('#Designation').val() == "" || $('#Designation').val() == undefined || $('#Designation').val() == null) {
+            swal("", "Please Select Designation", "warning");
+            $("#Designation").focus();
+            return false;
+        }
+        else if ($('#Year').val() == "" || $('#Year').val() == undefined || $('#Year').val() == null) {
+            swal("", "Please Select Year", "warning");
+            $("#Year").focus();
+            return false;
+        }
+        else if ($('#LeaveCategory').val() == "" || $('#LeaveCategory').val() == undefined || $('#LeaveCategory').val() == null) {
+            swal("", "Please Select Leave Category", "warning");
+            $("#LeaveCategory").focus();
+            return false;
+        }
+        else {
+            validateleave()
+        }
+
+    }
+    function checkval() {
+        debugger;
+        $('input[type=checkbox]').each(function () {
+            debugger;
+            if (this.checked) {
+                var id = $(this).attr('id');
+
+                var divid1 = ('1' + id);
+                var divid2 = ('2' + id);
+                var divid3 = ('text' + id);
+                $("#" + divid1).css("display", "block");
+                $("#" + divid2).css("display", "block");
+                $("#" + divid3).css("display", "block");
+            }
+            else {
+                var id = $(this).attr('id');
+                var divid1 = ('1' + id);
+                var divid2 = ('2' + id);
+                var divid3 = ('text' + id);
+                $("#" + divid1).css("display", "none");
+                $("#" + divid2).css("display", "none");
+                $("#" + divid3).css("display", "none");
+            }
+        });
+    }
+
+    function saveLeave() {
+        var mod = {};
+        var data = [];
+        $('input[name=leaves]:checked').each(function () {
+            debugger;
+            if (this.checked) {
+                var id = $(this).attr('id');
+                var divid1 = ('1' + id);
+                var divid2 = ('2' + id);
+                var divid3 = ('text' + id);
+                var data1 = {};
+                data1.ID = $("#" + id).val();
+                if ($("#" + divid1).is(":checked")) {
+                    data1.carryforward = true;
+                }
+                else {
+                    data1.carryforward = false;
+                }
+                /*data1.carryforward = $("#" + divid1).val();*/
+                data1.noofdays = $("#" + divid2).val();
+                data.push(data1)
+            }
+        });
+        mod.ArrayLeave = data;
+        mod.FK_EmployeeType = $("#FK_EmployeeType").val();
+        mod.ID = $("#ID").val();
+        mod.Designation = $("#Designation").val();
+        mod.Year = $("#Year").val();
+        mod.LeaveCategory = $("#LeaveCategory").val();
+        $.ajax({
+            url: '/Master/AddLeave',
+            type: "POST",
+            processData: false,
+            data: JSON.stringify({ Model: mod }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (response) {
+                debugger;
+                if (response.flag == 1) {
+                    debugger;
+                    window.location.href = "/Master/LeaveList";
+                }
+                else {
+                    alert("Something went Wrong");
+                }
+            },
+            error: function (er) {
+
+            }
+
+        });
+
+    }
+
+
+    //$('input[name="leaves"]:checked').each(function () {
+    //    alert(this.value);
+    //    var id = $(this).attr('id');
+    //    var val = this.value;
+    //    var leaveid = ('2' + id);
+    //    var leave = $("#" + leaveid).val();
+
+    //});
+
+    function validateleave() {
+        debugger;
+        $('input[name=leaves]:checked').each(function () {
+            if (this.checked) {
+                var id = $(this).attr('id');
+                var divid1 = ('1' + id);
+                var divid3 = ('2' + id);
+                if ($("#" + divid3).val() == null || $("#" + divid3).val() == "") {
+                    debugger;
+                    swal("", "Please Insert Leave", "warning");
+                    $("#" + divid3).focus();
+                    return false;
+                }
+                else {
+                    saveLeave();
+                }
+            }
+
+        });
+
+    }
+</script>
+
+

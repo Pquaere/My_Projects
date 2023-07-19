@@ -1,0 +1,640 @@
+﻿@model HRPayroll.Models.SalaryBill
+@{
+    ViewBag.Title = "SalaryBillRpt";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Salary Bill Report - Custom</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row mb-3">
+                        <div class="col-lg-12">
+                            <div class="card card-outline-info">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            @{
+                                                string Code = (string)TempData["code"];
+                                                string msg = (string)TempData["Msg"];
+                                                if (!string.IsNullOrEmpty(Code))
+                                                {
+                                                    if (Code == "1")
+                                                    {
+                                                        <div class="alert alert-success msgdiv" id="divmsg">
+                                                            <strong>Success!</strong> @msg
+                                                        </div>
+                                                        <script type="text/javascript">
+                                                            window.setTimeout(function () {
+                                                                $('#divmsg').hide();
+                                                            }, 4000);
+                                                        </script>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="alert alert-danger msgdiv">
+                                                            <strong>Error!</strong> @msg
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    <h5>Search</h5>
+                                    <div class="form-body">
+                                        <div class="row p-t-20">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">Bill Month</label>
+                                                    @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">Bill Year</label>
+                                                    <select class="form-control" id="Year" name="Year"></select>
+                                                    @Html.HiddenFor(model => model.Year)
+                                                    @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Employee Category</label>
+                                                    @Html.DropDownListFor(model => model.WTypeId, new SelectList(ViewBag.EmployeeCategory, "Value", "Text"), "-Select Category-", new { @class = "form-control", @onchange = "BindEmpType();" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Employee Type</label>
+                                                    @Html.DropDownListFor(m => m.EmpType, new SelectList(String.Empty, "Value", "Text"), "-select-", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label"> Salary Type</label>
+                                                    @Html.DropDownListFor(model => model.SalaryType, new List<SelectListItem>
+                                                    {
+                                                       new SelectListItem{ Text="Regular Salary", Value = "C" },
+                                                       new SelectListItem{ Text="Supplementary", Value = "S" },
+                                                    }, "-- Select Type--", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4" style="margin-top:30px">
+                                                <div class="form-group">
+                                                    <button class="btn btn-success" onclick="filldepartment()"> Fill Department </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 showhide">
+                                                <div class="form-group">
+                                                    <label class="form-label">District<span class="text-danger">*</span></label>
+                                                    @Html.DropDownListFor(model => model.District, new SelectList(ViewBag.ddlDistrict, "Value", "Text"), "-Select District-", new { @class = "form-control", @disabled = true })
+                                                    @Html.HiddenFor(model => model.District)
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 showhide">
+                                                <div class="form-group">
+                                                    <label class="form-label">Office Type<span class="text-danger">*</span></label>
+                                                    @Html.DropDownListFor(model => model.ULBType, new SelectList(ViewBag.Agency, "Value", "Text"), new { @class = "form-control", @disabled = true })
+                                                    @Html.HiddenFor(model => model.ULBType)
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 showhide">
+                                                <div class="form-group">
+                                                    <label class="form-label">Office Name<span class="text-danger">*</span></label>
+                                                    @Html.DropDownListFor(model => model.ULBName, new SelectList(ViewBag.Office, "Value", "Text"), "-Select Office-", new { @class = "form-control", @disabled = true })
+                                                    @Html.HiddenFor(model => model.ULBName)
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Select Department</label>
+                                                    @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Select Sub Department</label>
+                                                    @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control", @onchange = "BindEmployee();" })
+                                                    @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Search Employee</label>
+                                                    @Html.DropDownListFor(model => model.EmpId, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control", @onchange = "BindEmpDetail();" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label"> Order By</label>
+                                                    @Html.DropDownListFor(model => model.OrderBy, new List<SelectListItem>
+                                                       {
+                                                           new SelectListItem{ Text="Order by Name", Value = "1" },
+                                                           new SelectListItem{ Text="Order by PFMS Code", Value = "2" },
+                                                           new SelectListItem{ Text="Order by Department Code", Value = "3" },
+                                                           new SelectListItem{ Text="Order by PPO No", Value = "4" },
+                                                           new SelectListItem{ Text="Order by Designation", Value = "5" },
+                                                        }, new { @class = "form-control" })
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <input type="checkbox" name="directions" onclick="Showcustombill();" />
+                                                    Check here if want to add NPS/EPF/ESIC Employer/Pen Contribution
+                                                </div>
+                                            </div>
+
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4" style="margin-top:30px">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-success" onclick="Showcustombill()">
+                                                            Show Custom Bill
+                                                        </button> &nbsp; &nbsp;
+                                                        <button class="printMe btn btn-danger">Print</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br /><br /><br />
+
+                                            <div class="col-md-12" style="overflow: auto" id="printlist">
+                                                <div class="form-group" id="id1div">
+                                                    &nbsp;&nbsp; &nbsp;&nbsp;
+                                                    <table border=1 width="100%" style="background-color:lightgray;font-size:14px" id="ticket_list">
+                                                        <tr>
+                                                            <td><label id="hdnlbl"></label> &nbsp;&nbsp;</td>
+                                                            <td><label id="hdnlb2"></label>&nbsp;&nbsp;</td>
+                                                            <td> <label id="hdnlb3"></label></td>
+                                                        </tr>
+                                                    </table>
+                                                    <div class="col-md-12" id="container" style="overflow: auto">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Report/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindEmpType(id) {
+        debugger;
+        var empCategory = $('#WTypeId').val();
+        if (empCategory > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Report/GetEmployeeType',
+                data: { empCategory: empCategory },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmpType').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+                    }
+                    else {
+                        $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#EmpType').val(id)
+                    }
+                },
+                error: function (e) {
+                    $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+            })
+        }
+        else {
+            $("#EmpType").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+    function BindEmployee(id) {
+        debugger;
+        var SubDeptId = $('#Fk_SubDeptId').val();
+        var DptEpCode = "";
+        var PFMSCODE = $('#PFMSCode').val();
+        var EmpName = $('#EmpName').val();
+        $.ajax({
+            url: '/Report/GetEmpSalDetail',
+            type: 'post',
+            data: { SubDeptId: SubDeptId, DptEpCode: DptEpCode, PFMSCODE: PFMSCODE, EmpName: EmpName },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#EmpId').empty();
+                    $('#EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2018; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    function GetOfficeName() {
+        debugger;
+        var districtId=$('#DistrictId').val();
+        var AgencyTypeId = $('#officeTypeId').val();
+        $.ajax({
+
+            type: 'Post',
+            url: '@Url.Action("GetOfficeName", "Master")',
+            data: { districtId: districtId, AgencyTypeId: AgencyTypeId },
+            dataType: 'json',
+            success: function (data) {
+                if (data != null) {
+                    $('#OfficeId').children().remove().end().append($("<option></option>").val("").text("-select-"));
+                    for (var i = 0; i < data.length; i++) {
+                        $('#OfficeId').append('<option Value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                    }
+                   /* $('#OfficeName').val(Id)*/
+                }
+                else {
+                    $('#OfficeId').children().remove().end().append($("<option></option>").val("").text("-select-"));
+                }
+            },
+            error: function (err) {
+                $('#OfficeId').children().remove().end().append($("<option></option>").val("").text("-select-"));
+            }
+        })
+    }
+
+    function GetOfficeType(id) {
+        debugger;
+        $.ajax({
+            type: 'Post',
+            url: '@Url.Action("GetOfficeType", "Master")',
+            data: { districtId: id},
+            dataType: 'json',
+            success: function (data) {
+                if (data != null) {
+                    $('#officeTypeId').children().remove().end().append($("<option></option>").val("").text("select Office Type"));
+                    for (var i = 0; i < data.length; i++) {
+                        $('#officeTypeId').append('<option Value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                    }
+                   /* $('#OfficeName').val(Id)*/
+                }
+                else {
+                    $('#officeTypeId').children().remove().end().append($("<option></option>").val("").text("select Office Type"));
+                }
+            },
+            error: function (err) {
+                $('#officeTypeId').children().remove().end().append($("<option></option>").val("").text("select Office Type"));
+            }
+        })
+    }
+
+    function filldepartment() {
+        debugger;
+        var WTypeId = $('#WTypeId').val();
+        if ($('#WTypeId').val() == "" || $('#WTypeId').val() == undefined || $('#WTypeId').val() == null) {
+            swal("", "Please Select Category Type", "warning");
+            return false;
+        }
+        if (WTypeId == 1) {
+            $.ajax({
+                url: '/Report/filldepartment',
+                type: 'post',
+                data: { EmpType: $("#EmpType").val(), WTypeId: $("#WTypeId").val(), Month: $("#Month").val(), Year: $("#Year").val() },
+                dataType: 'json',
+                containtType: 'aplication/json;charset=utf-8',
+                success: function (data) {
+                    if (data != null) {
+                        $('#Fk_DepartmentId').empty();
+                        $('#Fk_DepartmentId').append('<option>---Select----</option>');
+                        for (var i = 0; i < data.length; i++) {
+                            $('#Fk_DepartmentId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                        }
+                        if (id > 0) {
+                        }
+                    }
+                },
+                error: function (error) {
+                }
+            });
+        }
+
+        else {
+            $.ajax({
+                url: '/Report/filldepartment1',
+                type: 'post',
+                data: { EmpType: $("#EmpType").val(), WTypeId: $("#WTypeId").val(), Month: $("#Month").val(), Year: $("#Year").val() },
+                dataType: 'json',
+                containtType: 'aplication/json;charset=utf-8',
+                success: function (data) {
+                    if (data != null) {
+                        $('#Fk_DepartmentId').empty();
+                        $('#Fk_DepartmentId').append('<option>---Select----</option>');
+                        for (var i = 0; i < data.length; i++) {
+                            $('#Fk_DepartmentId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                        }
+                        if (id > 0) {
+                        }
+                    }
+                },
+                error: function (error) {
+                }
+            });
+        }
+    }
+
+    function Showcustombill() {
+        debugger;
+        $('#container').empty();
+        if ($('#Month').val() == '' || $('#Month').val() == 0) {
+
+            swal("", "Please Select Month", "warning");
+            return false;
+        }
+        if ($('#Year').val() == '' || $('#Year').val() == 0) {
+
+            swal("", "Please Select Year", "warning");
+            return false;
+        }
+        if ($('#WTypeId').val() == '' || $('#WTypeId').val() == 0) {
+
+            swal("", "Please Select Employee Category", "warning");
+            return false;
+        }
+        $.ajax({
+            url: '/Report/GetULBHeadWiseSalaryBillDetails3',
+            type: 'post',
+            data: { EmpType: $("#EmpType").val(), WTypeId: $("#WTypeId").val(), Month: $("#Month").val(), SalaryType: $("#SalaryType").val(), Fk_SubDeptId: $("#Fk_SubDeptId").val(), Year: $("#Year").val(), Fk_DepartmentId: $("#Fk_DepartmentId").val(), EmpId: $("#EmpId").val(), WTypeId: $("#WTypeId").val(), ULBName: $("#ULBName").val(), OrderBy: $("#OrderBy").val() },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (response) {
+                ;
+                var tab = $('<table id="tblexport" cellspacing="0" style="width:100%; font-size:10px;" border="1px solid black" class="table table-responsive table-bordered"></table>');
+                var thead = $('<thead></thead>');
+                var trow = $('<tr></tr>');
+
+
+                tab.append(thead);
+                var val = $.parseJSON(response);
+
+
+                $.each(val, function (i, p) {
+                    if (i == 0) {
+                        var trow1 = $('<tr style="font-weight:bolder;color:black;background-color:lightcyan;font-size:10px"><td>S.No</td><td>Employee Type</td><td>Department</td><td>Sub Department</td><td>Dept code/Emp code</td><td>PFMS Code</td><td>Emp. Name</td><td>Father Name</td><td>Designation</td><td>Work Days</td><td>Matrix And Level</td></tr>');
+                        var arr = p.HeadName.split(',');
+
+                        for (var j = 0; j < arr.length; j++) {
+                            if (arr[j].replace("[", "").replace("]", "").replace(/\d+/g, '').replace('-', '') != 'GPFTypeId') {
+                                trow1.append('<td style="text-align:left;">' + arr[j].replace("[", "").replace("]", "").replace(/\d+/g, '').replace('-', '') + '</td>');
+                            }
+                        }
+                        thead.append(trow1);
+                    }
+                    var ttd = $('<td></td>');
+                    tab.append(thead); var NPS = 0; var EPF = 0; var ESIC = 0; var PenB = 0; var PenBDA = 0;
+                    $.each(p, function (k, v) {
+                        //display the key and value pair
+                        //console.log(k + ' is ' + v);
+
+                        var p = k.replace(/\d+/g, '').replace('-', '')
+                        if (p != 'HeadName' && p != 'EmpId' && p != 'PayYear' && p != 'PayMonth' && p != 'OfficeId' && p != 'OfficeName' && p != 'GPFTypeId') {
+                            debugger;
+
+                            if (p == 'NPS Employer' || p == 'NPS Employer Ded') {
+
+                                NPS = isNullAndUndef(v);
+                                //alert(NPS);
+                            }
+                            if (p == 'EPFEmployer') {
+
+                                EPF = isNullAndUndef(v);
+                                //alert(NPS);
+                            }
+                            if (p == 'Pension Cont.(Basic+DA)') {
+
+                                PenBDA = isNullAndUndef(v);
+                                //alert(NPS);
+                            }
+                            if (p == 'Pension Cont.(Basic)') {
+
+                                PenB = isNullAndUndef(v);
+                                //alert(NPS);
+                            }
+                            if (p == 'ESICEmployer') {
+
+                                ESIC = isNullAndUndef(v);
+                                //alert(NPS);
+                            }
+                            if ($('#ContentPlaceHolder1_chkcomp_0').is(":checked")) {
+                                if (p == 'Gross Pay' || p == 'Total Deduction') {
+                                    var g = NPS + EPF + ESIC + PenBDA + PenB + v;
+                                    //alert(g);
+                                    ttd += '<td style="font-weight:bold;color:black">' + g + '</td>'
+
+
+                                }
+                                else if (p == 'Net Pay' || p == 'Basic Salary') {
+                                    ttd += '<td style="font-weight:bold;color:black">' + isNullAndUndef(v) + '</td>'
+
+                                }
+                                else {
+                                    ttd += '<td>' + isNullAndUndef(v) + '</td>'
+                                }
+
+                            }
+                            else {
+                                if (p == 'Gross Pay' || p == 'Total Deduction') {
+
+                                    //alert(g);
+                                    ttd += '<td style="font-weight:bold;color:black">' + isNullAndUndef(v) + '</td>'
+
+
+                                }
+                                else if (p == 'Net Pay' || p == 'Basic Salary') {
+                                    ttd += '<td style="font-weight:bold;color:black">' + isNullAndUndef(v) + '</td>'
+
+                                }
+                                else {
+                                    ttd += '<td>' + isNullAndUndef(v) + '</td>'
+                                }
+                            }
+
+
+                        }
+                        if (p == 'OfficeName') {
+                            $('#hdnlbl').html(v);
+                        }
+                        if (p == 'PayMonth') {
+
+                            $('#hdnlb2').html("Month:  " + getmonthname(v));
+                        }
+                        if (p == 'PayYear') {
+                            $('#hdnlb3').html("Year:   " + v);
+                        }
+
+                    });
+                    //trow += '<tr><td>' + parseInt(i + 1) + '</td>' + ttd + '</tr>'
+                    trow += '<tr style="font-size:10px;background-color:antiquewhite;">' + ttd + '</tr>'
+
+
+                });
+
+                tab.append(trow);
+
+                $("#container").html(tab);
+
+                $('#loading').hide();
+                $('#lblMsg').focus();
+                // loaddata1();
+                calculatesum();
+            },
+            failure: function (response) {
+                swal("No Record Found Under This Selection!");
+                $('#loading').hide();
+            }
+            , error: function (response) {
+                swal("No Record Found Under This Selection!");
+                $('#loading').hide();
+            }
+        });
+    }
+
+    function isNullAndUndef(variable) {
+        if (variable !== null && variable !== undefined) {
+            return (variable);
+        }
+        else {
+            return 0;
+        }
+    }
+
+    function getmonthname(p) {
+        var day = "";
+        switch (p) {
+            case 1:
+                day = "January";
+                break;
+            case 2:
+                day = "February";
+                break;
+            case 3:
+                day = "March";
+                break;
+            case 4:
+                day = "April";
+                break;
+            case 5:
+                day = "May";
+                break;
+            case 6:
+                day = "June";
+                break;
+            case 7:
+                day = "July";
+                break;
+            case 8:
+                day = "August";
+                break;
+            case 9:
+                day = "September";
+                break;
+            case 10:
+                day = "October";
+                break;
+            case 11:
+                day = "November";
+                break;
+            case 12:
+                day = "December";
+                break;
+        }
+        return day;
+    }
+
+    $(document).ready(function () {
+        $('#ticket_list').dataTable({
+            responsive: true,
+        });
+    });
+
+    $(".printMe").click(function () {
+        var divToPrint = document.getElementById("printlist");
+        newWin = window.open("");
+        newWin.document.write(divToPrint.outerHTML);
+        newWin.print();
+        newWin.close();
+    });
+
+</script>

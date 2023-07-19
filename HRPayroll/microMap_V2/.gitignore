@@ -1,0 +1,12 @@
+*.exe
+*.pdb
+/.vs
+/.vs/
+microMapV2/obj/Debug/microMapV2.csproj.AssemblyReference.cache
+.vs/microMapV2/v16/Server/sqlite3/storage.ide
+*.config
+*.dll
+*.dll
+.vs/microMapV2/v16/Server/sqlite3/storage.ide-shm
+.vs/microMapV2/v16/Server/sqlite3/storage.ide-wal
+microMapV2/Controllers/list.cs

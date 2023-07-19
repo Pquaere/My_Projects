@@ -1,0 +1,284 @@
+﻿@model HRPayroll.Models.PaySlip
+@{
+    ViewBag.Title = "PaySlips";
+    Layout = null;
+}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PAY SLIP</title>
+</head>
+<style type="text/css">
+    p {
+        padding: 0px;
+        margin: 0px;
+        margin-bottom: 10px !important;
+    }
+</style>
+<body style="margin: 10px 0; font-size: 12px;font-family:Arial, Verdana, Tahoma; line-height: 16px;">
+    <div style="text-align: center;margin-bottom: 5px;"><button type="button" style="background-color:blue; color:white; padding:5px 10px; font-size: 16px;" class="printMe btn btn-danger">Print</button></div>
+    <table cellspacing="0" cellpadding="0"
+           style="width: 800px; margin: 0px auto;border:1px solid #000; font-size: 12px;font-family:Arial, Verdana, Tahoma; line-height: 16px;" id="outprint">
+        <tbody>
+            <tr>
+                <td>
+                    <table border="1" cellpadding="0" cellspacing="0" style="background-color: Black; border-color: Black;   font-family: Arial, Helvetica, sans-serif; font-size: 8px; page-break-inside: avoid;">
+                        <tr style="background-color:White; color:Black; border:0px;">
+                            <td colspan="10" align="center">
+                                <table width="100%" border="1" style="font-family: Arial, Helvetica, sans-serif; font-size: 8px; border-color: black;  ">
+                                    <tr>
+                                        <td align="center" rowspan="3"><img src="../images/UPSRTC.png" width="90px" height="40" alt="#" /></td>
+                                        <td align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;"><b>Pay Slip</b></td>
+                                        <td align="center" rowspan="3"><img src="../images/UPSRTC.png" width="90px" height="40" alt="#" /></td>
+                                    </tr>
+                                    <tr><td align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;"><b>URBAN LOCAL BODY DIRECTORATE</b></td></tr>
+                                    <tr><td align="center" style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">@Model.DivisionName </b></td></tr>
+                                    <tr>
+                                        <td align="left"><b>Emp. Code:@Model.EmpCode  </b></td>
+                                        <td></td>
+                                        <td align="right"><b>Month:@Model.Month  @Model.Year</b></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr style="font-weight:bold; border:1; border-color:black; padding:0px; background-color:#A9A9A9; color:Black;">
+                            <td align="left" colspan="3"><b>Name:@Model.EmpName</b></td>
+                            <td align="left" colspan="3"><b>Designation:@Model.Designation  </b></td>
+                            <td align="left" colspan="3"><b>Present:@Model.WorkDays  </b></td>
+                            <td align="right" rowspan="3">
+                                <asp:Image ID="imgEmp" runat="server" Width="50px" Height="60px" ImageUrl='' />
+                            </td>
+                        </tr>
+                        <tr style="font-weight:bold; border:1; border-color:Black; padding:0px; background-color:#A9A9A9; color:Black;">
+                            <td align="left" colspan="3"><b>Bank:@Model.BankName  </b></td>
+                            <td align="left" colspan="3"><b>A/C No.: @Model.AccountNo </b></td>
+                            <td align="left" colspan="3"><b>I.F.S.C.: @Model.RTGSCode  </b></td>
+                        </tr>
+                        <tr style="font-weight:bold; border:1; border-color:Black; padding:0px; background-color:#A9A9A9; color:Black;">
+                            <td align="left" colspan="3"><b>Register:  </b></td>
+                            <td align="left" colspan="3"><b>G.I.S. No.:@Model.GISCode  </b></td>
+                            <td align="left" colspan="3"><b>PAN No.:@Model.PANNo  </b></td>
+                        </tr>
+                        <tr style="font-weight:bold; border:1; border-color:Black; padding:0px; background-color:#A9A9A9; color:Black;">
+                            <td align="left" colspan="3"><b>EPF Code:@Model.EPFCode  </b></td>
+                            <td align="left" colspan="3"><b>GPF Code:@Model.GPFCode  </b></td>
+
+                            <td align="left" colspan="2"><b>UAN No.:@Model.UANNO  </b></td>
+                            <td align="left" colspan="2"> </td>
+                        </tr>
+
+                        <tr style="font-weight:bold; border:1; border-color:Black; padding:0px; background-color:#A9A9A9; color:Black;">
+                            <td align="left" colspan="3"><b>Mobile No:@Model.mobileno  </b></td>
+                            <td align="left" colspan="3"><b>Adhar No:@Model.Adharno  </b></td>
+
+                            <td align="left" colspan="2"> </td>
+                            <td align="left" colspan="2"> </td>
+                        </tr>
+
+                        <tr style="font-weight:bold; border:1; border-color:Black; padding:0px; background-color:#A9A9A9; color:Black;">
+                            <td align="center" colspan="4"><b><u>EARNING</u></b></td>
+                            <td align="center" colspan="6"><b><u>DEDUCTION</u></b></td>
+                        </tr>
+                        <tr style="background-color:White; color:Black;">
+                            <td align="left" valign="top" colspan="2" style="width:160px;">
+                                <table width="95%" style="font-family: Arial, Helvetica, sans-serif; font-size: 8px;">
+                                    <tr>
+                                        <td align="left"><b>Basic Pay:</b></td>
+                                        <td align="right"> @Model.BasicSal </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Grade Pay:</b></td>
+                                        <td align="right"> @Model.GradePay</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>D.A. </b></td>
+                                        <td align="right">@Model.DA </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Medical Allow.:</b></td>
+                                        <td align="right">@Model.MA </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>WA:</b></td>
+                                        <td align="right">@Model.WA </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>CCA:</b></td>
+                                        <td align="right"> @Model.CCA</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>H.R.A.:</b></td>
+                                        <td align="right">@Model.HRA </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>I.R./Adhoc Pay:</b></td>
+                                        <td align="right"> @Model.IR</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Personal Pay:</b></td>
+                                        <td align="right">@Model.PerPay </td>
+                                    </tr>
+                                    <tr>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td align="left" valign="top" colspan="2" style="width:160px;">
+                                <table width="95%" style="font-family: Arial, Helvetica, sans-serif; font-size: 8px;">
+
+                                    <tr>
+                                        <td align="left"><b>Special Pay:</b></td>
+                                        <td align="right">@Model.SpecPay </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Disability.:</b></td>
+                                        <td align="right">@Model.DisAllow </td>
+                                    </tr> 
+                                    <tr>
+                                        <td align="left"><b>Deputation:</b></td>
+                                        <td align="right">@Model.DepAllow </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Bilangual:</b></td>
+                                        <td align="right"> @Model.BilangAllow</td>
+                                    </tr>
+                                    <tr>
+
+                                    <tr>
+                                        <td align="left"><b>Car Allow.:</b></td>
+                                        <td align="right">@Model.CarAllow </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Other Allow.:</b></td>
+                                        <td align="right">@Model.OtherAllow </td>
+                                    </tr>
+                                    <tr>
+
+                                </table>
+                            </td>
+                            <td align="left" valign="top" colspan="2" style="width:160px;">
+                                <table width="95%" style="font-family: Arial, Helvetica, sans-serif; font-size: 8px;">
+                                    <tr>
+                                        <td align="left"><b>E.P.F.:</b></td>
+                                        <td align="right">@Model.EPF </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>G.P.F. </b></td>
+                                        <td align="right">@Model.GPF </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>G.I.S. </b></td>
+                                        <td align="right">@Model.GIS </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>K.K.N.:</b></td>
+                                        <td align="right">@Model.KKF </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>L.I.C.:</b></td>
+                                        <td align="right">@Model.LIC </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Staff Car:</b></td>
+                                        <td align="right">@Model.StaffCar </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>T.D.S.:</b></td>
+                                        <td align="right">@Model.IncomeTax </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Quarter Rent:</b></td>
+                                        <td align="right">@Model.QtrRent </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Permanent:</b></td>
+                                        <td align="right">@Model.PermReco </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Court Reco.:</b></td>
+                                        <td align="right"> @Model.CourtReco</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td align="left" valign="top" colspan="2" style="width:160px;">
+                                <table width="95%" style="font-family: Arial, Helvetica, sans-serif; font-size: 8px;">
+                                    <tr>
+                                        <td align="left"><b>R.D.:</b></td>
+                                        <td align="right">@Model.RD </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Society:</b></td>
+                                        <td align="right">@Model.Society </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>GPF Adv.:</b></td>
+                                        <td align="right">@Model.GPFAdv </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>N.P.S.:</b></td>
+                                        <td align="right">@Model.NPS </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Pay Reco.:</b></td>
+                                        <td align="right">@Model.PayReco </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Mobile Bill:</b></td>
+                                        <td align="right">@Model.MobileBill </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Misc. Ded.:</b></td>
+                                        <td align="right">@Model.MiscDedAmt1 + @Model.MiscDedAmt2 + @Model.MiscDedAmt3 + @Model.MiscDedAmt4 </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td align="left" valign="top" colspan="2" style="width:150px;">
+                                <table width="95%" style="font-family: Arial, Helvetica, sans-serif; font-size: 8px;">
+                                    <tr>
+                                        <td align="left"><b style="font-family: Arial, Helvetica, sans-serif; font-size: 8px;"><u>ADVANCE</u></b></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Mobile Adv.:</b></td>
+                                        <td align="right">@Model.MobileAdv </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>H.B.A.:</b></td>
+                                        <td align="right">@Model.HBA </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"><b>Relief Fund.:</b></td>
+                                        <td align="right">@Model.LapAdv </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr style="font-weight:bold; border:1; border-color:Black; padding:0px; background-color:#A9A9A9; color:Black;">
+                            <td align="left" colspan="3"><b>Total Earning:@Model.GrossPay  </b></td>
+                            <td align="center" colspan="4"><b>Total Deduction: @Model.GrossPay - @Model.NetPay  </b></td>
+                            <td align="right" colspan="3"><b>Net Payable:@Model.NetPay </b></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/PDF/dist/jspdf.debug.js"></script>
+<script src="~/Scripts/PDF/dist/jspdf.js"></script>
+<script src="~/Scripts/PDF/dist/jspdf.min.js"></script>
+<script type="text/javascript">
+
+
+    $(".printMe").click(function () {
+        var divToPrint = document.getElementById("outprint");
+        newWin = window.open("");
+        newWin.document.write(divToPrint.outerHTML);
+        newWin.print();
+        newWin.close();
+    });
+</script>
+
+

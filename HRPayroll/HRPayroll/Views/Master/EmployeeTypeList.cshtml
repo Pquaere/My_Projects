@@ -1,0 +1,162 @@
+﻿@model HRPayroll.Models.Employements
+
+@{
+    ViewBag.Title = "EmployeeTypeList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-2">
+            <div class="row page-titles">
+                <div class="col-md-6 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Employement List</h3>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="pbutton" style="text-align: right">
+                        <div class="right text-right">
+                            <a href="/Master/AddEmployeeType" id="btnAdd" class="btn btn-success btn-sm">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Add Employement
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    @{
+                        string Code = (string)TempData["code"];
+                        string msg = (string)TempData["Msg"];
+                        if (!string.IsNullOrEmpty(Code))
+                        {
+                            if (Code == "1")
+                            {
+                                <div class="alert alert-success msgdiv">
+                                    <strong>Success!</strong> @msg
+                                </div>
+                                <script type="text/javascript">
+                                    window.setTimeout(function () {
+                                        location.href = '/Master/EmployeeTypeList';
+                                    }, 3000);
+                                </script>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger msgdiv">
+                                    <strong>Error!</strong> @msg
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+
+                <div class="col-md-12">
+
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table">
+                                <div class="table-responsive">
+                                    <table class="table table-striped dataTable">
+                                        <thead id="tbl">
+                                            <tr role="row" class="bg-secondary">
+                                                <th>S.No</th>
+                                                <th>Employement Type </th>
+                                                <th>Working Type</th>
+                                                <th>Edit</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model != null && Model.List != null)
+                                            {
+                                                if (Model.List.Count() > 0)
+                                                {
+                                                    var Sn = 0;
+                                                    foreach (var item in Model.List)
+                                                    {
+                                                        Sn = Sn + 1;
+                                                        <tr role="row" class="odd">
+                                                            <input type="hidden" value="@item.ID" class="ID" />
+                                                            <td>  @Sn</td>
+                                                            <td> @item.Employement </td>
+                                                            <td> @item.WorkingType </td>
+                                                            <td>
+                                                                <a href="/Master/AddEmployeeType?ID=@item.ID" title="Edit"><i class="fa fa-pencil"></i> </a>
+                                                            </td>
+                                                            <td>
+                                                                @if (item.IsActive == false)
+                                                                {
+                                                                    <a href="#" title="" name="Isactive" value="true" class="del"><span class=" p-1 badge-success">Active</span> </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a href="#" title="" name="Isactive" value="false" class="InActive"><span class=" p-1 badge-danger">In-Active</span> </a>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('.del').click(function () {
+        debugger;
+        var tr = $(this).closest('tr');
+        var trues = true;
+        var PK_Id = tr.find('.ID').val()
+        $.confirm({
+            title: '',
+            content: '<b>Are you sure ? You want to In-active selected Employee Type?</b>',
+            buttons: {
+                Ok: function () {
+                    window.location.href = "/Master/changeEmployeeTypeStatus?Isactive=" + trues + "&ID=" + PK_Id + "";
+                },
+
+                Cancle: function () {
+                    window.location.href = "/Master/EmployeeTypeList";
+                }
+
+
+            }
+        });
+    });
+
+    $('.InActive').click(function () {
+        debugger;
+        var tr = $(this).closest('tr');
+        var trues = false;
+        var PK_Id = tr.find('.ID').val()
+        $.confirm({
+            title: '',
+            content: '<b>Are you sure ? You want to  active selected Employee Type?</b>',
+            buttons: {
+                Ok: function () {
+                    window.location.href = "/Master/changeEmployeeTypeStatus?Isactive=" + trues + "&ID=" + PK_Id + "";
+                },
+                Cancle: function () {
+                    window.location.href = "/Master/EmployeeTypeList";
+                }
+            }
+        });
+    });
+</script>

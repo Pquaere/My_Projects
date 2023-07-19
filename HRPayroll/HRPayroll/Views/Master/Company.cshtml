@@ -1,0 +1,509 @@
+﻿@model HRPayroll.Models.Company
+
+@{
+    ViewBag.Title = "Company";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    bool mondayyoff = false;
+    bool sundayoff = false;
+    bool tuedayoff = false;
+    bool weddayoff = false;
+    bool thudayoff = false;
+    bool fridayoff = false;
+    bool satdayoff = false;
+    if (Model != null)
+    {
+        if (Model.WeekoffDay != null)
+        {
+            if (Model.WeekoffDay.Where(x=>x=="Sunday").Count()>0)
+            {
+                sundayoff = true;
+            }
+            if (Model.WeekoffDay.Where(x => x == "Monday").Count() > 0)
+            {
+                mondayyoff = true;
+            }
+            if (Model.WeekoffDay.Where(x => x == "Tuesday").Count() > 0)
+            {
+                tuedayoff = true;
+            }
+            if (Model.WeekoffDay.Where(x => x == "Wednesday").Count() > 0)
+            {
+                weddayoff = true;
+            }
+            if (Model.WeekoffDay.Where(x => x == "Thursday").Count() > 0)
+            {
+                thudayoff = true;
+            }
+            if (Model.WeekoffDay.Where(x => x == "Friday").Count() > 0)
+            {
+                fridayoff = true;
+            }
+            if (Model.WeekoffDay.Where(x => x == "Saturday").Count() > 0)
+            {
+                satdayoff = true;
+            }
+
+
+        }
+    }
+
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-lg-4 py-3">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Company Master</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-outline-info">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @{
+                                        string Code = (string)TempData["code"];
+                                        string msg = (string)TempData["Msg"];
+                                        if (!string.IsNullOrEmpty(Code))
+                                        {
+                                            if (Code == "1")
+                                            {
+                                                <div class="alert alert-success msgdiv">
+                                                    <strong>Success!</strong> @msg
+                                                </div>
+                                                <script type="text/javascript">
+                                                    window.setTimeout(function () {
+                                                        location.href = '/Master/Company';
+                                                    }, 2000);
+                                                </script>
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-danger msgdiv">
+                                                    <strong>Error!</strong> @msg
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <form method="post" action="/Master/Add_Company" onsubmit="return ValidateForm()" id="form">
+                                <div class="form-body">
+                                    <div class="row p-t-20">
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label"> Company Name <span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.CompanyName, new { @class = "form-control", @placeholder = "Enter Company Name ",@maxlength="50" })
+                                                @Html.ValidationMessageFor(m => m.CompanyName, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.CompanyId)
+                                            </div>
+                                        </div>
+
+                                        
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Company Logo</label>
+                                                <input class="form-control" onchange="UploadFile2(this,'CompanyLogo')" type="file" id="CompanyLogouploadImageUrl" />
+                                                @Html.HiddenFor(m => m.CompanyLogo, new { @class = "form-control" })
+                                                @if (!string.IsNullOrEmpty(Model.CompanyLogo))
+                                                {
+                                                    <img src="@Model.CompanyLogo" height="50" width="50" id="imgCompanyLogo" />
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Company App Logo</label>
+                                                <input class="form-control" onchange="UploadFile2(this,'CompanyAppLogo')" type="file" id="CompanyAppLogouploadImageUrl" />
+                                                @Html.HiddenFor(m => m.CompanyAppLogo, new { @class = "form-control" })
+                                                @if (!string.IsNullOrEmpty(Model.CompanyLogo))
+                                                {
+                                                    <img src="@Model.CompanyAppLogo" height="50" width="50" id="imgCompanyAppLogo" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Address</label>
+                                                @Html.TextBoxFor(M => M.Address, new { @class = "form-control", @placeholder = "Enter Address ",@maxlength="250" })
+                                                @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Owner Name</label>
+                                                @Html.TextBoxFor(M => M.OwnerName, new { @class = "form-control", @placeholder = "Enter Owner Name " ,@maxlength="50"})
+                                                @Html.ValidationMessageFor(m => m.OwnerName, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Owner Mobile No.</label>
+                                                @Html.TextBoxFor(M => M.OwnerMobileNo, new { @class = "form-control", @placeholder = "Enter Owner Mobile No. " , @onkeypress = "return isNumberKey(event)" ,@maxlength="10"})
+                                                @Html.ValidationMessageFor(m => m.OwnerMobileNo, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Telephone No.</label>
+                                                @Html.TextBoxFor(M => M.TelephoneNo, new { @class = "form-control", @placeholder = "Enter Telephone No. ", @onkeypress = "return isNumberKey(event)" , @maxlength = "10" })
+                                                @Html.ValidationMessageFor(m => m.TelephoneNo, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Email Id</label>
+                                                @Html.TextBoxFor(M => M.EmailId, new { @class = "form-control", @placeholder = "Enter Email Id " ,@type="email",@maxlength="50"})
+                                                @Html.ValidationMessageFor(m => m.EmailId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">GST No.</label>
+                                                @Html.TextBoxFor(M => M.GSTNo, new { @class = "form-control", @placeholder = "Enter GST No. " ,@maxlength="20"})
+                                                @Html.ValidationMessageFor(m => m.GSTNo, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Pan Number</label>
+                                                @Html.TextBoxFor(M => M.PanNumber, new { @class = "form-control", @placeholder = "Enter Pan Number " , @maxlength = "10" })
+                                                @Html.ValidationMessageFor(m => m.PanNumber, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Password</label>
+                                                @Html.TextBoxFor(M => M.Password, new { @class = "form-control", @placeholder = "Enter Password " , @maxlength = "50" })
+                                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">AlternateMobile</label>
+                                                @Html.TextBoxFor(M => M.AlternateMobile, new { @class = "form-control", @placeholder = "Enter Alternate Mobile " , @onkeypress = "return isNumberKey(event)" , @maxlength = "10" })
+                                                @Html.ValidationMessageFor(m => m.AlternateMobile, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Tan Number</label>
+                                                @Html.TextBoxFor(M => M.TanNumber, new { @class = "form-control", @placeholder = "Enter Tan Number " , @maxlength = "10" })
+                                                @Html.ValidationMessageFor(m => m.TanNumber, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label"> State  </label>
+                                                @Html.DropDownListFor(Model => Model.StateId, new SelectList(ViewBag.State, "Value", "Text"), "-Select State-", new { @class = "form-control" , @onchange = "BindDis();" })
+
+                                                @Html.ValidationMessageFor(m => m.StateId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        @Html.HiddenFor(m => m.checkday)
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label"> District  </label>
+                                                @Html.DropDownListFor(Model => Model.DistrictId, new SelectList(ViewBag.District, "Value", "Text"), "-Select District-", new { @class = "form-control" })
+
+                                                @Html.ValidationMessageFor(m => m.DistrictId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Pin Code</label>
+                                                @Html.TextBoxFor(M => M.PinCode, new { @class = "form-control", @placeholder = "Enter Pin Code " , @onkeypress = "return isNumberKey(event)", @maxlength = "6" })
+                                                @Html.ValidationMessageFor(m => m.PinCode, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Hr Email Id</label>
+                                                @Html.TextBoxFor(M => M.HrEmailId, new { @class = "form-control", @placeholder = "Enter Hr Email Id " })
+                                                @Html.ValidationMessageFor(m => m.HrEmailId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+
+                                                <label class="form-label">Week Off</label>
+                                                <br />
+                                                @if (mondayyoff == true)
+                                                {
+                                                    <input type="checkbox" value="Monday" checked="checked" name="directions" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span>
+
+                                                    <label>Monday</label><br />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" value="Monday" name="directions" class="w1" /><span> &nbsp; &nbsp; &nbsp;</span>
+                                                    <label>Monday</label><br />
+                                                }
+                                                @if (tuedayoff == true)
+                                                {
+                                                    <input type="checkbox" value="Tuesday" name="directions" checked="checked" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Tuesday</label><br />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" value="Tuesday" name="directions" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Tuesday</label><br />
+                                                }
+                                                @if (weddayoff == true)
+                                                {
+                                                    <input type="checkbox" value="Wednesday" name="directions" checked="checked" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Wednesday</label><br />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" value="Wednesday" name="directions" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Wednesday</label><br />
+                                                }
+                                                @if (thudayoff == true)
+                                                {
+                                                    <input type="checkbox" value="Thursday" name="directions" checked="checked" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Thursday</label><br />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" value="Thursday" name="directions" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Thursday</label><br />
+                                                }
+                                                @if (fridayoff == true)
+                                                {
+                                                    <input type="checkbox" value="Friday" name="directions" checked="checked" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Friday</label><br />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" value="Friday" name="directions" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Friday</label><br />
+                                                }
+                                                @if (satdayoff == true)
+                                                {
+                                                    <input type="checkbox" value="Saturday" checked="checked" name="directions" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Saturday</label><br />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" value="Saturday" name="directions" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Saturday</label><br />
+                                                }
+                                                @if (sundayoff == true)
+                                                {
+                                                    <input type="checkbox" value="Sunday" name="directions" checked="checked" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Sunday</label><br />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" value="Sunday" name="directions" class="w1" /><span>&nbsp; &nbsp; &nbsp;</span><label>Sunday</label><br />
+                                                }
+
+
+
+                                                @*<button type="button" class="button1">click</button>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4" style="margin-top: 31px;">
+                                    @if (Model.CompanyId > 0)
+                                    {
+
+                                        <button class="btn btn-success hstheme-button-o text-white">
+                                            <i class="fa fa-check"></i>
+                                            Update
+                                        </button>
+                                    }
+                                    else
+                                    {
+
+                                        <button class="btn btn-success hstheme-button-o text-white">
+                                            <i class="fa fa-check"></i>
+                                            Submit
+                                        </button>
+                                    }
+                                    <a href="/Master/CompanyList" class="btn btn-danger hstheme-button-o text-white">
+                                        <i class="fa fa-crosshairs"></i>
+                                        Cancel
+                                    </a>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ValidateForm() {
+
+        debugger;
+
+        var days = [];
+        $.each($("input[name='directions']:checked"), function () {
+            days.push($(this).val());
+        });
+        var days = days.join(",");
+        $('#checkday').val(days);
+        var regemail = /^([A-Za-z0-9_\-\.])+\@@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,3})$/;
+
+        if ($('#CompanyName').val() == "" || $('#CompanyName').val() == undefined || $('#CompanyName').val() == null) {
+            swal("", "Company Name is required", "warning");
+            return false;
+        }
+
+        if (regemail.test($("#EmailId").val()) == false) {
+            $("#EmailId").focus();
+            $("#EmailId").val('');
+            swal("", "Please enter a valid Email Id", "warning");
+            return false;
+        }
+        if (regemail.test($("#HrEmailId").val()) == false) {
+            $("#HrEmailId").focus();
+            $("#HrEmailId").val('');
+            swal("", "Please enter a valid Email Id", "warning");
+            return false;
+        }
+        
+        else {
+            return true;
+            $("#form").submit();
+        }
+
+    }
+    function UploadFile2(obj, type) {
+        debugger;
+        var filename = $(obj)[0].files[0].name;
+        var fileId = $(obj).attr("id");
+        var ext = obj.value.match(/\.(.+)$/)[1];
+
+        switch (ext) {
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'pdf':
+                var fileSize = ($("#" + fileId)[0].files[0].size / 1024 / 1024);
+                //if (fileSize > 2) {
+                //    swal("", "File size should not exceed 2 MB.\r\nफाइल का साइज़ 2 MB से अधिक नहीं होना चाहिए।", "warning");
+                //    return false;
+                //}
+                //else {
+                var data = new FormData();
+                var files = $("#" + fileId).get(0).files;
+                if (files.length > 0) {
+                    data.append("File", files[0]);
+                }
+                data.append("type", type);
+                $("#divLoader").show();
+                $.ajax({
+                    url: '@Url.Action("UploadImageFile", "Master")',
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function (response) {
+                        $("#divLoader").hide();
+
+                        if (response != null) {
+                            if (response.result) {
+
+                                $("#" + type + "").val(response.fpath);
+                                if ($("#" + type + "").val() != '') {
+                                    $("#img" + type + "").attr("src", response.fpath);
+                                }
+                                swal("", "File upload successfully. ", "success")
+                            }
+                            else {
+                                $("#" + type + "").val('');
+                                swal("", response.mesg, "error")
+                            }
+                        }
+                        else {
+                            swal("", "Fail to Upload File", "error")
+                        }
+                        return false;
+
+                    },
+                    error: function (e) {
+
+                        $("#divLoader").hide();
+                        swal("", "An Error Occured while uploading file", "error");
+                    }
+                });
+
+                /*}*/
+                break;
+            default:
+                swal("", 'File should be in PNG/JPG/JPEG/pdf format./फाइल PNG/JPG/JPEG/pdf प्रारूप में होनी चाहिए।', "warning");
+                this.value = '';
+                return false;
+        }
+
+    }
+
+
+    var limit = 2;
+    $('input.w1').on('change', function (evt) {
+        if ($(this).siblings(':checked').length >= limit) {
+            this.checked = false;
+            swal("", "Choose Maximum Two Days", "warning");
+        }
+    });
+
+    function BindDis(id) {
+        debugger;
+        var StateId = $('#StateId').val();
+        $.ajax({
+            url: '/Master/GetDistric',
+            type: 'post',
+            data: { StateId: StateId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#DistrictId').empty();
+                    $('#DistrictId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#DistrictId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+
+    function isNumberKey(evt) {
+        debugger
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+</script>
+

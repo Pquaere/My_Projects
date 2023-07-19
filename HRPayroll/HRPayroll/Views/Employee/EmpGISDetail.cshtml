@@ -1,0 +1,545 @@
+﻿@model HRPayroll.Models.EmpGIS
+
+@{
+    ViewBag.Title = "EmpGISDetail";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Employee GIS Details Form</h3>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" id="form" onsubmit="return ValidateForm()">
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv" id="msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    /*location.href = '';*/
+                                                                    $('#msgdiv').hide();
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+
+                                        <h5>Search</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Category<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.WTypeId, new SelectList(ViewBag.Type, "Value", "Text"), "-Select Type-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.ID)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                        @Html.HiddenFor(model => model.Fk_DepartmentId)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department</label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.Fk_SubDeptId)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">PFMS Code</label>
+                                                        @Html.TextBoxFor(M => M.PFMSCode, new { @class = "form-control", @maxlength = "50" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Departmental Employee Unique Code</label>
+                                                        @Html.TextBoxFor(M => M.DeptEmpCode, new { @class = "form-control", @maxlength = "50" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Search By Name</label>
+                                                        @Html.TextBoxFor(M => M.EmpName, new { @class = "form-control", @maxlength = "50" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <button class="btn btn-info mb-2" style="color:white;" type="button" onclick="BindEmployee()">
+                                                        Fill Employee
+                                                    </button>
+
+                                                </div>
+                                            </div>
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Search Employee<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.EmpId, new SelectList(String.Empty, "Value", "Text"), "-Select Employee-", new { @class = "form-control", @onchange = "BindEmpDetail();" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="card card-outline-info">
+                                                    <div class="card-body">
+                                                        <h5>Personal Detail</h5>
+                                                        <div class="row p-t-20">
+                                                            <div class="col-lg-12">
+                                                                <div class="row p-t-20">
+                                                                    <div class="col-md-8">
+                                                                        <div class="row p-t-20">
+
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label class="form-label">Employee Name</label>
+                                                                                    @Html.TextBoxFor(M => M.EmployeeName, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label class="form-label">Designation</label>
+                                                                                    @Html.DropDownListFor(model => model.DesignationId, new SelectList(ViewBag.Designation, "Value", "Text"), "-Select-", new { @class = "form-control" })
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label class="form-label">Father's - W/O Name</label>
+                                                                                    @Html.TextBoxFor(M => M.FatherName, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label class="form-label">Perm. Address</label>
+                                                                                    @Html.TextBoxFor(M => M.PermAddress, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label>Photo</label><br>
+                                                                            <img src="~/assets/images/No-Image.png" style="height:125px;width:115px;border: 1px solid #ccc;" id="img" />
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="row p-t-20">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Bank</label>
+                                                                            @Html.DropDownListFor(model => model.BankId, new SelectList(ViewBag.Bank, "Value", "Text"), "-Select-", new { @class = "form-control" })
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Adhar Number</label>
+                                                                            @Html.TextBoxFor(M => M.AdharNo, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Account Number</label>
+                                                                            @Html.TextBoxFor(M => M.AccountNo, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Pan Number</label>
+                                                                            @Html.TextBoxFor(M => M.PANNo, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Mobile Number</label>
+                                                                            @Html.TextBoxFor(M => M.MobileNo, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Date of Birth</label>
+                                                                            @Html.TextBoxFor(M => M.DOB, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Date of Joining</label>
+                                                                            @Html.TextBoxFor(M => M.DOJ, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Date of Retirement</label>
+                                                                            @Html.TextBoxFor(M => M.DOR, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="card card-outline-info">
+                                                    <div class="card-body">
+                                                        <h5>GIS Detail</h5>
+                                                        <div class="row p-t-20">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Deduction Type.<span class="text-danger">*</span></label>
+                                                                    @Html.DropDownListFor(m => m.Type, new List<SelectListItem>
+                                                                            {
+                                                                new SelectListItem{ Text="-- Select --", Value = "" },
+                                                                            new SelectListItem{ Text="Monthly", Value = "M" },
+                                                                            new SelectListItem{ Text="Quaterly", Value = "Q" },
+                                                                            new SelectListItem{ Text="Half Yearly", Value = "H" },
+                                                                            new SelectListItem{ Text="Yearly", Value = "Y" },
+                                                                   }, new { @class = "form-control" })
+                                                                 
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Policy No.<span class="text-danger">*</span></label>
+                                                                    @Html.TextBoxFor(M => M.GISNo, new { @class = "form-control", @maxlength = "12",@onkeypress= "return PanAndIfsc(event)" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Policy  Amount<span class="text-danger">*</span></label>
+                                                                    @Html.TextBoxFor(M => M.GISAmount, new { @class = "form-control", @maxlength = "50", @onkeypress = "return onlyNos(event)" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Status<span class="text-danger">*</span></label>
+                                                                    @Html.DropDownListFor(m => m.Status, new List<SelectListItem>
+                                                                            {
+                                                                new SelectListItem{ Text="-- Select Status--", Value = "" },
+                                                                            new SelectListItem{ Text="Active", Value = "A" },
+                                                                            new SelectListItem{ Text="Stop", Value = "S" },
+                                                                   }, new { @class = "form-control" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Start Month<span class="text-danger">*</span></label>
+                                                                    @Html.DropDownListFor(model => model.StartMonth, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Start Year:<span class="text-danger">*</span></label>
+                                                                    <select class="form-control" id="Year" name="Year">
+                                                                        <option value="">--select--</option>
+
+                                                                    </select>
+                                                                    @Html.HiddenFor(model => model.Year)
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Renew Date<span class="text-danger">*</span></label>
+                                                                    @Html.TextBoxFor(M => M.RenewDate, new { @class = "form-control", @Type = "date" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Remarks<span class="text-danger">*</span></label>
+                                                                    @Html.TextAreaFor(M => M.Remarks, new { @class = "form-control", @maxlength = "50" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row justify-content-center">
+                                                                <div class="col-md-4">
+                                                                    <div class="text-center">
+                                                                        <button class="btn btn-success"> <i class="fa fa-check"></i> Submit</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        //Reference the DropDownList.
+        var ddlYears = $("#Year");
+
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2000; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Employee/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+                        $("#Fk_SubDeptId").val(@Model.Fk_DepartmentId);
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+
+    function BindEmployee(id) {
+        debugger;
+
+        var WTypeId = $('#WTypeId').val();
+        var subDeptId = $('#Fk_SubDeptId').val();
+        var EmpName = $('#EmpName').val();
+        var DptEpCode = $('#DeptEmpCode').val();
+        var PFMSCode = $('#PFMSCode').val();
+        debugger;
+        if ($('#WTypeId').val() == '' || $('#WTypeId').val() == '0' || $('#WTypeId').val() == null) {
+            swal("", "Please Select Type...", "warning");
+            $('#WTypeId').focus();
+            return false;
+        }
+        if ($('#Fk_DepartmentId').val() == '' || $('#Fk_DepartmentId').val() == '0' || $('#Fk_DepartmentId').val() == null) {
+            swal("", "Please Select Department..", "warning");
+            $('#Fk_DepartmentId').focus();
+            return false;
+        }
+        $.ajax({
+            url: '/Employee/GetEmpbyDptEpCodeAndPFMSCode',
+            type: 'post',
+            data: { WTypeId: WTypeId,subDeptId: subDeptId, EmpName: EmpName, DptEpCode: DptEpCode, PFMSCode: PFMSCode },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#EmpId').empty();
+                    $('#EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+    function BindEmpDetail(id) {
+        debugger;
+        var EmpId = $('#EmpId').val();
+        if (EmpId > 0) {
+            $.ajax({
+                url: '/Employee/GetEmployeeDetail',
+                type: 'post',
+                data: { EmpID: EmpId },
+                dataType: 'json',
+                containtType: 'aplication/json;charset=utf-8',
+                success: function (data) {
+                    if (data != null) {
+                        debugger;
+                        $('#ID').val(data.ID);
+                        $('#GISId').val(data.GISId);
+                        $('#EmployeeName').val(data.EmpName);
+                        $('#BankId').val(data.BankId);
+                        $('#FatherName').val(data.FatherName);
+                        $('#PermAddress').val(data.PermAddress);
+                        $('#DesignationId').val(data.DesignationId);
+                        $('#AccountNo').val(data.AccountNo);
+                        $('#AdharNo').val(data.AdharNo);
+                        $('#PANNo').val(data.PANNo);
+                        $('#MobileNo').val(data.MobileNo);
+                        $('#DOB').val(data.DOB);
+                        $('#DOJ').val(data.DOJ);
+                        $('#DOR').val(data.DOR);
+                        $('#LicNo').val(data.LicNo);
+                        $('#LicAmount').val(data.LicAmount);
+                        $('#Type').val(data.Type);
+                        $('#GISNo').val(data.GISNo);
+                        $('#GISAmount').val(data.GISAmount);
+                        $('#Status').val(data.Status);
+                        $('#StartMonth').val(data.StartMonth);
+                        $('#Year').val(data.Year);
+                        $('#RenewDate').val(data.RenewDate);
+                        $('#Remarks').val(data.Remarks);
+                        if (data.Photo != null) {
+                            $('#img').attr("src", '');
+                            $('#img').attr("src", data.Photo.replace("~", ""));
+                        }
+                    }
+                },
+                error: function (error) {
+                }
+            })
+        }
+    }
+
+
+    function ValidateForm() {
+        debugger;
+        if ($('#Type').val() == '' || $('#Type').val() == '0' || $('#Type').val() == null) {
+            swal("", "Please Select Category...", "warning");
+            $('#Type').focus();
+            return false;
+        }
+        if ($('#GISNo').val() == '' || $('#GISNo').val() == '0' || $('#GISNo').val() == null) {
+            swal("", "Please Select GISNo..", "warning");
+            $('#GISNo').focus();
+            return false;
+        }
+        if ($('#GISAmount').val() == '' || $('#GISAmount').val() == '0' || $('#GISAmount').val() == null) {
+            swal("", "Please select GISAmount..", "warning");
+            $('#GISAmount').focus();
+            return false;
+        }
+
+        if ($('#Status').val() == '' || $('#Status').val() == '0' || $('#Status').val() == null) {
+            swal("", "Please Select Status..", "warning");
+            $('#Status').focus();
+            return false;
+        }
+        if ($('#StartMonth').val() == '' || $('#StartMonth').val() == '0' || $('#StartMonth').val() == null) {
+            swal("", "Please Select Month..", "warning");
+            $('#StartMonth').focus();
+            return false;
+        }
+        if ($('#Year').val() == '' || $('#Year').val() == '0' || $('#Year').val() == null) {
+            swal("", "Please Select Year..", "warning");
+            $('#Year').focus();
+            return false;
+        }
+        if ($('#RenewDate').val() == '' || $('#RenewDate').val() == '0' || $('#RenewDate').val() == null) {
+            swal("", "Please Select RenewDate..", "warning");
+            $('#RenewDate').focus();
+            return false;
+        }
+        if ($('#Remarks').val() == '' || $('#Remarks').val() == '0' || $('#Remarks').val() == null) {
+            swal("", "Please Enter Your Remark..", "warning");
+            $('#Remarks').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+
+    function onlyNos(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+
+    }
+
+    function PanAndIfsc(e) {
+        debugger;
+        var k;
+        document.all ? k = e.keyCode : k = e.which;
+        return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || (k >= 48 && k <= 57));
+    }
+
+</script>
+

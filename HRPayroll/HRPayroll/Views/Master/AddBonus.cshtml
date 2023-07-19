@@ -1,0 +1,169 @@
+﻿@model HRPayroll.Models.Bonus
+
+@{
+    ViewBag.Title = "AddBonus";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-lg-4 py-3">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Bonus Master</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card card-outline-info">
+
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @{
+                                        string Code = (string)TempData["code"];
+                                        string msg = (string)TempData["Msg"];
+                                        if (!string.IsNullOrEmpty(Code))
+                                        {
+                                            if (Code == "1")
+                                            {
+                                                <div class="alert alert-success msgdiv">
+                                                    <strong>Success!</strong> @msg
+                                                </div>
+                                                <script type="text/javascript">
+                                                    window.setTimeout(function () {
+                                                        location.href = '/Master/AddBonus';
+                                                    }, 2000);
+                                                </script>
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-danger msgdiv">
+                                                    <strong>Error!</strong> @msg
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <form method="post" id="form" onsubmit="return ValidateForm()">
+                                <div class="form-body">
+                                    <div class="row p-t-20">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Grade Pay Level<span class="text-danger">*</span></label>
+                                                @Html.DropDownListFor(model => model.LevelId, new SelectList(ViewBag.Level, "Value", "Text"), "-Select Level-", new { @class = "form-control" })
+                                                @Html.HiddenFor(model => model.ID)
+                                                @*@Html.HiddenFor(model => model.LevelId)*@
+                                                @Html.ValidationMessageFor(m => m.LevelId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Effective From<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.EffectiveDate, new { @class = "form-control", @placeholder = "Enter Effective Date", @Type = "date" })
+                                                @Html.ValidationMessageFor(m => m.EffectiveDate, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Bonus Amount<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.BonusAmt, new { @class = "form-control", @placeholder = "Enter Bonus Amount" })
+                                                @Html.ValidationMessageFor(m => m.BonusAmt, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Cash Percent<span class="text-danger">*</span></label>
+                                                @Html.TextBoxFor(M => M.CashPer, new { @class = "form-control", @placeholder = "Enter Cash Percentage" })
+                                                @Html.ValidationMessageFor(m => m.CashPer, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">
+                                                    PF Percent<span class="text-danger">*</span>
+                                                </label>
+                                                @Html.TextBoxFor(M => M.PFPer, new { @class = "form-control", @placeholder = "Enter PF Percentage" })
+                                                @Html.ValidationMessageFor(m => m.PFPer, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    @if (Model.ID > 0)
+                                    {
+                                        <button class="btn btn-success hstheme-button-o text-white">
+                                            <i class="fa fa-check"></i>
+                                            Update
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-success hstheme-button-o text-white">
+                                            <i class="fa fa-check"></i>
+                                            Submit
+                                        </button>
+                                    }
+
+                                    <a href="/Master/BonusList" class="btn btn-danger hstheme-button-o text-white">
+                                        <i class="fa fa-crosshairs"></i>
+                                        Cancel
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function ValidateForm() {
+        debugger;
+        if ($('#LevelId').val() == '' || $('#LevelId').val() == '0' || $('#LevelId').val() == null ) {
+            swal("", "Please select level..", "warning");
+            $('#LevelId').focus();
+            return false;
+        }
+        if ($('#EffectiveDate').val() == '' || $('#EffectiveDate').val() == '0' || $('#EffectiveDate').val() == null) {
+            swal("", "Please Enter Effective Date..", "warning");
+            $('#EffectiveDate').focus();
+            return false;
+        }
+        if ($('#BonusAmt').val() == '' || $('#BonusAmt').val() == '0' || $('#BonusAmt').val() == null) {
+            swal("", "Please Enter Bonus Amt..", "warning");
+            $('#BonusAmt').focus();
+            return false;
+        }
+        if ($('#CashPer').val() == '' || $('#CashPer').val() == '0' || $('#CashPer').val() == null) {
+            swal("", "Please Enter Cash Percent..", "warning");
+            $('#CashPer').focus();
+            return false;
+        }
+        if ($('#PFPer').val() == '' || $('#PFPer').val() == '0' || $('#PFPer').val() == null) {
+            swal("", "Please Enter PF Percent..", "warning");
+            $('#PFPer').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+
+    }
+
+
+</script>

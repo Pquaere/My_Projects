@@ -1,0 +1,426 @@
+﻿@model HRPayroll.Models.DAilyWagesEarDed
+@{
+    ViewBag.Title = "DAilyWagesEarDed";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">Daily Wages Earnings & Deductions Form</h3>
+                        </div>
+                    </div>
+                </div>
+                <form action="/Employee/Add_DAilyWagesEarDed" method="post" id="form1">
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @{
+                                                    string Code = (string)TempData["code"];
+                                                    string msg = (string)TempData["Msg"];
+                                                    if (!string.IsNullOrEmpty(Code))
+                                                    {
+                                                        if (Code == "1")
+                                                        {
+                                                            <div class="alert alert-success msgdiv">
+                                                                <strong>Success!</strong> @msg
+                                                            </div>
+                                                            <script type="text/javascript">
+                                                                window.setTimeout(function () {
+                                                                    location.href = '/Employee/DAilyWagesEarDed';
+                                                                }, 5000);
+                                                            </script>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="alert alert-danger msgdiv">
+                                                                <strong>Error!</strong> @msg
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+
+                                        <h5>Search</h5>
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Department<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Fk_DepartmentId, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "BindSubDepartment();" })
+                                                        @Html.HiddenFor(model => model.ID)
+                                                        @Html.HiddenFor(model => model.SaveUpdate)
+                                                        @Html.HiddenFor(model => model.Fk_DepartmentId)
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Select Sub Department<span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(model => model.Fk_SubDeptId, new SelectList(ViewBag.SubDepartment, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control" })
+
+                                                        @Html.HiddenFor(model => model.Fk_SubDeptId)
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-4 mt-2">
+                                                    <button class="btn btn-info mb-2" style="color:white;margin-top:20px;" type="button" onclick="BindEmployee()">
+                                                        Search
+                                                    </button>
+
+                                                </div>
+                                                  <div class="row p-t-20">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Search Employee<span class="text-danger">*</span></label>
+                                                            @Html.DropDownListFor(model => model.EmpId, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control", @onchange = "BindEmpDetail();" })
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Order By</label>
+                                                            @Html.DropDownListFor(model => model.OrderName, new List<SelectListItem>
+           {
+               new SelectListItem{ Text="Name", Value = "EmpName" },
+               new SelectListItem{ Text="Employee Code", Value = "EmpCode" },
+               new SelectListItem{ Text="Mobile No.", Value = "MobileNo" }
+
+            }, new { @class = "form-control" })
+
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label"> </label>
+                                                            @Html.DropDownListFor(model => model.AscDesc, new List<SelectListItem>
+           {
+               new SelectListItem{ Text="Ascending", Value = "Asc" },
+               new SelectListItem{ Text="Descending", Value = "Desc" },
+
+
+            }, new { @class = "form-control" })
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="card card-outline-info">
+                                                    <div class="card-body">
+                                                        <h5>Personal Detail</h5>
+                                                        <div class="row p-t-20">
+                                                            <div class="col-lg-12">
+                                                                <div class="row p-t-20">
+                                                                    <div class="col-md-12">
+                                                                        <div class="row p-t-20">
+                                                                            <div class="col-md-4">
+                                                                                <div class="form-group">
+                                                                                    <label class="form-label">Employee Name</label>
+                                                                                    @Html.TextBoxFor(M => M.EmpName, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                    @Html.ValidationMessageFor(m => m.EmpName, "", new { @class = "text-danger" })
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-4">
+                                                                                <div class="form-group">
+                                                                                    <label class="form-label">Father's  Name</label>
+                                                                                    @Html.TextBoxFor(M => M.FatherName, new { @class = "form-control", @maxLength = "20", @readonly = "readonly" })
+                                                                                    @Html.ValidationMessageFor(m => m.FatherName, "", new { @class = "text-danger" })
+                                                                                </div>
+                                                                            </div>
+
+
+
+                                                                        </div>
+
+                                                                    </div>
+
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="card card-outline-info">
+                                                    <div class="card-body">
+                                                        <h5>Add Earnings</h5>
+                                                        <div class="row p-t-20">
+                                                            <div class="col-lg-12">
+                                                                <div class="row p-t-20">
+                                                                    <div class="col-md-12">
+                                                                        <div class="row p-t-20">
+                                                                            <div class="col-md-4">
+                                                                                <div class="form-group">
+                                                                                    <label class="form-label">Per Day Salary</label>
+                                                                                    @Html.TextBoxFor(M => M.BasicSalary, new { @class = "form-control", @maxLength = "20", })
+
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-4">
+                                                                                <div class="form-group">
+                                                                                    <label class="form-label">Earning</label>
+                                                                                    @Html.TextBoxFor(M => M.Earning, new { @class = "form-control", @maxLength = "20" })
+
+                                                                                </div>
+                                                                            </div>
+
+
+                                                                            <div class="col-md-4">
+                                                                                <div class="form-group">
+                                                                                    <label class="form-label">Deduction</label>
+                                                                                    @Html.TextBoxFor(M => M.Deduction, new { @class = "form-control", @maxLength = "20" })
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="col-md-12">
+                        <div class="form-group text-center">
+
+
+                            <button class="btn btn-success hstheme-button-o text-white" id="save" type="button" onclick="checkSaveUpdate('S')">
+                                Submit
+                            </button>
+                            <input type="button" class="btn btn-danger" name="Update" value="Update" id="Update" onclick="checkSaveUpdate('U')" />
+
+
+
+                        </div>
+                    </div>
+
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+     function BindSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Fk_DepartmentId').val();
+        $.ajax({
+            url: '/Employee/GetSubDepartment',
+            type: 'post',
+            data: { DepartmentId: DepartmentId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#Fk_SubDeptId').empty();
+                    $('#Fk_SubDeptId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#Fk_SubDeptId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                    if (id > 0) {
+
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }  
+    function BindEmployee(id) {
+        debugger;
+        
+        var SubDeptId = $('#Fk_SubDeptId').val();
+        var DptEpCode = "";
+        var PFMSCODE = $('#PFMSCode').val();
+        var EmpName = $('#EmpName').val();
+        if (Fk_DepartmentId == "" || Fk_DepartmentId == null || Fk_DepartmentId == undefined) {
+            swal("", "Please Select DepartmentId ", "warning")
+            return false;
+        }
+        if (Fk_SubDeptId == "" || Fk_SubDeptId == null || Fk_SubDeptId == undefined) {
+            swal("", "Please Select SubDeptId ", "warning")
+            return false;
+        }
+       
+        $.ajax({
+            url: '/Employee/GetEmployeeForDW',
+            type: 'post',
+            data: { SubDeptId: SubDeptId, DptEpCode: DptEpCode, PFMSCODE: PFMSCODE, EmpName: EmpName },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#EmpId').empty();
+                    $('#EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    } 
+    function BindEmployee1(id) {
+        debugger;
+
+        var DptEpCode = $('#DeptEmpCode').val();
+
+        $.ajax({
+            url: '/Employee/GetEmpbyDptEpCode',
+            type: 'post',
+            data: { DptEpCode: DptEpCode },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    $('#EmpId').empty();
+                    $('#EmpId').append('<option>---Select----</option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $('#EmpId').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>');
+                    }
+                }
+            },
+            error: function (error) {
+            }
+        })
+    }
+    function BindEmpDetail(id) {
+        debugger;
+        var EmpId = $('#EmpId').val();
+        $.ajax({
+            url: '/Employee/GetEmployeeDetailforDw',
+            type: 'post',
+            data: { EmpID: EmpId },
+            dataType: 'json',
+            containtType: 'aplication/json;charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    debugger;
+                    if (data.DedEmpId > 0) {
+                       
+                        $('#save').prop('disabled', true);
+                        $('#Update').prop('disabled', false);
+                    }
+                    else {
+                        $('#save').prop('disabled', false);
+                        $('#Update').prop('disabled', true);
+
+                    }
+                    $('#ID').val(data.ID);
+                    $('#EmpName').val(data.EmpName); 
+                    $('#FatherName').val(data.FatherName);
+                    $('#BasicSalary').val(data.BasicSalary);
+                    $('#Earning').val(data.Earning);
+                    $('#Deduction').val(data.Deduction);
+                    if (data.Rate > 0) {
+                        $('#BasicSalary').val(data.Rate);
+                    }
+                   /* $('#FatherName').val(data.FatherName);  */ 
+                }
+            },
+            error: function (error) {
+            }
+        })
+    } 
+    function checkSaveUpdate(form)
+    {
+        var EmpId = $('#EmpId').val();
+
+        if (EmpId == "" || EmpId == null || EmpId == undefined) {
+            swal("", "Please Select Employee ", "warning")
+            return false;
+        }
+
+        debugger;
+        if (form == "U") {
+            var y = "Update"
+            $('#SaveUpdate').val(y)
+
+        }
+        else
+        {
+            var y = "Save"
+            $('#SaveUpdate').val(y)
+        }
+        $('#form1').submit();
+
+    }
+    function isNumberKey(evt) {
+        debugger
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+
+</script>

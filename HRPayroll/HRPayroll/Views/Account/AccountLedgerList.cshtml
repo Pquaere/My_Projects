@@ -1,0 +1,186 @@
+﻿@model HRPayroll.Models.AccountLedger
+@{
+    ViewBag.Title = "AccountLedgerList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="block-header py-2">
+            <div class="row page-titles">
+                <div class="col-md-6 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Account Ledger List <span class="text-muted fw-normal ms-2">(@Model.list.Count)</span></h3>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="pbutton" style="text-align: right">
+                        <div class="right text-right">
+                            <a href="@Url.Action("AccountLedger","Account")" id="btnAdd" class="btn btn-success btn-sm">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Add New
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr role="row" class="bg-secondary">
+                                                <th>Sr.No</th>
+                                                <th>Ledger Name</th>
+                                                <th>Account Group Name</th>
+                                                <th>Current Balance</th>
+                                                <th>Financial Year</th>
+                                                <th>Account Type</th>
+                                                <th>Is Reserved</th>
+                                                <th>Nature</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model != null && Model.list != null)
+                                            {
+                                                if (Model.list.Count > 0)
+                                                {
+                                                    int i = 1;
+                                                    foreach (var itm in Model.list)
+                                                    {
+                                                        <tr>
+                                                            <th scope="row" class="ps-4">@((i) + ((Model.Pager.CurrentPage - 1) * Model.Pager.PageSize))</th>
+                                                            @*<td>@itm.Group_Ref_Id</td>*@
+                                                            <td>@itm.Ledger_Name</td>
+                                                            <td>@itm.Account_Group_Name</td>
+                                                            <td>@itm.Current_Balance</td>
+                                                            <td>@itm.Fy_Full</td>
+                                                            <td>@itm.Account_Type</td>
+                                                            <td>
+                                                                @if (itm.Is_Reserved == 1)
+                                                                {
+                                                                    <span class="badge badge-soft-success mb-0">Reserved</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="badge badge-soft-success mb-0">Not Reserved</span>
+                                                                }
+                                                            </td>
+                                                            <td>@itm.Nature</td>
+                                                            <td>
+                                                                <ul class="list-inline mb-0">
+                                                                    <li class="list-inline-item">
+                                                                        <a href="@Url.Action("AccountLedger","Account",new { Id=itm.Ledger_Id})" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" class="px-2 text-primary"><i class="fa fa-pencil font-size-18"></i></a>
+                                                                    </li>
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" class="px-2 text-danger" onclick="DeleteAl('@itm.Ledger_Id')"><i class="fa fa-trash-o font-size-18"></i></a>
+                                                                    </li>
+                                                                </ul>
+                                                            </td>
+                                                        </tr>
+                                                        i++;
+                                                    }
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-0 align-items-center pb-4">
+            @if (Model != null)
+            {
+                if (Model.Pager != null)
+                {
+                    if (Model.Pager.EndPage > 1)
+                    {
+                        <div class="col-sm-6">
+                            <div><p class="mb-sm-0">Showing @Model.list.Count of @Model.list[0].TotalRecord entries</p></div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="float-sm-end">
+                                <ul class="pagination mb-sm-0">
+                                    @if (Model.Pager.CurrentPage > 1)
+                                    {
+                                        <li class="page-item">
+                                            <a href="/Account/VoucherTypesList" class="page-link"><i class="mdi mdi-chevron-left"></i>First</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a href="/Account/VoucherTypesList?Page=@(Model.Pager.CurrentPage - 1)" class="page-link"><i class="mdi mdi-chevron-left"></i>Previous</a>
+                                        </li>
+                                    }
+                                    @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+                                    {
+                                        <li class="page-item @(page == Model.Pager.CurrentPage ? "active" : "")"><a href="/Account/VoucherTypesList?Page=@page" class="page-link">@page</a></li>
+                                    }
+                                    @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="/Account/VoucherTypesList?Page=@(Model.Pager.CurrentPage + 1)">Next</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="/Account/VoucherTypesList?Page=@(Model.Pager.TotalPages)">Last</a>
+                                        </li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    function DeleteAl(ID) {
+        debugger;
+        var Id = ID;
+        $.confirm({
+            title: 'Confirmation Message',
+            content: 'Are you sure to delete this record ?',
+            buttons: {
+                Ok: function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Account/DeleteAccountLedger',
+                        data: { id: Id },
+                        dataType: "Json",
+                        success: function (data) {
+                            if (data.flag == 1) {
+                                window.location.reload();
+
+                            }
+                            else {
+                                swal("", data.msg, "error");
+                            }
+                        },
+                        error: function (er) {
+
+                        }
+                    })
+                },
+                Cancel: function () {
+                    window.location.reload();
+                }
+            }
+        });
+    }
+
+</script>            
+
+
+

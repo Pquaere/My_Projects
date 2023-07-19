@@ -1,0 +1,185 @@
+﻿@model HRPayroll.Models.DAPercent
+@{
+    ViewBag.Title = "DA_Percent";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+    <div class="container-fluid">
+        <div class="page-wrapper">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Add DA Percent</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    @{
+                        string Code = (string)TempData["code"];
+                        string msg = (string)TempData["Msg"];
+                        if (!string.IsNullOrEmpty(Code))
+                        {
+                            if (Code == "1")
+                            {
+                                <div class="alert alert-success msgdiv">
+                                    <strong>Success!</strong> @msg
+                                </div>
+                                <script type="text/javascript">
+                                    window.setTimeout(function () {
+                                        location.href = '/Master/DA_Percent';
+                                    }, 3000);
+
+/**/</script>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger msgdiv">
+                                    <strong>Error!</strong> @msg
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card card-outline-info">
+                            <div class="card-body">
+                                <form action="/Master/Add_DA_Percent" method="post" id="FormSubmit" onsubmit="return ValidateForm();">
+                                    <div class="form-body">
+
+                                        <div class="row p-t-20">
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Employee Category<span class="text-danger">*</span></label>
+                                                    @Html.DropDownListFor(m => m.EmpCategory, new SelectList(ViewBag.EmpCategory1, "Value", "Text"), "-select-", new { @class = "form-control", @onchange = "BindEmpType()" })
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        Select Pay commission<span class="text-danger">*</span>
+                                                    </label>
+                                                    @Html.DropDownListFor(model => model.PayComId, new SelectList(ViewBag.Paycommission, "Value", "Text"), "-- Select --", new { @class = "form-control" })
+
+                                                    @Html.ValidationMessageFor(m => m.PayComId, "", new { @class = "text-danger" })
+                                                    @Html.HiddenFor(Model => Model.ID)
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        DA %<span class="text-danger">*</span>
+                                                    </label>
+                                                    @Html.TextBoxFor(M => M.DA_Percent, new { @class = "form-control", @placeholder = "Enter DA %", @onchange = "checkpercent()", @onkeypress = "return isNumberKey(event)" })
+                                                    @Html.ValidationMessageFor(m => m.DA_Percent, "", new { @class = "text-danger" })
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+
+                                                        Effective From Date<span class="text-danger">*</span>
+                                                    </label>
+                                                    @Html.TextBoxFor(M => M.Date, new { @class = "form-control", @type = "Date" })
+                                                    @Html.ValidationMessageFor(m => m.Date, "", new { @class = "text-danger" })
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        @if (Model.ID > 0)
+                                        {
+                                            <button class="btn btn-success hstheme-button-o text-white">
+                                                <i class="fa fa-check"></i>
+                                                Update
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-success hstheme-button-o text-white">
+                                                <i class="fa fa-check"></i>
+                                                Submit
+                                            </button>
+                                        }
+
+                                        <a href="/Master/DA_PercentList" class="btn btn-danger hstheme-button-o text-white">
+                                            <i class="fa fa-crosshairs"></i>
+                                            Cancel
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+</div>
+
+        <script>
+
+            function ValidateForm() {
+                debugger;
+                if ($('#EmpCategory').val() == '' || $('#EmpCategory').val() == '0') {
+                    swal("", "Please Select Employee Category..", "warning");
+                    $('#EmpCategory').focus();
+                    return false;
+
+                }
+                if ($('#PayComId').val() == '' || $('#PayComId').val() == '0') {
+                    swal("", "Please Select Pay commission..", "warning");
+                    $('#PayComId').focus();
+                    return false;
+
+                }
+                if ($('#DA_Percent').val() == '' || $('#DA_Percent').val() == '0' || $('#DA_Percent').val() == null) {
+                    swal("", "Please Enter DA Percent..", "warning");
+                    $('#DA_Percent').focus();
+                    return false;
+                }
+                if ($('#Date').val() == '' || $('#Date').val() == '0' || $('#Date').val() == null) {
+                    swal("", "Please Enter Date ..", "warning");
+                    $('#Date').focus();
+                    return false;
+                }
+                else {
+                    return true;
+                    $("#FormSubmit").submit();
+                }
+            }
+
+            function checkpercent() {
+                debugger;
+                var da = $("#DA_Percent").val();
+
+                if (parseFloat(da) > 100) {
+                    swal("", "DA Percent More Than 100..", "warning");
+                    $('#DA_Percent').val('');
+                }
+            }
+
+            function isNumberKey(evt) {
+                debugger
+                var charCode = (evt.which) ? evt.which : evt.keyCode;
+                if (charCode != 46 && charCode > 31
+                    && (charCode < 48 || charCode > 57))
+                    return false;
+
+                return true;
+            }
+
+        </script>
+

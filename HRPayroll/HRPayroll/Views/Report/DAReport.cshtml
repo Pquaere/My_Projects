@@ -1,0 +1,386 @@
+﻿
+@model HRPayroll.Models.DAArrear
+@{
+    ViewBag.Title = "DAReport";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="page-wrapper">
+        <div class="card">
+            <div class="card-bod1" style="padding: 8px; background: #e7e7e7;">
+                <div class="block-header py-lg-4 py-3">
+                    <div class="row page-titles">
+                        <div class="col-md-12 align-self-center">
+                            <h3 class="text-themecolor font-20 clearfix" style="text-align:center">DA Arrear</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        @{
+                            string Code = (string)TempData["code"];
+                            string msg = (string)TempData["Msg"];
+                            if (!string.IsNullOrEmpty(Code))
+                            {
+                                if (Code == "1")
+                                {
+                                    <div class="alert alert-success msgdiv">
+                                        <strong>Success!</strong> @msg
+                                    </div>
+                                    <script type="text/javascript">
+                                        window.setTimeout(function () {
+                                            location.href = '/Report/DAReport';
+                                        }, 5000);
+                                    </script>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-danger msgdiv">
+                                        <strong>Error!</strong> @msg
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+                <form method="post" id="form" action="/Report/DAReport" onsubmit="return ValidateForm()">
+                    <div class="container-fluid">
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="card card-outline-info">
+                                    <div class="card-body">
+
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">District</label>
+                                                        @Html.DropDownListFor(model => model.District, new SelectList(ViewBag.ddlDistrict, "Value", "Text"), "-Select District-", new { @class = "form-control", @disabled = true })
+                                                        @Html.HiddenFor(model => model.Id)
+                                                        @Html.HiddenFor(model => model.District)
+                                                        @Html.ValidationMessageFor(m => m.District, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">ULB Type</label>
+                                                        @Html.DropDownListFor(model => model.ULBType, new SelectList(ViewBag.Agency, "Value", "Text"), new { @class = "form-control", @disabled = true })
+                                                        @Html.HiddenFor(model => model.ULBType)
+                                                        @Html.ValidationMessageFor(m => m.ULBType, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">ULB Name</label>                                                       @Html.DropDownListFor(model => model.ULBName, new SelectList(ViewBag.Office, "Value", "Text"), "-Select Office-", new { @class = "form-control", @disabled = true })
+                                                        @Html.HiddenFor(model => model.ULBName)
+                                                        @Html.ValidationMessageFor(m => m.ULBName, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row p-t-20">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Year</label>
+                                                        <select class="form-control" id="Year" name="Year">
+                                                            <option value="">--select--</option>
+                                                        </select>
+                                                        @Html.HiddenFor(model => model.Year)
+                                                        @Html.ValidationMessageFor(m => m.Year, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Month</label><br />
+
+                                                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.Month, "Value", "Text"), "-Select Month-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.Month)
+                                                        @Html.ValidationMessageFor(m => m.Month, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">WorkingType</label>
+                                                        @Html.DropDownListFor(model => model.WorkingType, new SelectList(ViewBag.Type, "Value", "Text"), "-Select WorkingType-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.WorkingType)
+                                                        @Html.ValidationMessageFor(m => m.WorkingType, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+
+
+
+                                            </div>
+                                            <div class="row p-t-20">
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Department</label>
+                                                        @Html.DropDownListFor(model => model.Department, new SelectList(ViewBag.Department, "Value", "Text"), "-Select Department-", new { @class = "form-control", @onchange = "GetSubDepartment();" })
+                                                        @Html.HiddenFor(model => model.Department)
+                                                        @Html.ValidationMessageFor(m => m.Department, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">SubDepartment</label>                                                      @Html.DropDownListFor(model => model.SubDepartment, new SelectList(String.Empty, "Value", "Text"), "-Select SubDepartment-", new { @class = "form-control", @onchange = "GetEmployee()" })
+                                                        @Html.HiddenFor(model => model.SubDepartment)
+                                                        @Html.ValidationMessageFor(m => m.SubDepartment, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Empployee Name</label>
+                                                        @Html.DropDownListFor(model => model.EmployeeName, new SelectList(ViewBag.Employee, "Value", "Text"), "-Select Employee-", new { @class = "form-control" })
+                                                        @Html.HiddenFor(model => model.EmployeeName)
+                                                        @Html.ValidationMessageFor(m => m.EmployeeName, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row p-t-20">
+
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="ReportFor">Report For</label><br />
+                                                        @Html.RadioButtonFor(model => model.ReportFor, new { @class = "form-control" })
+                                                        DA Arrear
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <input type="submit" value="Show" class="btn btn-success" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            @if (Model.List != null && Model.List.Count > 0)
+            {
+                <div class="row" id="EmpTable">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table">
+                                    <div class="table-responsive">
+                                        <table class="table dataTable table-striped">
+                                            <thead id="tbl">
+                                                <tr role="row" class="bg-secondary">
+                                                    <th>S.No</th>
+                                                    <th>Count</th>
+                                                    <th>Expense Type</th>
+                                                    <th>Action Type</th>
+                                                    <th>Payment Method</th>
+                                                    <th>Transaction Key</th>
+                                                    <th>THead</th>
+                                                    <th>Head</th>
+                                                    <th>Gross Pay</th>
+                                                    <th>Designation</th>
+                                                    <th>PFMSCode</th>
+                                                    <th>Employee Name</th>
+                                                    <th>Working Type</th>
+                                                    <th>Component Code</th>
+                                                    <th>Account No</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model != null && Model.List != null)
+                                                {
+                                                    if (Model.List.Count() > 0)
+                                                    {
+                                                        var Sn = 0;
+                                                        foreach (var item in Model.List)
+                                                        {
+                                                            Sn = Sn + 1;
+                                                            <tr role="row" class="odd">
+                                                                <td>  @Sn</td>
+                                                                <td>@item.cnt</td>
+                                                                <td> @item.ExpenseType </td>
+                                                                <td>@item.ActionType</td>
+                                                                <td> @item.PaymentMethod </td>
+                                                                <td> @item.TransactionKey </td>
+                                                                <td> @item.THead </td>
+                                                                <td> @item.DesigNo </td>
+                                                                <td> @item.PFMSCode </td>
+                                                                <td> @item.EMPName </td>
+                                                                <td> @item.WType </td>
+                                                                <td> @item.ComponentCode </td>
+                                                                <td> @item.AccountNo </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="6"><span>No Data Available</span></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                   
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+
+    })
+
+
+
+    function ValidateForm() {
+        debugger;
+        if ($('#Year').val() == '' || $('#Year').val() == null || $('#Year').val() == '0') {
+            swal("", "Please Select Year...", "warning");
+            $('#Year').focus();
+            return false;
+        }
+        if ($('#Month').val() == '' || $('#Month').val() == '0' || $('#Month').val() == null) {
+            swal("", "Please Select Month...", "warning");
+            $('#Month').focus();
+            return false;
+        }
+        if ($('#WorkingType').val() == '' || $('#WorkingType').val() == null || $('#WorkingType').val() == '0') {
+            swal("", "Please select Working Type..", "warning");
+            $('#WorkingType').focus();
+            return false;
+        }
+        if ($('#Department').val() == '' || $('#Department').val() == null || $('#Department').val() == '0') {
+            swal("", "Please Select Department.", "warning");
+            $('#Department').focus();
+            return false;
+        }
+        if ($('#SubDepartment').val() == '' || $('#SubDepartment').val() == null || $('#SubDepartment').val() == '0') {
+            swal("", "Please Select Sub Department.", "warning");
+            $('#SubDepartment').focus();
+            return false;
+        }
+        if ($('#EmployeeName').val() == '' || $('#EmployeeName').val() == null || $('#EmployeeName').val() == '0') {
+            swal("", "Please Select Employee Name.", "warning");
+            $('#EmployeeName').focus();
+            return false;
+        }
+        if ($('#ReportFor').prop('checked') == false) {
+            swal("", "Please Select Report For..", "warning");
+            return false;
+        }
+        else {
+            return true;
+            $("#form").submit();
+        }
+    }
+
+    $(function () {
+        var ddlYears = $("#Year");
+
+        var currentYear = (new Date()).getFullYear();
+
+        for (var i = 2000; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+    });
+
+    function GetSubDepartment(id) {
+        debugger;
+        var DepartmentId = $('#Department').val();
+        if (DepartmentId > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetSubCategory',
+                data: { DepartmentId: DepartmentId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#SubDepartment').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#SubDepartment').val(id);
+                    }
+                },
+                error: function (e) {
+                    $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#SubDepartment").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+
+    function GetEmployee(id) {
+        debugger;
+
+        var WTypeId = $('#WorkingType').val();
+        var Fk_SubDeptId = $('#SubDepartment').val();
+        var DepartmentId = $('#Department').val();
+        if (DepartmentId > 0) {
+            $.ajax({
+                type: 'post',
+                url: '/Employee/GetEmployeeDropdown',
+                data: { WTypeId: WTypeId, DepartmentId: DepartmentId, Fk_SubDeptId: Fk_SubDeptId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#EmployeeName").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                        for (var i = 0; i < data.length; i++) {
+                            $('#EmployeeName').append('<option value=' + data[i].Value + '>' + data[i].Text + '</option>')
+                        }
+
+                    }
+                    else {
+                        $("#EmployeeName").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                    }
+                    if (id > 0) {
+                        $('#EmployeeName').val(id);
+                    }
+                },
+                error: function (e) {
+                    $("#EmployeeName").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+                }
+
+            })
+        }
+        else {
+            $("#EmployeeName").children().remove().end().append($("<option></option>").val("").text("-Select-"));
+        }
+    }
+
+</script>
+
+
+
+

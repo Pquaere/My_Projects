@@ -1,0 +1,444 @@
+﻿@using HRPayroll.Models.Manager
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>@ViewBag.Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="HR & Project Admin Dashboard Template with Bootstrap 5x">
+    <meta name="author" content="WrapTheme, design by: ThemeMakker.com">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    <link href="~/assets/css/custom.css" rel="stylesheet" />
+    <link href="~/assets/css/ListPage.css" rel="stylesheet" />
+    <link href="~/assets/plugin/sweetalert/sweetalert.css" rel="stylesheet" />
+    <link href="~/assets/css/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/assets/plugin/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <link href="~/assets/css/dataTables.min.css" rel="stylesheet" />
+    <link href="~/assets/css/select2.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+    @if (SessionManager.UTypeId != 5 || SessionManager.UTypeId == 0)
+    {
+        Response.Redirect("/Home/Index");
+    }
+    else
+    {
+        <div id="layout" class="theme-orange">
+            <!-- Page Loader -->
+            <div class="page-loader-wrapper text-center">
+                <div class="loader">
+                    <h4>HR PAYROLL</h4>
+                    <div class="h5 fw-light mt-3">Please wait...</div>
+                </div>
+            </div>
+            <!-- Overlay For Sidebars -->
+
+            <div id="wrapper">
+
+                <!-- top navbar -->
+                <nav class="navbar navbar-fixed-top">
+                    <div class="container-fluid">
+                        <div class="navbar-btn">
+                            <button type="button" class="btn-toggle-offcanvas"><i class="fa fa-bars"></i></button>
+                        </div>
+
+                        <div class="navbar-brand ps-2">
+                            <a href="#">
+                                <img src="~/assets/images/quaere-software-company-logo1.svg" width="150px" />
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Sidbar menu -->
+                <!-- Sidbar menu -->
+                <div id="left-sidebar" class="sidebar">
+                    <div class="user-account p-3">
+                        <div class="d-flex mb-3 pb-3 border-bottom align-items-center">
+                            <img src="~/assets/images/user.png" class="avatar lg rounded me-3" alt="User Profile Picture">
+                            <div class="dropdown flex-grow-1">
+                                <span class="d-block">Welcome,</span>
+                                <a href="#" class="dropdown-toggle user-name" data-bs-toggle="dropdown"><strong>@SessionManager.Name</strong></a>
+                                <ul class="dropdown-menu p-2 shadow-sm">
+                                    <li><a href="/Account/AdminLogout"><i class="fa fa-power-off me-2"></i>Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- nav tab: content -->
+                    <div class="tab-content px-0">
+                        <div class="tab-pane fade show active" id="hr_menu" role="tabpanel">
+                            <nav class="sidebar-nav">
+                                <ul class="metismenu list-unstyled">
+                                    <li class="">
+                                        <a href="/Admin/Dashboard" class="has-arrow">
+                                            <i class="fa fa-tachometer"></i><span>Dashboard</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Add Masters data</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Master/StateList">States</a></li>
+                                            <li><a href="/Master/DistrictList">Districts</a></li>
+                                            <li><a href="/Master/CircleList">Circles</a></li>
+                                            <li><a href="/Master/OfficeList">Offices</a></li>
+                                            <li><a href="/Master/DepartmentList">Departments</a></li>
+                                            <li><a href="/Master/SubDepartmentList">Sub-Departments</a></li>
+                                            <li><a href="/Master/DA_PercentList">DA Percentage</a></li>
+                                            <li><a href="/Master/fixallowanceList">Fix Allowance</a></li>
+                                            <li><a href="/Master/DesignationList">Designations</a></li>
+                                            <li><a href="/Master/ServiceTypeList">Service-Types</a></li>
+                                            <li><a href="/Master/OfficeTimeList">Office-Time</a></li>
+                                            <li><a href="/Master/HolidayTypeList">Holiday-Types</a></li>
+                                            <li><a href="/Master/HolidayList">Holidays</a></li>
+                                            <li><a href="/Master/LeaveTypeList">Leave-Types</a></li>
+                                            <li><a href="/Master/ActivitiesList">Activities</a></li>
+                                            <li><a href="/Master/EmployeeTypeList">Employement</a></li>
+                                            @*<li><a href="/Master/CompanyList">Company</a></li>*@
+                                            <li><a href="/Admin/UserRegistration">User Registration</a></li>
+                                            <li><a href="/Admin/UserRegList">User List</a></li>
+                                            @*<li><a href="#">View Password</a></li>
+        <li><a href="#">Delete Salary From Bill</a></li>
+        <li><a href="#">Map User To Circle</a></li>*@
+                                            <li><a href="/Master/GradePayList">GradePay</a></li>
+                                            <li><a href="/Master/HeadCodeList">Payment Head</a></li>
+                                            <li><a href="/Master/EmpCategoryList">Class Category</a></li>
+                                            <li><a href="/Master/ServiceQuotaList">Service Quota</a></li>
+                                            <li><a href="/Master/MandalList">Mandals</a></li>
+                                            <li><a href="/Master/DivisionList">Divisions</a></li>
+                                            <li><a href="/Master/ComissionList">Commission</a></li>
+                                            <li><a href="/Master/PayComissionList">Pay Commission</a></li>
+                                        </ul>
+                                    </li>
+
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Daily Calling</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Generate Excel Calling</a></li>
+                                                <li><a href="#">Upload Excel Calling</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>ULB Payment</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Update Payment Status</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Employee</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="/Employee/EmployeeRegistration">Permanent Registration</a></li>
+                                                <li><a href="/Employee/RegisteredEmployee">  Employee List</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration?Type=2">Contractual Registration</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration?Type=3">dailywages Registration</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration">Employee Registration</a></li>
+                                                <li><a href="/Employee/SearchEmployee">Search Employee</a></li>
+                                                <li><a href="/Employee/EmpPFGPF">Add PF/GPF/NPS Account</a></li>
+                                                <li><a href="/Employee/EmployeeLIC">Add New LIC</a></li>
+                                                <li><a href="/Master/SalaryStopAndSuspend">Stop And Suspend Salary</a></li>
+                                                <li><a href="/Employee/AddEmpLeave">Employee Leave</a></li>
+                                                <li><a href="/Master/LeaveList">Assign Leaves </a></li>
+                                                <li><a href="/Employee/UpdateEmpsalary">Update Employee Salary</a></li>
+                                                <li><a href="/Employee/LeaveRequest">Apply Leave</a></li>
+                                                <li><a href="/Employee/AttendanceRegular">Attendance Request</a></li>
+                                                <li><a href="/Admin/Attendance">Attendance List</a></li>
+                                                <li><a href="/Admin/MonthlyAttendance">Monthly Attendance</a></li>
+                                                <li><a href="/Employee/EmpEarningAndDeductionDetail">Earning And Deduction(Permanent)</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Employee</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="/Employee/EmployeeRegistration">Permanent Registration</a></li>
+                                                <li><a href="/Employee/RegisteredEmployee">  Employee List</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration?Type=2">Contractual Registration</a></li>
+                                                <li><a href="/Employee/RegisteredEmployee?Type=2">Contractual Employee List</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration?Type=3">dailywages Registration</a></li>
+                                                <li><a href="/Employee/RegisteredEmployee?Type=3">dailywages Employee List</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration">Employee Registration</a></li>
+                                                <li><a href="/Employee/SearchEmployee">Search Employee</a></li>
+                                                <li><a href="/Employee/EmpPFGPF">Add PF/GPF/NPS Account</a></li>
+                                                <li><a href="/Employee/EmployeeLIC">Add New LIC</a></li>
+                                                <li><a href="/Master/SalaryStopAndSuspend">Stop And Suspend Salary</a></li>
+                                                <li><a href="/Employee/AddEmpLeave">Employee Leave</a></li>
+                                                <li><a href="/Master/LeaveList">Assign Leaves </a></li>
+                                                <li><a href="/Employee/UpdateEmpsalary">Update Employee Salary</a></li>
+                                                <li><a href="/Employee/LeaveRequest">Apply Leave</a></li>
+                                                <li><a href="/Employee/AttendanceRegular">Attendance Request</a></li>
+                                                <li><a href="/Admin/Attendance">Attendance List</a></li>
+                                                <li><a href="/Admin/MonthlyAttendance">Monthly Attendance</a></li>
+                                                <li><a href="/Employee/EmpEarningAndDeductionDetail">Earning And Deduction(Permanent)</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-list-ul"></i><span>Salary (PayRoll)</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="/Employee/EmpEarningAndDeductionDetail">Earning & Deduction (Permanent)</a></li>
+                                                <li><a href="/Employee/EarningandDeductionContractual">Earning & Deduction (Contractual)</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-list-ul"></i><span>Holidays</span></a>
+                                            <ul class="list-unstyled">
+                                            </ul>
+                                        </li>*@
+                                    @*<li><a href="app-events.html"><i class="fa fa-calendar"></i>Events</a></li>*@
+                                    @*<li><a href="app-activities.html"><i class="fa fa-file-text-o"></i>Activities</a></li>*@
+                                    @*<li><a href="app-social.html"><i class="fa fa-globe"></i>HR Social</a></li>*@
+                                    @*<li>
+                                            <a href="#Accounts" class="has-arrow"><i class="fa fa-briefcase"></i><span>Accounts</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="@Url.Action("AccountTypeList","Account")">Account-Types</a></li>
+                                                <li><a href="@Url.Action("FinancialYearList","Account")">Financial Years</a></li>
+                                                <li><a href="@Url.Action("VoucherTypesList","Account")">Voucher-Types</a></li>
+                                                <li><a href="@Url.Action("AccountGroupList","Account")">Account Groups</a></li>
+                                                <li><a href="@Url.Action("AccountLedgerList","Account")">Account Ledgers</a></li>
+                                                <li><a href="/Master/BankList">Banks</a></li>
+                                                <li><a href="/Master/BranchList">Bank-Branch</a></li>
+                                                <li><a href="/Master/BonusList">Bonus</a></li>
+                                                <li><a href="/Master/CategoryList">Category</a></li>
+                                                <li><a href="/Master/SubCategoryList">Sub-Category</a></li>
+                                                <li><a href="/Master/BrandList">Brands</a></li>
+                                                <li><a href="/Master/UnitList">Units</a></li>
+                                                <li><a href="/Master/SizeList">Size</a></li>
+                                                <li><a href="/Master/ProductList">Products</a></li>
+                                            </ul>
+                                        </li>*@
+                                    <li>
+                                        <a href="#UserPermission" class="has-arrow"><i class="fa fa-user-secret"></i><span>User Permission</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/UserPermission/RoleList">Role Master</a></li>
+                                            <li><a href="/UserPermission/FormTypeList">Form-Type Master</a></li>
+                                            <li><a href="/UserPermission/FormList">Form Master</a></li>
+                                            @*<li><a href="/UserPermission/RolePermissionList">Role Permission</a></li>
+                                                <li><a href="/Userpermission/SetPermissionList">Set Permission</a></li>*@
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <!-- Sidbar menu -->
+                <!-- Sidbar menu -->
+                <div id="left-sidebar" class="sidebar">
+                    <div class="user-account p-3">
+                        <div class="d-flex mb-3 pb-3 border-bottom align-items-center">
+                            <img src="~/assets/images/user.png" class="avatar lg rounded me-3" alt="User Profile Picture">
+                            <div class="dropdown flex-grow-1">
+                                <span class="d-block">Welcome,</span>
+                                <a href="#" class="dropdown-toggle user-name" data-bs-toggle="dropdown"><strong>@SessionManager.Name</strong></a>
+                                <ul class="dropdown-menu p-2 shadow-sm">
+                                    <li><a href="/Account/AdminLogout"><i class="fa fa-power-off me-2"></i>Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- nav tab: content -->
+                    <div class="tab-content px-0">
+                        <div class="tab-pane fade show active" id="hr_menu" role="tabpanel">
+                            <nav class="sidebar-nav">
+                                <ul class="metismenu list-unstyled">
+                                    <li class="">
+                                        <a href="/Admin/Dashboard" class="has-arrow">
+                                            <i class="fa fa-tachometer"></i><span>Dashboard</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Add Masters data</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/Master/StateList">States</a></li>
+                                            <li><a href="/Master/DistrictList">Districts</a></li>
+                                            <li><a href="/Master/CircleList">Circles</a></li>
+                                            <li><a href="/Master/OfficeList">Offices</a></li>
+                                            <li><a href="/Master/DepartmentList">Departments</a></li>
+                                            <li><a href="/Master/SubDepartmentList">Sub-Departments</a></li>
+                                            <li><a href="/Master/DA_PercentList">DA Percentage</a></li>
+                                            <li><a href="/Master/fixallowanceList">Fix Allowance</a></li>
+                                            <li><a href="/Master/DesignationList">Designations</a></li>
+                                            <li><a href="/Master/ServiceTypeList">Service-Types</a></li>
+                                            <li><a href="/Master/OfficeTimeList">Office-Time</a></li>
+                                            <li><a href="/Master/HolidayTypeList">Holiday-Types</a></li>
+                                            <li><a href="/Master/HolidayList">Holidays</a></li>
+                                            <li><a href="/Master/LeaveTypeList">Leave-Types</a></li>
+                                            <li><a href="/Master/ActivitiesList">Activities</a></li>
+                                            <li><a href="/Master/EmployeeTypeList">Employement</a></li>
+                                            @*<li><a href="/Master/CompanyList">Company</a></li>*@
+                                            <li><a href="/Admin/UserRegistration">User Registration</a></li>
+                                            <li><a href="/Admin/UserRegList">User List</a></li>
+                                            @*<li><a href="#">View Password</a></li>
+        <li><a href="#">Delete Salary From Bill</a></li>
+        <li><a href="#">Map User To Circle</a></li>*@
+                                            <li><a href="/Master/GradePayList">GradePay</a></li>
+                                            <li><a href="/Master/HeadCodeList">Payment Head</a></li>
+                                            <li><a href="/Master/EmpCategoryList">Class Category</a></li>
+                                            <li><a href="/Master/ServiceQuotaList">Service Quota</a></li>
+                                            <li><a href="/Master/MandalList">Mandals</a></li>
+                                            <li><a href="/Master/DivisionList">Divisions</a></li>
+                                            <li><a href="/Master/ComissionList">Commission</a></li>
+                                            <li><a href="/Master/PayComissionList">Pay Commission</a></li>
+                                            <li><a href="/Master/AgencyTypeList">Agency Type</a></li>
+                                        </ul>
+                                    </li>
+
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Daily Calling</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Generate Excel Calling</a></li>
+                                                <li><a href="#">Upload Excel Calling</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>ULB Payment</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="#">Update Payment Status</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Employee</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="/Employee/EmployeeRegistration">Permanent Registration</a></li>
+                                                <li><a href="/Employee/RegisteredEmployee">  Employee List</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration?Type=2">Contractual Registration</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration?Type=3">dailywages Registration</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration">Employee Registration</a></li>
+                                                <li><a href="/Employee/SearchEmployee">Search Employee</a></li>
+                                                <li><a href="/Employee/EmpPFGPF">Add PF/GPF/NPS Account</a></li>
+                                                <li><a href="/Employee/EmployeeLIC">Add New LIC</a></li>
+                                                <li><a href="/Master/SalaryStopAndSuspend">Stop And Suspend Salary</a></li>
+                                                <li><a href="/Employee/AddEmpLeave">Employee Leave</a></li>
+                                                <li><a href="/Master/LeaveList">Assign Leaves </a></li>
+                                                <li><a href="/Employee/UpdateEmpsalary">Update Employee Salary</a></li>
+                                                <li><a href="/Employee/LeaveRequest">Apply Leave</a></li>
+                                                <li><a href="/Employee/AttendanceRegular">Attendance Request</a></li>
+                                                <li><a href="/Admin/Attendance">Attendance List</a></li>
+                                                <li><a href="/Admin/MonthlyAttendance">Monthly Attendance</a></li>
+                                                <li><a href="/Employee/EmpEarningAndDeductionDetail">Earning And Deduction(Permanent)</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-users"></i><span>Employee</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="/Employee/EmployeeRegistration">Permanent Registration</a></li>
+                                                <li><a href="/Employee/RegisteredEmployee">  Employee List</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration?Type=2">Contractual Registration</a></li>
+                                                <li><a href="/Employee/RegisteredEmployee?Type=2">Contractual Employee List</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration?Type=3">dailywages Registration</a></li>
+                                                <li><a href="/Employee/RegisteredEmployee?Type=3">dailywages Employee List</a></li>
+                                                <li><a href="/Employee/EmployeeRegistration">Employee Registration</a></li>
+                                                <li><a href="/Employee/SearchEmployee">Search Employee</a></li>
+                                                <li><a href="/Employee/EmpPFGPF">Add PF/GPF/NPS Account</a></li>
+                                                <li><a href="/Employee/EmployeeLIC">Add New LIC</a></li>
+                                                <li><a href="/Master/SalaryStopAndSuspend">Stop And Suspend Salary</a></li>
+                                                <li><a href="/Employee/AddEmpLeave">Employee Leave</a></li>
+                                                <li><a href="/Master/LeaveList">Assign Leaves </a></li>
+                                                <li><a href="/Employee/UpdateEmpsalary">Update Employee Salary</a></li>
+                                                <li><a href="/Employee/LeaveRequest">Apply Leave</a></li>
+                                                <li><a href="/Employee/AttendanceRegular">Attendance Request</a></li>
+                                                <li><a href="/Admin/Attendance">Attendance List</a></li>
+                                                <li><a href="/Admin/MonthlyAttendance">Monthly Attendance</a></li>
+                                                <li><a href="/Employee/EmpEarningAndDeductionDetail">Earning And Deduction(Permanent)</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-list-ul"></i><span>Salary (PayRoll)</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="/Employee/EmpEarningAndDeductionDetail">Earning & Deduction (Permanent)</a></li>
+                                                <li><a href="/Employee/EarningandDeductionContractual">Earning & Deduction (Contractual)</a></li>
+                                            </ul>
+                                        </li>*@
+                                    @*<li>
+                                            <a href="#-" class="has-arrow"><i class="fa fa-list-ul"></i><span>Holidays</span></a>
+                                            <ul class="list-unstyled">
+                                            </ul>
+                                        </li>*@
+                                    @*<li><a href="app-events.html"><i class="fa fa-calendar"></i>Events</a></li>*@
+                                    @*<li><a href="app-activities.html"><i class="fa fa-file-text-o"></i>Activities</a></li>*@
+                                    @*<li><a href="app-social.html"><i class="fa fa-globe"></i>HR Social</a></li>*@
+                                    @*<li>
+                                            <a href="#Accounts" class="has-arrow"><i class="fa fa-briefcase"></i><span>Accounts</span></a>
+                                            <ul class="list-unstyled">
+                                                <li><a href="@Url.Action("AccountTypeList","Account")">Account-Types</a></li>
+                                                <li><a href="@Url.Action("FinancialYearList","Account")">Financial Years</a></li>
+                                                <li><a href="@Url.Action("VoucherTypesList","Account")">Voucher-Types</a></li>
+                                                <li><a href="@Url.Action("AccountGroupList","Account")">Account Groups</a></li>
+                                                <li><a href="@Url.Action("AccountLedgerList","Account")">Account Ledgers</a></li>
+                                                <li><a href="/Master/BankList">Banks</a></li>
+                                                <li><a href="/Master/BranchList">Bank-Branch</a></li>
+                                                <li><a href="/Master/BonusList">Bonus</a></li>
+                                                <li><a href="/Master/CategoryList">Category</a></li>
+                                                <li><a href="/Master/SubCategoryList">Sub-Category</a></li>
+                                                <li><a href="/Master/BrandList">Brands</a></li>
+                                                <li><a href="/Master/UnitList">Units</a></li>
+                                                <li><a href="/Master/SizeList">Size</a></li>
+                                                <li><a href="/Master/ProductList">Products</a></li>
+                                            </ul>
+                                        </li>*@
+                                    <li>
+                                        <a href="#UserPermission" class="has-arrow"><i class="fa fa-user-secret"></i><span>User Permission</span></a>
+                                        <ul class="list-unstyled">
+                                            <li><a href="/UserPermission/RoleList">Role Master</a></li>
+                                            <li><a href="/UserPermission/FormTypeList">Form-Type Master</a></li>
+                                            <li><a href="/UserPermission/FormList">Form Master</a></li>
+                                            @*<li><a href="/UserPermission/RolePermissionList">Role Permission</a></li>
+                                                <li><a href="/Userpermission/SetPermissionList">Set Permission</a></li>*@
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div id="main-content">
+                @RenderBody()
+
+                @*<footer>
+                        <p>&copy; @DateTime.Now.Year - HRMS</p>
+                    </footer>*@
+            </div>
+        </div>
+        <!-- page js file -->
+        @*<script src="~/assets/bundles/mainscripts.bundle.js"></script>*@
+
+        <!-- core js file -->
+        <script src="~/assets/bundles/libscripts.bundle.js"></script>
+        <!-- page js file -->
+        <script src="~/assets/bundles/mainscripts.bundle.js"></script>
+        @*<script src="~/assets/bundles/dataTables.bundle.js"></script>*@
+        <script src="../js/pages/index.js"></script>
+
+
+
+        <!-- Sweet-Alert  -->
+        <script src="~/assets/plugin/sweetalert/sweetalert.min.js"></script>
+        <script src="~/assets/js/jquery-confirm.min.js"></script>
+        <script src="~/assets/plugin/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+        <script src="~/assets/plugin/datatables/jquery.dataTables.min.js"></script>
+        <script src="~/assets/plugin/sweetalert/jquery.sweet-alert.custom.js"></script>
+        <script src="~/assets/plugin/styleswitcher/jQuery.style.switcher.js"></script>
+        <script src="~/assets/bundles/select2.bundle.js"></script>
+        <script src="~/assets/js/Custom.js"></script>
+        <script src="~/assets/bundles/dataTables.bundle.js"></script>
+        <script>
+            jQuery(document).ready(function () {
+                $('.dataTable').DataTable();
+                $('.datepicker').datepicker({
+                    format: 'dd-mm-yyyy',
+                    autoclose: true
+                });
+            });
+
+        </script>
+
+        @RenderSection("scripts", required: false)
+    }
+</body>
+</html>

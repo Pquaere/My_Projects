@@ -1,0 +1,195 @@
+﻿@model  HRPayroll.Models.Attendances
+@{
+    ViewBag.Title = "Attendance";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="block-header py-2">
+        <div class="row page-titles">
+            <div class="col-md-6 align-self-center">
+                <h3 class="text-themecolor font-20 clearfix">Attendance List</h3>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container-fluid mb-2">
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @{
+                                string Code = (string)TempData["code"];
+                                string msg = (string)TempData["Msg"];
+                                if (!string.IsNullOrEmpty(Code))
+                                {
+                                    if (Code == "1")
+                                    {
+                                        <div class="alert alert-success msgdiv" id="msgdiv">
+                                            <strong>Success!</strong> @msg
+                                        </div>
+                                        <script type="text/javascript">
+                                            window.setTimeout(function () {
+                                                /*location.href = '';*/
+                                                $('#msgdiv').hide();
+                                            }, 5000);
+                                        </script>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-danger msgdiv">
+                                            <strong>Error!</strong> @msg
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <form action="/Admin/Attendance" method="post">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label">Date:</label>
+                                    @Html.TextBoxFor(M => M.AttendanceDate, new { @class = "form-control", @placeholder = "Employee Name", @type = "date" })
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group" style="margin-top:31px;">
+                                    <button class="btn btn-success" type="submit">Search</button>
+                                    <button class="btn btn-primary" id="reset">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table">
+                        <div class="table-responsive">
+                            <table id="ticket_list" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr role="row" class="bg-secondary">
+                                        <th>S.No</th>
+                                        <th>EmpId</th>
+                                        <th>Employee Type</th>
+                                        <th>Employee Name</th>
+                                        <th>Employee Code</th>
+                                        <th>In Time</th>
+                                        <th>Out Time</th>
+                                        @*<th>Attendance Date</th>*@
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.AttendanceList != null)
+                                    {
+                                        var sn = 1;
+                                        foreach (var item in Model.AttendanceList)
+                                        {
+                                            <tr role="row" class="odd">
+                                                <td>@sn</td>
+                                                <td>@item.EmpId</td>
+                                                <td>@item.WorkingType</td>
+                                                <td>@item.EmpName</td>
+                                                <td>@item.EmpCode</td>
+                                                <td>@Html.TextBoxFor(M => item.InTime, new { @class = "form-control", @type = "time" })</td>
+                                                <td>@Html.TextBoxFor(M => item.OutTime, new { @class = "form-control", @type = "time" })</td>
+                                                @*<td>@item.AttendanceDate</td>*@
+                                            </tr>
+                                            sn++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary" onclick="Save()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+   
+
+    //$(document).ready(function () {
+    //    debugger;
+    //    var dateObj = new Date();
+    //    var month = dateObj.getUTCMonth();
+    //    var day = dateObj.getUTCDate();
+    //    var year = dateObj.getUTCFullYear();
+    //    var newdate = day + "-" + month + "-" + year;
+    //    alert(newdate);
+    //    $("#AttendanceDate").val(newdate);
+       
+    //}); 
+
+    $(document).ready(function () {
+        $('#reset').on('click', function () {
+            $('#AttendanceDate').val('');
+        });
+    });
+
+    
+
+    function Save() {
+        debugger;
+        if ($("#AttendanceDate").val() == "") {
+            swal("", "Please select attendance date", "warning");
+            return false;
+        }
+        var EmpList = [];
+        $("tbody tr ").each(function () {
+            var row = $(this);
+            if (row.find("td:eq(3) input").val() != "") {
+                EmpList.push({
+                    "EmpId": row.find("td:eq(1) ").text(),
+                    "InTime": row.find("td:eq(5) input").val(),
+                    "OutTime": row.find("td:eq(6) input").val(),
+                    "AttendanceDate": $("#AttendanceDate").val(),
+                });
+            }
+        })
+        $.ajax({
+            type: 'POST',
+            data: JSON.stringify({ EmpList: EmpList }),
+            contentType: 'application/json',
+            url: '/Admin/UpdateAttendance',
+            success: function (data) {
+                if (data != null) {
+                    swal("", "Attendance insert successfully", "success");
+                    window.setTimeout(function () {
+                        window.location.href = "/Admin/Attendance";
+                    }, 2000);
+                }
+                else {
+                    swal("", "Some error occured", "error");
+                    window.setTimeout(function () {
+                        window.location.href = "/Admin/UpdateAttendance";
+                    }, 2000);
+                }
+            }
+        });
+        console.log(EmpList);
+    }
+
+</script>
+<script>
+    $(document).ready(function () {
+        $('#ticket_list').dataTable({
+            responsive: true,
+        });
+    });
+</script>

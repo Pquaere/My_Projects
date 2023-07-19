@@ -1,0 +1,157 @@
+﻿.bg-secondary {
+    background: #2359a8 !important;
+}
+
+@media (min-width: 1024px) {
+    .footer {
+        left: 240px;
+    }
+}
+
+.footer {
+    bottom: 0;
+    color: #67757c;
+    left: 0px;
+    padding: 17px 15px;
+    position: absolute;
+    right: 0;
+    border-top: 1px solid rgba(120, 130, 140, 0.13);
+    background: #ffffff;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+i.fa.fa-pencil {
+    color: orange;
+}
+
+span.p-1.badge-success {
+    color: #4DCA88;
+}
+
+span.p-1.badge-danger {
+    color: orangered;
+}
+
+/*31-05-2023*/
+
+@media screen and (max-width: 480px) {
+    .pbutton {
+        text-align: center !important;
+    }
+
+    .text-themecolor {
+        text-align: center !important;
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+}
+
+/*Shalini 06/13/2023*/
+
+.border-form {
+    border-top: 2px solid #2359a8 !important;
+    border-right: 2px solid #2359a8 !important;
+    border-bottom: 2px solid #2359a8 !important;
+    border-left: 2px solid #2359a8 !important;
+    padding: 10px;
+}
+
+.border-form1 {
+    border-right: 2px solid #2359a8;
+    border-bottom: 2px solid #2359a8;
+    border-left: 2px solid #2359a8;
+    padding: 10px;
+}
+
+span.select2-selection.select2-selection--single {
+    height: 38px;
+    border: 1px solid #f0f0f0;
+}
+
+
+
+/*New Css 11-07-2023*/
+
+.table.table-striped > tbody > tr:nth-of-type(odd) > * {
+    color: #000;
+}
+
+tr.odd {
+    background: #61bfeb26 !important;
+}
+
+th.sorting.sorting_asc {
+    color: #fff;
+}
+
+th.sorting {
+    color: #fff !important;
+}
+
+.sidebar {
+    background: linear-gradient(135deg,#266fd9,#2359a8 40%,#2359a8);
+}
+
+span.d-block {
+    color: #FFF;
+}
+
+.sidebar .user-account .user-name {
+    color: #fff !important;
+}
+
+.has-arrow span {
+    color: #fff;
+}
+
+.sidebar .metismenu > li a i {
+    color: #ffffff;
+}
+
+.sidebar .metismenu ul a {
+    color: #ffffff !important;
+}
+
+.metismenu .has-arrow::after {
+    color: #fff;
+}
+
+.navbar-fixed-top {
+    background: linear-gradient(135deg,#266fd9,#2359a8 40%,#2359a8);
+    box-shadow: 0 3px 7px 0 #0915204a;
+}
+
+.btn-success {
+    background-color: #005495 !important;
+    border-color: #2359a8 !important;
+}
+
+h3.text-themecolor.font-20.clearfix {
+    color: #2f6d9d;
+}
+
+.table tr th {
+    color: #ffffff;
+}
+
+.btn-danger {
+    background-color: #0b3e8b;
+    border-color: #0b3e8b;
+}
+
+.sidebar .user-account .dropdown-menu a {
+    color: #2359a8 !important;
+}
+
+.btn.btn-primary {
+    background-color: #005495 !important;
+    border-color: #2359a8 !important;
+}
+
+
+i.fa.fa-pencil {
+    color: #2359a8;
+}

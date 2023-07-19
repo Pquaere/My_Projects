@@ -1,0 +1,170 @@
+﻿@model HRPayroll.Models.OfficeTime
+@{
+    ViewBag.Title = "AddOfficeTime";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+    <div class="container-fluid">
+        <div class="page-wrapper">
+            <div class="row page-titles">
+                <div class="col-md-12 align-self-center">
+                    <h3 class="text-themecolor font-20 clearfix">Add Office-Time</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    @{
+                        string Code = (string)TempData["code"];
+                        string msg = (string)TempData["Msg"];
+                        if (!string.IsNullOrEmpty(Code))
+                        {
+                            if (Code == "1")
+                            {
+                                <div class="alert alert-success msgdiv">
+                                    <strong>Success!</strong> @msg
+                                </div>
+                                <script type="text/javascript">
+                                    window.setTimeout(function () {
+                                        location.href = '/Master/AddOfficeTime';
+                                    }, 3000);
+
+/**/</script>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger msgdiv">
+                                    <strong>Error!</strong> @msg
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card card-outline-info">
+                            <div class="card-body">
+                                <form action="/Master/AddOfficeTime" method="post" id="FormSubmit" onsubmit="return ValidateForm();">
+                                    <div class="form-body">
+
+                                        <div class="row p-t-20">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        Select Office<span class="text-danger">*</span>
+                                                    </label>
+                                                    @Html.DropDownListFor(model => model.Fk_OfficeId, new SelectList(ViewBag.Office, "Value", "Text"), "-Select Office-", new { @class = "form-control" })
+                                                    @Html.HiddenFor(model => model.ID)
+
+                                                </div>
+                                            </div>
+                                            <!--/span-->
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        In-Time<span class="text-danger">*</span>
+                                                    </label>
+                                                    @Html.TextBoxFor(M => M.InTime, new { @class = "form-control", @type = "time" })
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        Out-Time<span class="text-danger">*</span>
+                                                    </label>
+                                                    @Html.TextBoxFor(M => M.OutTime, new { @class = "form-control", @type = "time" })
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        Lunch-Time<span class="text-danger">*</span>
+                                                    </label>
+                                                    @Html.TextBoxFor(M => M.LunchTime, new { @class = "form-control", @placeholder = "In Minute", @onkeypress = "return isNumberKey(event)", @maxlength = "2" })
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        @if (Model.ID > 0)
+                                        {
+                                            <button class="btn btn-success hstheme-button-o text-white">
+                                                <i class="fa fa-check"></i>
+                                                Update
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-success hstheme-button-o text-white">
+                                                <i class="fa fa-check"></i>
+                                                Submit
+                                            </button>
+                                        }
+
+                                        <a href="/Master/OfficeTimeList" class="btn btn-danger hstheme-button-o text-white">
+                                            <i class="fa fa-crosshairs"></i>
+                                            Cancel
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+<script>
+
+    function ValidateForm() {
+        debugger;
+        if ($('#Fk_OfficeId').val() == '' || $('#Fk_OfficeId').val() == '0') {
+            swal("", "Please Select Office..", "warning");
+            $('#Fk_OfficeId').focus();
+            return false;
+
+        }
+        if ($('#InTime').val() == '' || $('#InTime').val() == '0' || $('#InTime').val() == null) {
+            swal("", "Please Enter In-Time..", "warning");
+            $('#InTime').focus();
+            return false;
+        }
+        if ($('#OutTime').val() == '' || $('#OutTime').val() == '0' || $('#OutTime').val() == null) {
+            swal("", "Please Enter Out-Time..", "warning");
+            $('#OutTime').focus();
+            return false;
+        }
+        if ($('#LunchTime').val() == '' || $('#LunchTime').val() == '0' || $('#LunchTime').val() == null) {
+            swal("", "Please Enter Lunch-Time..", "warning");
+            $('#LunchTime').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#FormSubmit").submit();
+        }
+    }
+
+     function isNumberKey(evt) {
+        debugger
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+
+</script>
+

@@ -1,0 +1,230 @@
+﻿@model HRPayroll.Models.CategoryModel
+
+@{
+    ViewBag.Title = "AddCategory";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-12 align-self-center">
+            <h3 class="text-themecolor font-20 clearfix">Add Category</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                string Code = (string)TempData["code"];
+                string msg = (string)TempData["Msg"];
+                if (!string.IsNullOrEmpty(Code))
+                {
+                    if (Code == "1")
+                    {
+                        <div class="alert alert-success msgdiv">
+                            <strong>Success!</strong> @msg
+                        </div>
+                        <script type="text/javascript">
+                            window.setTimeout(function () {
+                                location.href = '/Master/CategoryList';
+                            }, 3000);
+                        </script>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger msgdiv">
+                            <strong>Error!</strong> @msg
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-outline-info">
+                    <div class="card-body">
+                        <form action="/Master/AddCategory" method="post" id="FormSubmit" onsubmit="return ValidateForm();">
+                            <div class="form-body">
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                Category Name<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.CategoryName, new { @class = "form-control", @placeholder = "Enter Category Name.." })
+
+                                            @Html.HiddenFor(Model => Model.ID)
+                                        </div>
+                                    </div>
+                                    <!--/span-->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                Preference Order<span class="text-danger">*</span>
+                                            </label>
+                                            @Html.TextBoxFor(M => M.PreferenceOrder, new { @class = "form-control", @placeholder = "Enter Preference Order.." })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="form-label">Upload File</label>
+                                            <input class="form-control" onchange="UploadFile(this,'Images')" type="file" id="File" />
+                                            @Html.HiddenFor(m => m.Images, new { @class = "form-control" })
+
+                                            @if (Model.Images != null)
+                                            {
+
+                                                <img class="inline-block" src="@Model.Images" target="blank" id="imgHolidayImage" alt="user" style="height:50px">
+                                            }
+                                            else
+                                            {
+                                                <div class="d-none" id="d1">
+                                                    <img class="inline-block" src="" target="blank" id="imgHolidayImage" alt="user" style="height:50px">
+                                                </div>
+                                            }
+                                            <div class="d-none" id="d2">
+                                                <div class="col-md-4" id="image"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                @if (Model.ID > 0)
+                                {
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Update
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-success hstheme-button-o text-white">
+                                        <i class="fa fa-check"></i>
+                                        Submit
+                                    </button>
+                                }
+
+                                <a href="/Master/CategoryList" class="btn btn-danger hstheme-button-o text-white">
+                                    <i class="fa fa-crosshairs"></i>
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+     function UploadFile(obj, type) {
+        debugger;
+        var filename = $(obj)[0].files[0].name;
+        var fileId = $(obj).attr("id");
+         var ext = obj.value.match(/\.(.+)$/)[1];
+
+
+        switch (ext) {
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'pdf':
+                var fileSize = ($("#" + fileId)[0].files[0].size / 1024 / 1024);
+                var data = new FormData();
+                var files = $("#" + fileId).get(0).files;
+                if (files.length > 0) {
+                    data.append("File", files[0]);
+                }
+                data.append("type", type);
+                $("#divLoader").show();
+                $.ajax({
+                    url: '@Url.Action("UploadImageFile", "Master")',
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function (response) {
+                        $("#divLoader").hide();
+
+                        if (response != null) {
+                            if (response.result) {
+                                var result = response.fpath;
+
+                                if (ext == "jpg" || ext == "jpeg" || ext == "png")
+                    {
+                          $('#d1').removeClass('d-none');
+                          $('#d2').addClass('d-none');
+                    }
+                    else
+                    {
+                       $('#d2').removeClass('d-none');
+                       $('#d1').addClass('d-none');
+                                     $('#image').html(' <a href="'+result+'" target="_blank" class="btn btn-warning"><i class="fa fa-download"></i></a>');
+                    }
+                                $("#" + type + "").val(response.fpath);
+
+                                if ($("#" + type + "").val() != '') {
+
+                                    $("#img" + type + "").attr("src", response.fpath);
+                                }
+                                swal("", "File upload successfully. ", "success")
+                            }
+                            else {
+                                $("#" + type + "").val('');
+                                swal("", response.mesg, "error")
+                            }
+                        }
+                        else {
+                            swal("", "Fail to Upload File", "error")
+                        }
+                        return false;
+
+                    },
+                    error: function (e) {
+
+                        $("#divLoader").hide();
+                        swal("", "An Error Occured while uploading file", "error");
+                    }
+                });
+
+                /*}*/
+                break;
+            default:
+                swal("", 'File should be in PNG/JPG/JPEG/pdf format./फाइल PNG/JPG/JPEG/pdf प्रारूप में होनी चाहिए।', "warning");
+                this.value = '';
+                return false;
+        }
+
+    }
+
+
+    function ValidateForm() {
+        debugger;
+        if ($('#CategoryName').val() == '' || $('#CategoryName').val() == null) {
+            swal("", "Please enter Category Name..", "warning");
+            $('#CategoryName').focus();
+            return false;
+        }
+        if ($('#PreferenceOrder').val() == '' || $('#PreferenceOrder').val() == '0' || $('#PreferenceOrder').val() == null) {
+            swal("", "Please Enter Preference Order..", "warning");
+            $('#PreferenceOrder').focus();
+            return false;
+        }
+        if ($('#Images').val() == '' || $('#Images').val() == null) {
+            swal("", "Please Upload Category Image..", "warning");
+            $('#Images').focus();
+            return false;
+        }
+        else {
+            return true;
+            $("#FormSubmit").submit();
+        }
+    }
+</script>
+
